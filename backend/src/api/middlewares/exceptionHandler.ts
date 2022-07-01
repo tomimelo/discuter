@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { loggerAcquirer } from '../../utils/logger-acquirer/logger-acquirer'
 
-import { validToShowErrorMessage } from '../../utils/vaild-error-codes'
-
 const logger = loggerAcquirer.acquire().child('ExceptionHandler')
 
 export default {
@@ -23,7 +21,7 @@ export default {
       ok: false,
       error: {
         status: error.status || 500,
-        message: validToShowErrorMessage(error.code) ? error.message || 'Internal server error' : 'Internal server error',
+        message: error.message || 'Internal server error',
         code: error.code || -1,
         data: error.data
       }
