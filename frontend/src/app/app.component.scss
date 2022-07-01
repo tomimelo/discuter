@@ -1,0 +1,70 @@
+$darker: #232931;
+$dark: #393E46;
+$accent: #4ECCA3;
+$primary: #EEEEEE;
+
+.app-container {
+  background-color: $darker;
+  width: 100vw;
+  height: 100vh;
+}
+
+.app-logo {
+  display: none;
+}
+
+.mobile-container {
+  background-color: $dark;
+  height: 100%;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .app-container {
+    padding-top: 50px;
+  }
+
+  .app-logo {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1;
+  }
+
+  .mobile-container {
+    width: 465px;
+    height: 600px;
+    margin: auto;
+    overflow: auto;
+    box-shadow: 0 10px 25px 0 rgb(0 0 0 / 8%);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+}
+
+@media (min-width: 600px) and (max-height: 640px) {
+  .mobile-container {
+    height: 500px;
+  }
+}
+
+@media (min-width: 600px) and (min-height: 800px) {
+  .mobile-container {
+    height: 700px;
+  }
+}
+
+@media (min-width: 600px) and (min-height: 900px) {
+  .mobile-container {
+    height: 800px;
+  }
+}
+
+@media (min-width: 600px) and (min-height: 1000px) {
+  .mobile-container {
+    height: 900px;
+  }
+}
