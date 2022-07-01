@@ -20,7 +20,8 @@
     "express-mad-logger": "^1.0.0",
     "express-validator": "^6.12.1",
     "mad-logger": "^3.0.0",
-    "mad-server": "^3.1.1"
+    "mad-server": "^3.1.1",
+    "twilio": "^3.78.0"
   },
   "devDependencies": {
     "@types/config": "0.0.39",
