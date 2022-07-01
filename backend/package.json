@@ -1,0 +1,50 @@
+{
+  "name": "node-ts-mad-server",
+  "version": "2.0.0",
+  "description": "Node typescript http server with logger and db connector",
+  "main": "build/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node .",
+    "restart": "rm -rf build && npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint **/*.ts",
+    "lint:fix": "eslint **/*.ts --fix"
+  },
+  "keywords": [
+    "node",
+    "typescript",
+    "server",
+    "http",
+    "logger",
+    "database",
+    "connection",
+    "handling",
+    "controller",
+    "express",
+    "mongo"
+  ],
+  "author": "Tomás Melone",
+  "license": "MIT",
+  "dependencies": {
+    "config": "^3.3.7",
+    "cors": "^2.8.5",
+    "express-mad-logger": "^1.0.0",
+    "express-validator": "^6.12.1",
+    "mad-logger": "^3.0.0",
+    "mad-server": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/config": "0.0.39",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.6.1",
+    "@typescript-eslint/eslint-plugin": "^5.30.3",
+    "@typescript-eslint/parser": "^5.30.3",
+    "eslint": "^8.18.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.3",
+    "eslint-plugin-promise": "^6.0.0"
+  }
+}

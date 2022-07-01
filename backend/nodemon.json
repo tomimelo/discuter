@@ -1,0 +1,6 @@
+{
+  "exec": "ts-node ./src/app.ts",
+  "verbose": true,
+  "ignore": ["logs"],
+  "ext": "ts,json"
+}
