@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import config from 'config'
 import { MadServer } from 'mad-server'
 import { serverConfig } from './api/server/server-config'
