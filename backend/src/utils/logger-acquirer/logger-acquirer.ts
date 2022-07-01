@@ -17,7 +17,7 @@ class LoggerAcquirer {
 }
 
 const defaultLoggerConfig = {
-  filename: path.join(__dirname, '../../../logs/myapp-%DATE%.log')
+  filename: path.join(__dirname, '../../../logs/discuter-%DATE%.log')
 }
 
 export const loggerAcquirer = new LoggerAcquirer(defaultLoggerConfig)
