@@ -1,7 +1,7 @@
 {
-  "name": "node-ts-mad-server",
-  "version": "2.0.0",
-  "description": "Node typescript http server with logger and db connector",
+  "name": "discuter-server",
+  "version": "1.0.0",
+  "description": "Discuter server for Midudev Hackathon",
   "main": "build/app.js",
   "scripts": {
     "build": "tsc",
@@ -11,19 +11,6 @@
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint **/*.ts --fix"
   },
-  "keywords": [
-    "node",
-    "typescript",
-    "server",
-    "http",
-    "logger",
-    "database",
-    "connection",
-    "handling",
-    "controller",
-    "express",
-    "mongo"
-  ],
   "author": "Tomás Melone",
   "license": "MIT",
   "dependencies": {
