@@ -3,3 +3,4 @@ build
 logs/*
 public/*
 config/*
+.env
