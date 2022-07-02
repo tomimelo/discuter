@@ -21,7 +21,6 @@ export class HomeComponent implements OnInit {
 
   async signIn(): Promise<void> {
     const data = await this.supabaseService.signIn();
-    console.log(data);
   }
 
 }
