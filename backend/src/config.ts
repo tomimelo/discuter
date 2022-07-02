@@ -1,26 +1,27 @@
-export interface AppConfig {
-  env: string;
-  api: {
-    version: number;
-    port: number;
-  };
-  db: {
-    host: string;
-    port: number;
-    user: string;
-    password: string;
-    options: any;
-  };
-  auth: {
-    user: string;
-    password: string;
-  };
-  jwt: {
-    secret: string;
-    expiresIn: string;
-    refreshTokenDaysUntilExpire: number;
-  };
-  logger: {
-    level: string;
-  };
+import httpContext from 'express-http-context'
+import cors from 'cors'
+import { MadServerConfig } from 'mad-server'
+import { expressMadLogger } from 'express-mad-logger'
+import serverRouter from './api/routes/api.routes'
+import { normalizePort } from './utils/normalizer'
+import { loggerAcquirer } from './utils/logger-acquirer/logger-acquirer'
+import exceptionHandler from './api/middlewares/exceptionHandler'
+
+const port = normalizePort(process.env.PORT, 3000)
+
+const log = loggerAcquirer.acquire()
+const logger = log.child('HttpServer')
+
+export const serverConfig: MadServerConfig = {
+  port,
+  router: serverRouter,
+  logger,
+  preMiddlewares: [
+    httpContext.middleware,
+    cors(),
+    expressMadLogger.getMiddleware(log)
+  ],
+  postMiddlewares: [
+    exceptionHandler.internal
+  ]
 }
