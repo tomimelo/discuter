@@ -1,0 +1,33 @@
+import { NextFunction, Request, Response } from 'express'
+import { AuthService } from '../../auth/auth-service'
+import { getUser } from '../../utils/get-user'
+import httpContext from 'express-http-context'
+
+export const verifyJWT = (authService: AuthService) => {
+  return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const authHeader = req.header('Authorization')
+      let token = null
+
+      if (authHeader) {
+        [, token] = authHeader.split(' ')
+      }
+
+      if (!token) {
+        throw new Error('Unauthorized access')
+      }
+
+      const userMetadata = await authService.verifyJWT(token).catch(() => {
+        throw new Error('Unauthorized access')
+      })
+
+      httpContext.set('user', getUser(userMetadata))
+
+      next()
+    } catch (error: any) {
+      next(error)
+    }
+  }
+}
+
+export default verifyJWT
