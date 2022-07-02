@@ -3,6 +3,7 @@ import { AuthConfig } from '../../auth/auth-config'
 import { AuthService } from '../../auth/auth-service'
 import { TwilioConfig } from '../../twilio/twilio-config'
 import { TwilioFactory } from '../../twilio/twilio-factory'
+import exceptionHandler from '../middlewares/exceptionHandler'
 import verifyJWT from '../middlewares/verifyJwt'
 
 const twilioConfig: TwilioConfig = {
@@ -32,6 +33,13 @@ const twilioRouter = new MadRouter({
   handlers: [getAccessToken]
 })
 
-const router = new MadRouter({ basePath: '/api', handlers: [twilioRouter] })
+const notFound: MadRoute = {
+  method: MadRouteMethod.GET,
+  path: '/*',
+  middlewares: [],
+  handler: exceptionHandler.notFound
+}
+
+const router = new MadRouter({ basePath: '/api', handlers: [twilioRouter, notFound] })
 
 export default router

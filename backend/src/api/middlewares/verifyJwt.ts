@@ -7,11 +7,7 @@ export const verifyJWT = (authService: AuthService) => {
   return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const authHeader = req.header('Authorization')
-      let token = null
-
-      if (authHeader) {
-        [, token] = authHeader.split(' ')
-      }
+      const token = authHeader ? authHeader.split(' ')[1] : null
 
       if (!token) {
         throw new Error('Unauthorized access')
