@@ -1,2 +1,8 @@
 <input type="text" #text>
 <button (click)="sendMessage(text.value)">Send</button>
+<button (click)="leaveRoom()">Leave</button>
+<button (click)="deleteRoom()">Delete</button>
+<div *ngIf="isOwner">
+  <input type="text" #participant>
+  <button (click)="inviteParticipant(participant.value)">Invite</button>
+</div>
