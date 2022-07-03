@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { TwilioService } from 'src/app/services/twilio.service';
 
 @Component({
   selector: 'app-room',
@@ -8,14 +8,13 @@ import { Router } from '@angular/router';
 })
 export class RoomComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private twilioService: TwilioService) { }
 
   ngOnInit(): void {
   }
 
-  joinRoom(room: string) {
-    console.log(room);
-    this.router.navigate(['/room', room]);
+  sendMessage(message: string) {
+    this.twilioService.sendMessage(message)
   }
 
 }

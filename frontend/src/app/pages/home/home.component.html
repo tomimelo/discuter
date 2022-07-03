@@ -1,4 +1,8 @@
-<p>Your name</p>
-<input type="text" #name>
-<button (click)="join(name.value)">Join</button>
-<button (click)="signIn()">Sign in</button>
+<button *ngIf="!user" (click)="signIn()">Sign in</button>
+<div *ngIf="user">
+  <img [src]="user.avatar_url" alt="">
+  <h5>{{user.full_name}}</h5>
+  <button (click)="signOut()">Sign out</button>
+  <input type="text" #room>
+  <button (click)="joinRoom(room.value)">Join</button>
+</div>

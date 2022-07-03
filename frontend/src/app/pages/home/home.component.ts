@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SupabaseService } from 'src/app/services/supabase.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { TwilioService } from 'src/app/services/twilio.service';
+import { User } from 'src/app/types/user';
 
 @Component({
   selector: 'app-home',
@@ -9,18 +11,26 @@ import { SupabaseService } from 'src/app/services/supabase.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router, private supabaseService: SupabaseService) { }
+  public user: User | null = null;
+
+  constructor(private router: Router, private authService: AuthService, private twilioService: TwilioService) { }
 
   ngOnInit(): void {
-  }
-
-  join(name: string): void {
-    console.log(name);
-    this.router.navigateByUrl('/room');
+    this.authService.getUser().subscribe(user => {
+      this.user = user
+    })
   }
 
   async signIn(): Promise<void> {
-    const data = await this.supabaseService.signIn();
+    return this.authService.signIn();
   }
 
+  async signOut(): Promise<void> {
+    return this.authService.signOut();
+  }
+
+  async joinRoom(room: string) {
+    await this.twilioService.joinRoom(room)
+    this.router.navigateByUrl(`/room/${room}`)
+  }
 }
