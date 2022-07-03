@@ -1,9 +1,12 @@
-import twilio from 'twilio'
+import twilio, { Twilio } from 'twilio'
 import AccessToken from 'twilio/lib/jwt/AccessToken'
 import { TwilioConfig } from './twilio-config'
 
 export class TwilioClient {
-  public constructor (private readonly config: TwilioConfig) {}
+  private client: Twilio
+  public constructor (private readonly config: TwilioConfig) {
+    this.client = twilio(this.config.accountSid, this.config.authToken)
+  }
 
   public getAccessTokenWithGrant (identity: string): string {
     const accessToken = this.getAccessToken(identity)
