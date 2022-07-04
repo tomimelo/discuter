@@ -11,7 +11,7 @@ export class TwilioService {
 
   private client: Client | null = null
   private conversation: Conversation | null = null
-  private $conversation: BehaviorSubject<Conversation | null> = new BehaviorSubject<Conversation | null>(null)
+  private conversation$: BehaviorSubject<Conversation | null> = new BehaviorSubject<Conversation | null>(null)
 
   constructor(private http: HttpClient) { }
 
@@ -59,7 +59,7 @@ export class TwilioService {
   }
 
   public async leaveRoom() {
-    this.conversation?.removeAllListeners()
+    this.unsubscribeConversation()
     if (!this.isHost()) {
       await this.conversation?.leave()
     }
@@ -71,7 +71,7 @@ export class TwilioService {
   }
 
   public getConversation(): Observable<Conversation | null> {
-    return this.$conversation.asObservable()
+    return this.conversation$.asObservable()
   }
 
   public async inviteParticipant(identity: string) {
@@ -140,6 +140,10 @@ export class TwilioService {
     return this.client?.user.identity === this.conversation?.createdBy
   }
 
+  private unsubscribeConversation() {
+    this.conversation?.removeAllListeners()
+  }
+
   private isConflict(error: any): boolean {
     return error.status === 409 || error.message.includes('Conflict')
   }
@@ -158,6 +162,6 @@ export class TwilioService {
 
   private setConversation(value: Conversation | null) {
     this.conversation = value
-    this.$conversation.next(value)
+    this.conversation$.next(value)
   }
 }
