@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node .",
+    "start:dev": "nodemon",
     "restart": "rm -rf build && npm run start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint **/*.ts",
@@ -34,6 +35,8 @@
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.3",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.0.0",
+    "nodemon": "^2.0.18",
+    "ts-node": "^10.8.2"
   }
 }
