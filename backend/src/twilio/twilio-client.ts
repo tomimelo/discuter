@@ -14,6 +14,22 @@ export class TwilioClient {
     return accessToken.toJwt()
   }
 
+  public async getRoomsByUser (username: string): Promise<any[]> {
+    // const channels = await this.client.chat.services(this.config.serviceSid).channels.list()
+    const user = await this.client.conversations.users.get(username)
+    const userConversationsList = await user.userConversations.list()
+    return userConversationsList.map(userConversation => {
+      return {
+        uniqueName: userConversation.uniqueName,
+        createdBy: userConversation.createdBy,
+        conversationState: userConversation.conversationState,
+        unreadMessagesCount: userConversation.unreadMessagesCount,
+        dateCreated: userConversation.dateCreated,
+        dateUpdated: userConversation.dateUpdated
+      }
+    })
+  }
+
   private getAccessToken (identity: string): AccessToken {
     const { AccessToken } = twilio.jwt
     return new AccessToken(this.config.accountSid, this.config.apiKey, this.config.apiSecret, { identity })
