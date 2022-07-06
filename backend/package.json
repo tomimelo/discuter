@@ -18,7 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express-http-context": "^1.2.4",
-    "express-mad-logger": "^1.0.0",
+    "express-mad-logger": "^1.0.1",
     "jsonwebtoken": "^8.5.1",
     "mad-logger": "^3.0.0",
     "mad-server": "^3.1.1",
