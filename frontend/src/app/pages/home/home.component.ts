@@ -13,7 +13,7 @@ import { User } from 'src/app/types/user';
 export class HomeComponent implements OnInit, OnDestroy {
 
   public user: User | null = null;
-  public destroy$ = new Subject<void>()
+  private destroy$ = new Subject<void>()
 
   constructor(private router: Router, private authService: AuthService, private twilioService: TwilioService) { }
 
