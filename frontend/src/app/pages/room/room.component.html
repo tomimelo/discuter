@@ -10,5 +10,11 @@
     <input type="text" #participant>
     <button (click)="inviteParticipant(participant.value)">Invite</button>
   </div>
+  <div class="messages-container">
+    <div *ngFor="let message of messages" class="message-box" [class.author-message]="message.author === user?.user_name">
+      <p>{{message.author}}</p>
+      <p>{{message.body}}</p>
+    </div>
+  </div>
 </ng-container>
 

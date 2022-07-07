@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Conversation } from '@twilio/conversations';
+import { Conversation, Message } from '@twilio/conversations';
 import { TwilioService } from 'src/app/services/twilio.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/types/user';
@@ -19,6 +19,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>()
   private isJoined: boolean = false
   public loading: boolean = true
+  public messages: Message[] = []
 
   constructor(private twilioService: TwilioService,
               private authService: AuthService,
@@ -43,7 +44,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.isHost = this.twilioService.isHost()
     })
     this.twilioService.onMessage.pipe(takeUntil(this.destroy$)).subscribe(message => {
-      console.log(message);
+      this.messages.push(message)
     })
   }
 
