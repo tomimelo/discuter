@@ -1,13 +1,58 @@
+$pageWrapperPadding: 30px;
+
 * {
   margin: 0;
   padding: 0;
   list-style: none;
   text-decoration: none;
   box-sizing: border-box;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 16px;
 }
 
 html, body { 
   height: 100%;
+}
+
+.page-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: $pageWrapperPadding;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.github-button {
+  border: none;
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  gap: 10px;
+  background-color: #1d2225;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+
+  &:hover {
+    background-color: #2c3236;
+  }
+
+  &:active {
+    background-color: #1d2225;
+  }
+
+  svg {
+    fill: currentColor
+  }
+}
+
+.fixed-navbar{
+  position: absolute;
+  top: 0;
+}
+
+.numpass-wrapper .t-input {
+  padding: 0 5px!important;
 }
