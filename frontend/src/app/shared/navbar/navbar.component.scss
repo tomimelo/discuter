@@ -1,0 +1,12 @@
+:host {
+  width: 100%;
+}
+
+:host-context(.align-right) .navbar-wrapper {
+  justify-content: flex-end;
+}
+
+.navbar-wrapper {
+  padding: 20px;
+  display: flex;
+}
