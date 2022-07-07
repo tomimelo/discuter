@@ -1,3 +1,5 @@
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { TuiRootModule, TuiDialogModule, TuiAlertModule } from "@taiga-ui/core";
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,7 +16,11 @@ import { PagesRoutingModule } from './pages/pages-routing.module';
     BrowserModule,
     AppRoutingModule,
     PagesRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    TuiRootModule,
+    BrowserAnimationsModule,
+    TuiDialogModule,
+    TuiAlertModule
   ],
   providers: [],
   bootstrap: [AppComponent]
