@@ -24,7 +24,7 @@ export class SupabaseService {
     return this.supabase.auth.signIn({
       provider: 'github',
     }, {
-      redirectTo: 'http://localhost:4200/auth'
+      redirectTo: `${environment.baseUrl}/auth`
     })
   }
 
