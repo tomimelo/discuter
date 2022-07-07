@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Client, Conversation, Message, Participant, State } from '@twilio/conversations';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -12,6 +12,7 @@ export class TwilioService {
   private client: Client | null = null
   private conversation: Conversation | null = null
   private conversation$: BehaviorSubject<Conversation | null> = new BehaviorSubject<Conversation | null>(null)
+  public onMessage = new Subject<Message>()
 
   constructor(private http: HttpClient) { }
 
@@ -32,19 +33,11 @@ export class TwilioService {
     try {
       const conversation = await this.getConversationByUniqueName(room) || await this.createConversation(room)
       console.log({ conversation });
-      conversation.on('messageAdded', (message: Message) => {
-        console.log(message)
-      })
-      conversation.on('participantJoined', (participant: Participant) => {
-        console.log(participant)
-      })
-      conversation.on('participantLeft', participant => {
-        console.log('participantLeft', participant);
-      })
       if (conversation.status !== 'joined') {
         await conversation.join()
       }
       this.setConversation(conversation)
+      this.listenOnConversation()
       console.log(`Room ${room} joined`);
     } catch (error) {
       if (this.isForbidden(error)) {
@@ -91,6 +84,22 @@ export class TwilioService {
     }
   }
 
+  public isHost(): boolean {
+    return this.client?.user.identity === this.conversation?.createdBy
+  }
+
+  private listenOnConversation() {
+    this.conversation?.on('messageAdded', (message: Message) => {
+      this.onMessage.next(message)
+    })
+    this.conversation?.on('participantJoined', (participant: Participant) => {
+      console.log(participant)
+    })
+    this.conversation?.on('participantLeft', participant => {
+      console.log('participantLeft', participant);
+    })
+  }
+
   private async getClient(): Promise<Client> {
     return this.client || await this.initClient()
   }
@@ -134,10 +143,6 @@ export class TwilioService {
     console.log(`Creating conversation ${uniqueName}`);
     const client = await this.getClient()
     return client.createConversation({uniqueName})
-  }
-
-  private isHost(): boolean {
-    return this.client?.user.identity === this.conversation?.createdBy
   }
 
   private unsubscribeConversation() {
