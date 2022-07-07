@@ -1,0 +1,9 @@
+.numpass-wrapper > form {
+  display: flex;
+  gap: .5em;
+
+  tui-input-number {
+    min-width: 20px;
+    text-align: center;
+  }
+}
