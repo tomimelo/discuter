@@ -8,13 +8,13 @@ import { SupabaseService } from './supabase.service';
   providedIn: 'root'
 })
 export class AuthService implements OnDestroy {
-  private user: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null)
+  private user$: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null)
   private destroy$ = new Subject<void>()
 
   constructor(private supabaseService: SupabaseService) {
     this.supabaseService.onSignEvent.pipe(takeUntil(this.destroy$)).subscribe(({event, session}) => {
       const user = this.getUserFromSession(session)
-      this.user.next(user)
+      this.user$.next(user)
     })
   }
 
@@ -32,7 +32,7 @@ export class AuthService implements OnDestroy {
   }
 
   public getUser() {
-    return this.user.asObservable()
+    return this.user$.asObservable()
   }
 
   private getUserFromSession(session: Session | null): User | null {
