@@ -1,8 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import {TuiAvatarModule} from '@taiga-ui/kit';
+import {TuiButtonModule, TuiHostedDropdownModule, TuiDataListModule, TuiSvgModule} from '@taiga-ui/core';
+
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { NavbarModule } from 'src/app/shared/navbar/navbar.module';
+import { NumPassModule } from 'src/app/shared/num-pass/num-pass.module';
+
+const TAIGA_MODULES = [
+  TuiButtonModule,
+  TuiAvatarModule,
+  TuiHostedDropdownModule,
+  TuiDataListModule,
+  TuiSvgModule
+]
 
 
 @NgModule({
@@ -11,7 +24,10 @@ import { HomeComponent } from './home.component';
   ],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    NavbarModule,
+    NumPassModule,
+    ...TAIGA_MODULES
   ]
 })
 export class HomeModule { }

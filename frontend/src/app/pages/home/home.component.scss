@@ -1,0 +1,28 @@
+:host {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-button {
+  display: flex;
+  align-items: center;
+  color: white;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.avatar-menu {
+  &-wrapper button {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  &-label {
+    padding: 0 10px 10px 8px;
+  }
+
+  &-username {
+    font-weight: bold;
+  }
+}

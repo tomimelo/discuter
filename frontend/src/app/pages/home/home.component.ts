@@ -14,6 +14,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public user: User | null = null;
   private destroy$ = new Subject<void>()
+  public authenticating: boolean = false;
+  public isAvatarMenuOpen: boolean = false
+  private selectedRoom: string | null = null;
 
   constructor(private router: Router, private authService: AuthService, private twilioService: TwilioService) { }
 
@@ -29,15 +32,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   async signIn(): Promise<void> {
-    return this.authService.signIn();
+    if (this.authenticating) return
+    this.authenticating = true;
+    await this.authService.signIn();
+    this.authenticating = false;
   }
 
   async signOut(): Promise<void> {
+    this.isAvatarMenuOpen = false;
     return this.authService.signOut();
   }
 
-  async joinRoom(room: string) {
-    await this.twilioService.joinRoom(room)
-    this.router.navigateByUrl(`/room/${room}`)
+  async joinRoom() {
+    if (!this.selectedRoom) return
+    await this.twilioService.joinRoom(this.selectedRoom)
+    this.router.navigateByUrl(`/room/${this.selectedRoom}`)
+  }
+
+  onRoomValueChange(room: string) {
+    this.selectedRoom = room
   }
 }
