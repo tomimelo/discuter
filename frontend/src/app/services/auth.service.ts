@@ -1,17 +1,26 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Session } from '@supabase/supabase-js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { User } from '../types/user';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
   private user: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null)
+  private destroy$ = new Subject<void>()
 
   constructor(private supabaseService: SupabaseService) {
-    this.checkUser()
+    this.supabaseService.onSignEvent.pipe(takeUntil(this.destroy$)).subscribe(({event, session}) => {
+      const user = this.getUserFromSession(session)
+      this.user.next(user)
+    })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 
   public async signIn() {
@@ -20,22 +29,14 @@ export class AuthService {
 
   public async signOut() {
     await this.supabaseService.signOut()
-    this.user.next(null)
   }
 
   public getUser() {
     return this.user.asObservable()
   }
 
-  private checkUser() {
-    const session = this.supabaseService.getSession()
-    if (!session) return
-    const user = this.getUserFromSession(session)
-    if (!user) return
-    this.user.next(user)
-  }
-
-  private getUserFromSession(session: Session): User | null {
+  private getUserFromSession(session: Session | null): User | null {
+    if (!session) return null
     const user_metadata = session.user?.user_metadata
     if (!user_metadata) return null
     return {
