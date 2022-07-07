@@ -27,9 +27,12 @@ export class RoomComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
       this.conversation = conversation
+      if (this.conversation) {
+        await this.setupConversation()
+      }
       if (this.isJoined || this.conversation?.status === 'joined') {
         this.isJoined = true
         this.loading = false
@@ -52,6 +55,17 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.destroy$.next()
     this.destroy$.complete()
     this.conversation?.removeAllListeners()
+  }
+
+  async setupConversation() {
+    await this.loadMessages()
+  }
+  
+  async loadMessages() {
+    if (this.conversation) {
+      const messages = await this.conversation.getMessages()
+      this.messages.push(...messages.items)
+    }
   }
 
   async sendMessage(message: string) {
