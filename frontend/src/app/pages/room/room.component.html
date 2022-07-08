@@ -1,20 +1,50 @@
-<div *ngIf="loading">
-  <p>Loading... please wait</p>
-</div>
-<ng-container *ngIf="!loading">
-  <input type="text" #text>
-  <button (click)="sendMessage(text.value)">Send</button>
-  <button (click)="leaveRoom()">Leave</button>
-  <button (click)="deleteRoom()">Delete</button>
-  <div *ngIf="isHost">
-    <input type="text" #participant>
-    <button (click)="inviteParticipant(participant.value)">Invite</button>
+<div class="room-wrapper">
+  <div *ngIf="loading">
+    <p>Loading... please wait</p>
   </div>
-  <div class="messages-container">
-    <div *ngFor="let message of messages" class="message-box" [class.author-message]="message.author === user?.user_name">
-      <p>{{message.author}}</p>
-      <p>{{message.body}}</p>
+  <div class="conversation-wrapper" *ngIf="!loading">
+    <app-navbar>
+      <div class="navbar-content-wrapper">
+        <div class="room-info">
+          <button
+          tuiIconButton
+          type="button"
+          size="s"
+          appearance="icon"
+          icon="tuiIconArrowLeftLarge"
+          tuiHint="Go back"
+          (click)="goBack()"
+          ></button>
+          <span class="room-name">{{conversation?.uniqueName}}</span>
+        </div>
+        <div class="room-options">
+          <button
+          tuiIconButton
+          type="button"
+          size="s"
+          appearance="icon"
+          icon="tuiIconLogoutLarge"
+          tuiHint="Leave room"
+          (click)="leaveRoom()"
+          ></button>
+        </div>
+      </div>
+    </app-navbar>
+    <!-- <button (click)="deleteRoom()">Delete</button>
+    <div *ngIf="isHost">
+      <input type="text" #participant>
+      <button (click)="inviteParticipant(participant.value)">Invite</button>
+    </div> -->
+    <div class="messages-container">
+      <div *ngFor="let message of messages" class="message-box" [class.author-message]="message.author === user?.user_name">
+        <p>{{message.author}}</p>
+        <p>{{message.body}}</p>
+      </div>
     </div>
+    <app-navbar>
+      <input type="text" #text>
+      <button (click)="sendMessage(text.value)">Send</button>
+    </app-navbar>
   </div>
-</ng-container>
+</div>
 

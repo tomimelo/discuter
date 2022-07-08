@@ -72,8 +72,13 @@ export class RoomComponent implements OnInit, OnDestroy {
     return this.twilioService.sendMessage(message)
   }
 
-  async leaveRoom() {
+  async goBack() {
     await this.twilioService.leaveRoom()
+    this.router.navigateByUrl('/home')
+  }
+
+  async leaveRoom() {
+    await this.twilioService.leaveConversation()
     this.router.navigateByUrl('/home')
   }
 

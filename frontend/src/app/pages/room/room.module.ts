@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { RoomRoutingModule } from './room-routing.module';
 import { RoomComponent } from './room.component';
+import { NavbarModule } from 'src/app/shared/navbar/navbar.module';
+import { TuiButtonModule, TuiHintModule} from '@taiga-ui/core';
+
+const TAIGA_MODULES = [
+  TuiButtonModule,
+  TuiHintModule
+]
 
 
 @NgModule({
@@ -11,7 +18,9 @@ import { RoomComponent } from './room.component';
   ],
   imports: [
     CommonModule,
-    RoomRoutingModule
+    RoomRoutingModule,
+    NavbarModule,
+    ...TAIGA_MODULES
   ]
 })
 export class RoomModule { }
