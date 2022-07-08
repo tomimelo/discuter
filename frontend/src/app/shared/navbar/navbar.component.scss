@@ -2,6 +2,14 @@
   width: 100%;
 }
 
+:host-context(.align-left) .navbar-wrapper {
+  justify-content: flex-start;
+}
+
+:host-context(.align-center) .navbar-wrapper {
+  justify-content: center;
+}
+
 :host-context(.align-right) .navbar-wrapper {
   justify-content: flex-end;
 }
