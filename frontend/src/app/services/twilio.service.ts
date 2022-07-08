@@ -104,10 +104,14 @@ export class TwilioService {
   }
 
   private async getClient(): Promise<Client> {
-    return this.client || await this.initClient()
+    return this.client && this.client.connectionState === 'connected' ? this.client : await this.initClient()
   }
 
-  private initClient(): Promise<Client> {
+  private async initClient(): Promise<Client> {
+    if (this.client) {
+      await this.client.shutdown()
+      this.client = null
+    }
     return new Promise<Client>((resolve, reject) => {
       const jwt = JSON.parse(localStorage.getItem('supabase.auth.token') || '').currentSession.access_token;
       this.getAccessToken(jwt).subscribe({next: accessToken => {
