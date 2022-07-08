@@ -10,7 +10,7 @@
   </button>
 
   <ng-container *ngIf="user">
-    <app-navbar class="fixed-navbar align-right">
+    <app-navbar fixed="top" align="right">
       <tui-hosted-dropdown tuiDropdownAlign="left" [content]="avatarMenu" [(open)]="isAvatarMenuOpen">
         <button type="button" class="avatar-button">
           <tui-avatar size="s" [text]="user.full_name" [avatarUrl]="user.avatar_url" [rounded]="true"></tui-avatar>
@@ -29,9 +29,10 @@
         </div>
       </ng-template>
     </app-navbar>
-    <div>
+    <div class="room-code-wrapper">
+      <h3>Enter room code</h3>
       <app-num-pass [digits]="5" (onDigitsChange)="onRoomValueChange($event)"></app-num-pass>
-      <button (click)="joinRoom()">Join</button>
+      <button tuiButton appearance="accent" [showLoader]="joining" [disabled]="joining" (click)="joinRoom()">Join</button>
     </div>
   </ng-container>
 </div>
