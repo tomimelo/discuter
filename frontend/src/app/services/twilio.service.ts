@@ -53,9 +53,12 @@ export class TwilioService {
 
   public async leaveRoom() {
     this.unsubscribeConversation()
-    if (!this.isHost()) {
-      await this.conversation?.leave()
-    }
+    this.setConversation(null)
+  }
+
+  public async leaveConversation() {
+    this.unsubscribeConversation()
+    await this.conversation?.leave()
     this.setConversation(null)
   }
 
