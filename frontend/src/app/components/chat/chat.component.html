@@ -1,9 +1,6 @@
 <div class="chat-wrapper">
   <div class="messages-wrapper">
-    <div *ngFor="let message of messages" class="message-box" [class.author-message]="username === message.author">
-      <p>{{message.author}}</p>
-      <p>{{message.body}}</p>
-    </div>
+    <app-message *ngFor="let message of messages" [message]="message" [username]="username" [class.author-message]="username === message.author"></app-message>
   </div>
   <app-messager (onSend)="sendMessage($event)"></app-messager>
 </div>

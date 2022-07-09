@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatComponent } from './chat.component';
 import { MessagerModule } from '../messager/messager.module';
+import { MessageModule } from '../message/message.module';
 
 @NgModule({
   declarations: [
@@ -9,7 +10,8 @@ import { MessagerModule } from '../messager/messager.module';
   ],
   imports: [
     CommonModule,
-    MessagerModule
+    MessagerModule,
+    MessageModule
   ],
   exports: [
     ChatComponent
