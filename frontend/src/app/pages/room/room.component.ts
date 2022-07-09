@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Conversation, Message } from '@twilio/conversations';
+import { Conversation, Message, Participant } from '@twilio/conversations';
 import { TwilioService } from 'src/app/services/twilio.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/types/user';
 import { Subject, takeUntil } from 'rxjs';
+import { TuiDialogService } from '@taiga-ui/core';
 
 @Component({
   selector: 'app-room',
@@ -16,6 +17,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public user: User | null = null;
   public isHost: boolean = false
   public conversation: Conversation | null = null
+  public participants: Participant[] = []
   private destroy$ = new Subject<void>()
   private isJoined: boolean = false
   public loading: boolean = true
@@ -24,12 +26,15 @@ export class RoomComponent implements OnInit, OnDestroy {
   constructor(private twilioService: TwilioService,
               private authService: AuthService,
               private router: Router,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              @Inject(TuiDialogService)
+              private readonly dialogService: TuiDialogService) {
   }
 
   async ngOnInit() {
     this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
       this.conversation = conversation
+      console.log(this.conversation);
       if (this.conversation) {
         await this.setupConversation()
       }
@@ -58,7 +63,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async setupConversation() {
-    await this.loadMessages()
+    await Promise.all([
+      this.loadMessages(),
+      this.setParticipants()
+    ])
   }
   
   async loadMessages() {
@@ -68,6 +76,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  async setParticipants() {
+    this.participants = await this.conversation?.getParticipants() || []
+  }
+
   async sendMessage(message: string) {
     return this.twilioService.sendMessage(message)
   }
@@ -75,6 +87,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   async goBack() {
     await this.twilioService.leaveRoom()
     this.router.navigateByUrl('/home')
+  }
+
+  async showParticipants() {
+    this.dialogService.open('Participants').subscribe()
   }
 
   async leaveRoom() {

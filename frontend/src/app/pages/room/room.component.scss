@@ -8,8 +8,8 @@
 }
 
 .conversation-wrapper {
-  width: 100%;
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -31,20 +31,6 @@
   }
 }
 
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-}
-
-.message-box {
-  background-color: white;
-  padding: .5em;
-  width: fit-content;
-}
-
-.author-message {
-  align-self: flex-end;
+app-chat {
+  height: calc(100% - 72px);
 }
