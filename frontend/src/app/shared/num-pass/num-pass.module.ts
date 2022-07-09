@@ -4,7 +4,7 @@ import {TuiInputNumberModule} from '@taiga-ui/kit';
 import {TuiTextfieldControllerModule, TuiButtonModule} from '@taiga-ui/core';
 
 import { NumPassComponent } from './num-pass.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const TAIGA_MODULES = [
   TuiInputNumberModule,
@@ -18,7 +18,6 @@ const TAIGA_MODULES = [
   ],
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     ...TAIGA_MODULES
   ],
