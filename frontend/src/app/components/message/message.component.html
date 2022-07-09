@@ -1,0 +1,12 @@
+<div class="message">
+  <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="message.author || ''"></tui-avatar>
+  <div class="message-content">
+    <div class="message-header">
+      <span class="message-author">{{message.author === username ? 'You' : message.author}}</span>
+      <span class="message-time">{{message.dateCreated! | time}}</span>
+    </div>
+    <div class="message-body">
+      <p>{{message.body}}</p>
+    </div>
+  </div>
+</div>

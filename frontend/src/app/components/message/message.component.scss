@@ -1,0 +1,43 @@
+:host-context(.author-message) .message {
+  direction: rtl;
+
+  &-body {
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius: 8px;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+.message {
+  padding: .5em;
+  width: fit-content;
+  display: flex;
+  gap: 1em;
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-header {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    margin-bottom: 1em;
+  }
+
+  &-body {
+    background-color: white;
+    padding: .5em;
+    -webkit-border-radius: 8px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius: 8px;
+    -moz-border-radius-topleft: 0;
+    border-radius: 8px;
+    border-top-left-radius: 0;
+  }
+}
+
