@@ -1,0 +1,14 @@
+<form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+  <tui-input formControlName="text" tuiTextfieldSize="s" tuiMode="onDark">
+    Type a message...
+    <input tuiTextfield autocomplete="off" />
+  </tui-input>
+  <button
+    tuiIconButton
+    type="submit"
+    size="s"
+    appearance="icon"
+    icon="tuiIconRedoLarge"
+    [disabled]="messageForm.invalid"
+    ></button>
+</form>
