@@ -32,13 +32,11 @@ export class TwilioService {
   async joinRoom(room: string) {
     try {
       const conversation = await this.getConversationByUniqueName(room) || await this.createConversation(room)
-      console.log({ conversation });
       if (conversation.status !== 'joined') {
         await conversation.join()
       }
       this.setConversation(conversation)
       this.listenOnConversation()
-      console.log(`Room ${room} joined`);
     } catch (error) {
       if (this.isForbidden(error)) {
         console.log(`Forbidden to join room ${room}`);
@@ -119,7 +117,6 @@ export class TwilioService {
         client.on('stateChanged', async (state: State) => {
           if (state === 'initialized') {
             this.client = client
-            console.log(`Client initialized`);
             resolve(this.client)
           }
           if (state === 'failed') {
@@ -147,7 +144,6 @@ export class TwilioService {
   }
 
   private async createConversation(uniqueName: string): Promise<Conversation> {
-    console.log(`Creating conversation ${uniqueName}`);
     const client = await this.getClient()
     return client.createConversation({uniqueName})
   }
