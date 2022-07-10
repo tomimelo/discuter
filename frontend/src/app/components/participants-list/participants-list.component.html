@@ -1,0 +1,14 @@
+<span>Participants</span>
+<form class="invite-form" [formGroup]="inviteForm" (ngSubmit)="inviteParticipant()" >
+  <tui-input formControlName="identity" tuiTextfieldSize="s" tuiMode="onDark">
+    Invite participant by username
+    <input tuiTextfield autocomplete="off" />
+  </tui-input>
+  <button tuiButton type="submit" size="s" [disabled]="inviteForm.invalid">Invite</button>
+  <button tuiIconButton tuiHint="Copy invite link" type="button" size="s" appearance="icon" icon="tuiIconLinkLarge"></button>
+</form>
+<ul>
+  <li *ngFor="let participant of participants">
+    <span>{{participant.identity}}</span>
+  </li>
+</ul>
