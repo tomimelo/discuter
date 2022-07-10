@@ -5,10 +5,14 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class TimePipe implements PipeTransform {
 
-  transform(value: Date): string {
+  transform(value: Date, ...args: string[]): string {
     if (!value || !(value instanceof Date)) return '';
     const day = this.isToday(value) ? 'Today' : this.wasYesterday(value) ? 'Yesterday' : value.toLocaleDateString();
     const time = value.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false });
+    const format = args[0]
+    if (format === 'min') {
+      return time
+    }   
     return `${day} at ${time}`;
   }
 
