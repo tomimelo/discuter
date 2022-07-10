@@ -13,13 +13,15 @@ export class SupabaseService {
     return rooms || []
   }
 
-  public async getRoomByUniqueName (uniqueName: string): Promise<any> {
-    const { data } = await this.client.from<Room>('rooms').select('*').eq('unique_name', uniqueName)
-    return data && data.length ? data[0] : null
+  public async getRoomByUniqueName (uniqueName: string): Promise<Room | null> {
+    const result = await this.client.from<Room>('rooms').select('*').eq('unique_name', uniqueName)
+    if (result.error) throw new Error('Error getting room')
+    return result.data.length ? result.data[0] : null
   }
 
-  public async createRoom (room: Pick<Room, 'unique_name' | 'user'>): Promise<any> {
-    const { data } = await this.client.from<Room>('rooms').insert(room)
-    return data && data.length ? data[0] : null
+  public async createRoom (room: Pick<Room, 'unique_name' | 'user'>): Promise<Room> {
+    const result = await this.client.from<Room>('rooms').insert(room)
+    if (result.error) throw new Error('Error creating room')
+    return result.data[0]
   }
 }
