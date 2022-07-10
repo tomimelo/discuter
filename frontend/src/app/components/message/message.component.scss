@@ -11,11 +11,20 @@
   }
 }
 
+:host-context(.simple-message) .message {
+  tui-avatar {
+    visibility: hidden;
+  }
+
+  .message-header {
+    display: none;
+  }
+}
+
 .message {
-  padding: .5em;
-  width: fit-content;
+  padding: 10px;
   display: flex;
-  gap: 1em;
+  gap: 15px;
 
   &-content {
     display: flex;
@@ -24,20 +33,34 @@
 
   &-header {
     display: flex;
-    gap: 1em;
-    align-items: center;
-    margin-bottom: 1em;
+    gap: 10px;
+    margin-bottom: 10px;
+    
+    .message-time {
+      font-size: 10px;
+      color: #8e8e8e;
+    }
+
+    .message-author {
+      font-weight: bold;
+    }
   }
 
   &-body {
+    width: fit-content;
     background-color: white;
-    padding: .5em;
+    padding: 8px 16px;
     -webkit-border-radius: 8px;
     -webkit-border-top-left-radius: 0;
     -moz-border-radius: 8px;
     -moz-border-radius-topleft: 0;
     border-radius: 8px;
     border-top-left-radius: 0;
+    direction: ltr;
+
+    p {
+      font-size: 14px;
+    }
   }
 }
 
