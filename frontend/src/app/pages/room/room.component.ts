@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Conversation, Message, Participant } from '@twilio/conversations';
 import { TwilioService } from 'src/app/services/twilio.service';
@@ -6,7 +6,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/types/user';
 import { Subject, takeUntil } from 'rxjs';
 import { TuiDialogService } from '@taiga-ui/core';
-
+import { PolymorpheusComponent} from '@tinkoff/ng-polymorpheus';
+import { ParticipantsListComponent } from 'src/app/components/participants-list/participants-list.component';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -28,13 +29,13 @@ export class RoomComponent implements OnInit, OnDestroy {
               private router: Router,
               private route: ActivatedRoute,
               @Inject(TuiDialogService)
-              private readonly dialogService: TuiDialogService) {
+              private readonly dialogService: TuiDialogService,
+              @Inject(Injector) private readonly injector: Injector,) {
   }
 
   async ngOnInit() {
     this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
       this.conversation = conversation
-      console.log(this.conversation);
       if (this.conversation) {
         await this.setupConversation()
       }
@@ -90,7 +91,13 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async showParticipants() {
-    this.dialogService.open('Participants').subscribe()
+    this.dialogService.open<Participant[]>(
+      new PolymorpheusComponent(ParticipantsListComponent, this.injector),
+      {
+        data: this.participants,
+        dismissible: true
+      }
+    ).subscribe()
   }
 
   async leaveRoom() {
