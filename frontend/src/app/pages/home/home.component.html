@@ -13,7 +13,7 @@
     <app-navbar fixed="top" align="right">
       <tui-hosted-dropdown tuiDropdownAlign="left" [content]="avatarMenu" [(open)]="isAvatarMenuOpen">
         <button type="button" class="avatar-button">
-          <tui-avatar size="s" [text]="user.full_name" [avatarUrl]="user.avatar_url" [rounded]="true"></tui-avatar>
+          <tui-avatar size="s" [text]="user?.full_name || ''" [avatarUrl]="user.avatar_url" [rounded]="true"></tui-avatar>
           <tui-svg [src]="isAvatarMenuOpen ? 'tuiIconChevronUp' : 'tuiIconChevronDown'"></tui-svg>
         </button>
       </tui-hosted-dropdown>
