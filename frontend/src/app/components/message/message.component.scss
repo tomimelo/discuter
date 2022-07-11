@@ -11,16 +11,6 @@
   }
 }
 
-:host-context(.simple-message) .message {
-  tui-avatar {
-    visibility: hidden;
-  }
-
-  .message-header {
-    display: none;
-  }
-}
-
 .message {
   padding: 10px;
   display: flex;

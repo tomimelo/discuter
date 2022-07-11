@@ -1,6 +1,6 @@
 <div class="chat-wrapper">
   <div class="messages-wrapper">
-    <app-message *ngFor="let message of messages; let i = index" [message]="message" [username]="username" [class.author-message]="username === message.author" [class.simple-message]="messages[i - 1] && messages[i - 1].author === message.author"></app-message>
+    <app-message *ngFor="let message of messages; let i = index" [message]="message" [username]="username" [class.author-message]="username === message.author"></app-message>
   </div>
   <app-messager (onSend)="sendMessage($event)"></app-messager>
 </div>
