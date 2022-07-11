@@ -39,9 +39,9 @@ export class TwilioService {
       this.listenOnConversation()
     } catch (error) {
       if (this.isForbidden(error)) {
-        console.log(`Forbidden to join room ${room}`);
+        throw new Error("You don't have permission to join this room")
       }
-      throw error
+      throw new Error('Something went wrong, please try again')
     }
   }
 
@@ -70,18 +70,16 @@ export class TwilioService {
 
   public async inviteParticipant(identity: string) {
     try {
-      const response = await this.conversation?.add(identity)
+      await this.conversation?.add(identity)
     } catch (error) {
       if (this.isForbidden(error)) {
-        console.log(`Forbidden to invite participant ${identity}`);
+        throw new Error("You don't have permission to invite this user")
       } else if (this.isConflict(error)) {
-        console.log(`Participant ${identity} already invited`);
+        throw new Error(`User ${identity} is already in this conversation`)
       } else if(this.isBadRequest(error)) {
-        console.log(`Participant ${identity} not found`);
-      } else {
-        console.log("ERROR HERE", error);
+        throw new Error(`User ${identity} not found`)
       }
-      throw error
+      throw new Error('Something went wrong, please try again')
     }
   }
 

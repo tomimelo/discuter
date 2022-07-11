@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { TuiDialogContext } from '@taiga-ui/core';
+import { Component, Inject } from '@angular/core';
+import { TuiAlertService, TuiDialogContext, TuiNotification } from '@taiga-ui/core';
 import { Participant } from '@twilio/conversations';
 import {POLYMORPHEUS_CONTEXT} from '@tinkoff/ng-polymorpheus';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -10,7 +10,7 @@ import { TwilioService } from 'src/app/services/twilio.service';
   templateUrl: './participants-list.component.html',
   styleUrls: ['./participants-list.component.scss']
 })
-export class ParticipantsListComponent implements OnInit {
+export class ParticipantsListComponent {
 
   public inviteForm = new FormGroup({
     identity: new FormControl('', Validators.required)
@@ -26,17 +26,24 @@ export class ParticipantsListComponent implements OnInit {
 
   constructor(@Inject(POLYMORPHEUS_CONTEXT)
               private readonly context: TuiDialogContext<Participant[], Participant[]>,
-              private twilioService: TwilioService) { }
-
-  ngOnInit(): void {
-  }
+              private twilioService: TwilioService,
+              @Inject(TuiAlertService)
+              private readonly alertService: TuiAlertService) { }
 
   async inviteParticipant() {
     const identity = this.identityControl.value.trim()
     if (identity === '') this.identityControl.setValue('')
     if (this.inviteForm.invalid) return
-    await this.twilioService.inviteParticipant(identity)
-    this.inviteForm.reset({ identity: '' })
+    try {
+      await this.twilioService.inviteParticipant(identity)
+      this.inviteForm.reset({ identity: '' })
+    } catch (error: any) {
+      this.handleError(error.message)
+    }
+  }
+
+  handleError(message: string = 'Something went wrong, please try again.') {
+    this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 
 }

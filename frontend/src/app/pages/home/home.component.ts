@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { TwilioService } from 'src/app/services/twilio.service';
@@ -18,13 +19,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   public isAvatarMenuOpen: boolean = false;
   private selectedRoom: string | null = '00000';
   public joining: boolean = false;
+  public joinButtonIcon: string = 'tuiIconLockLarge';
 
-  constructor(private router: Router, private authService: AuthService, private twilioService: TwilioService) { }
+  constructor(private router: Router, 
+              private authService: AuthService, 
+              private twilioService: TwilioService,
+              @Inject(TuiAlertService)
+              private readonly alertService: TuiAlertService) { }
 
   ngOnInit(): void {
-    this.authService.getUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
-      this.user = user
-    })
+    this.getUser()
   }
 
   ngOnDestroy(): void {
@@ -32,27 +36,55 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete()
   }
 
+  getUser(): void {
+    this.authService.getUser().pipe(takeUntil(this.destroy$)).subscribe({next: user => {
+      if (user) this.authenticating = false;
+      this.user = user
+    }, error: err => {
+      this.user = null
+      this.handleError()
+    }})
+  }
+
   async signIn(): Promise<void> {
-    if (this.authenticating) return
-    this.authenticating = true;
-    await this.authService.signIn();
-    this.authenticating = false;
+    try {
+      if (this.authenticating) return
+      this.authenticating = true;
+      await this.authService.signIn();
+    } catch (error) {
+      this.authenticating = false;
+      this.handleError()
+    }
   }
 
   async signOut(): Promise<void> {
-    this.isAvatarMenuOpen = false;
-    return this.authService.signOut();
+    try {
+      await this.authService.signOut();
+    } catch (error) {
+      this.handleError()
+    } finally {
+      this.isAvatarMenuOpen = false;
+    }
   }
 
   async joinRoom() {
-    if (!this.selectedRoom || this.joining) return
-    this.joining = true;
-    await this.twilioService.joinRoom(this.selectedRoom)
-    this.router.navigateByUrl(`/room/${this.selectedRoom}`)
-    this.joining = false;
+    try {
+      if (!this.selectedRoom || this.joining) return
+      this.joining = true;
+      await this.twilioService.joinRoom(this.selectedRoom)
+      this.router.navigateByUrl(`/room/${this.selectedRoom}`)
+    } catch (error: any) {
+      this.handleError(error.message)
+    } finally {
+      this.joining = false;
+    }
   }
 
   onRoomValueChange(room: string) {
     this.selectedRoom = room
+  }
+
+  handleError(message: string = 'Something went wrong, please try again') {
+    this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 }

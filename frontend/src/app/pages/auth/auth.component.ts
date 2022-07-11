@@ -13,6 +13,10 @@ export class AuthComponent implements OnDestroy {
   private destroy$ = new Subject<void>()
 
   constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService) {
+    this.listenFragment()
+  }
+
+  listenFragment(): void {
     this.route.fragment.pipe(takeUntil(this.destroy$)).subscribe(hashParams => {
       if (!hashParams) {
         this.router.navigateByUrl('/home');

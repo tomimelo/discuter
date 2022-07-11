@@ -3,6 +3,10 @@
   height: 100%;
 }
 
+h1 {
+  margin-bottom: 1.5em;
+}
+
 .avatar-button {
   display: flex;
   align-items: center;
@@ -29,6 +33,7 @@
 
 .room-code-wrapper {
   display: flex;
+  gap: 10px;
   flex-direction: column;
   align-items: center;
   justify-content: center;      

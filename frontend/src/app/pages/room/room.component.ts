@@ -5,8 +5,8 @@ import { TwilioService } from 'src/app/services/twilio.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/types/user';
 import { Subject, takeUntil } from 'rxjs';
-import { TuiDialogService } from '@taiga-ui/core';
-import { PolymorpheusComponent} from '@tinkoff/ng-polymorpheus';
+import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiNotification } from '@taiga-ui/core';
+import { PolymorpheusComponent, PolymorpheusContent} from '@tinkoff/ng-polymorpheus';
 import { ParticipantsListComponent } from 'src/app/components/participants-list/participants-list.component';
 @Component({
   selector: 'app-room',
@@ -20,7 +20,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public conversation: Conversation | null = null
   public participants: Participant[] = []
   private destroy$ = new Subject<void>()
-  private isJoined: boolean = false
+  private alreadyJoined: boolean = false
   public loading: boolean = true
   public messages: Message[] = []
 
@@ -30,31 +30,15 @@ export class RoomComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               @Inject(TuiDialogService)
               private readonly dialogService: TuiDialogService,
-              @Inject(Injector) private readonly injector: Injector,) {
+              @Inject(Injector) private readonly injector: Injector,
+              @Inject(TuiAlertService)
+              private readonly alertService: TuiAlertService) {
   }
 
-  async ngOnInit() {
-    this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
-      this.conversation = conversation
-      if (this.conversation) {
-        await this.setupConversation()
-      }
-      if (this.isJoined || this.conversation?.status === 'joined') {
-        this.isJoined = true
-        this.loading = false
-        return;
-      }
-      const roomId = this.route.snapshot.paramMap.get('id')
-      if (roomId) await this.twilioService.joinRoom(roomId)
-      this.loading = false
-    })
-    this.authService.getUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
-      this.user = user
-      this.isHost = this.twilioService.isHost()
-    })
-    this.twilioService.onMessage.pipe(takeUntil(this.destroy$)).subscribe(message => {
-      this.messages.push(message)
-    })
+  ngOnInit() {
+    this.getConversation()
+    this.getUser()
+    this.listenOnMessage()
   }
 
   ngOnDestroy(): void {
@@ -63,11 +47,39 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.conversation?.removeAllListeners()
   }
 
-  async setupConversation() {
-    await Promise.all([
-      this.loadMessages(),
-      this.setParticipants()
-    ])
+  getConversation(): void {
+    this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
+      await this.setupConversation(conversation)
+      if (!this.userIsInConversation()) {
+        const roomId = this.getRoomIdFromParams()
+        if (roomId) await this.joinRoom(roomId)
+      }
+      this.alreadyJoined = true
+      this.loading = false
+    })
+  }
+
+  getUser(): void {
+    this.authService.getUser().pipe(takeUntil(this.destroy$)).subscribe(user => {
+      this.user = user
+      this.isHost = this.twilioService.isHost()
+    })
+  }
+
+  listenOnMessage(): void {
+    this.twilioService.onMessage.pipe(takeUntil(this.destroy$)).subscribe(message => {
+      this.messages.push(message)
+    })
+  }
+
+  async setupConversation(conversation: Conversation | null) {
+    this.conversation = conversation
+    if (this.conversation) {
+      await Promise.all([
+        this.loadMessages(),
+        this.setParticipants()
+      ])
+    }
   }
   
   async loadMessages() {
@@ -81,8 +93,25 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.participants = await this.conversation?.getParticipants() || []
   }
 
+  getRoomIdFromParams(): string | null {
+    return this.route.snapshot.paramMap.get('id')
+  }
+
+  userIsInConversation(): boolean {
+    return this.alreadyJoined || this.conversation?.status === 'joined'
+  }
+
+  async joinRoom(roomId: string) {
+    try {
+      await this.twilioService.joinRoom(roomId)
+    } catch (error) {
+      this.handleError('Error joining room, please try again.')
+      this.router.navigateByUrl('/home')
+    }
+  }
+
   async sendMessage(message: string) {
-    return this.twilioService.sendMessage(message)
+    await this.twilioService.sendMessage(message)
   }
 
   async goBack() {
@@ -90,7 +119,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/home')
   }
 
-  async showParticipants() {
+  showParticipants() {
     this.dialogService.open<Participant[]>(
       new PolymorpheusComponent(ParticipantsListComponent, this.injector),
       {
@@ -112,5 +141,24 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async inviteParticipant(participant: string) {
     await this.twilioService.inviteParticipant(participant)
+  }
+
+  showDialog(content: PolymorpheusContent<TuiDialogContext>): void {
+    this.dialogService.open(content, {
+      data: {
+        message: "Are you sure you want to leave this room? You will not be able to join again unless someone invite you.",
+        confirm: "Leave"
+      }
+    }).subscribe();
+  }
+
+  handleError(message: string = 'Something went wrong, please try again.') {
+    this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe({next: (some) => {
+      console.log(some);
+    }})
+  }
+
+  consoleLog(data: any) {
+    console.log(data);
   }
 }

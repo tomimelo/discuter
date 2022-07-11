@@ -12,16 +12,27 @@
         </div>
         <div class="room-options">
           <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconLogoutLarge" tuiHint="Leave room"
-            (click)="leaveRoom()"></button>
+            (click)="showDialog(confirmationDialog)"></button>
           <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconUsers" tuiHint="Participants" (click)="showParticipants()"></button>
         </div>
       </div>
     </app-navbar>
-    <!-- <button (click)="deleteRoom()">Delete</button>
-    <div *ngIf="isHost">
-      <input type="text" #participant>
-      <button (click)="inviteParticipant(participant.value)">Invite</button>
-    </div> -->
     <app-chat [messages]="messages" [username]="user ? user.user_name : ''" (onSend)="sendMessage($event)"></app-chat>
   </div>
 </div>
+
+<ng-template #confirmationDialog let-observer let-data="data">
+  <p>{{data.message}}</p>
+  <button tuiButton
+          type="button"
+          size="m"
+          (click)="observer.complete()">
+    {{data.confirmText || 'Confirm'}}
+  </button>
+  <button tuiButton
+          type="button"
+          size="m"
+          (click)="observer.complete()">
+    {{data.cancelText || 'Cancel' }}
+  </button>
+</ng-template>

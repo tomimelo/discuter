@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ChatComponent } from './chat.component';
 import { MessagerModule } from '../messager/messager.module';
 import { MessageModule } from '../message/message.module';
+import { TuiScrollbarModule } from '@taiga-ui/core';
 
+const TAIGA_MODULES = [
+  TuiScrollbarModule
+]
 @NgModule({
   declarations: [
     ChatComponent
@@ -11,7 +15,8 @@ import { MessageModule } from '../message/message.module';
   imports: [
     CommonModule,
     MessagerModule,
-    MessageModule
+    MessageModule,
+    ...TAIGA_MODULES
   ],
   exports: [
     ChatComponent
