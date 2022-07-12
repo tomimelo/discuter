@@ -19,7 +19,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   public isAvatarMenuOpen: boolean = false;
   private selectedRoom: string | null = '00000';
   public joining: boolean = false;
-  public joinButtonIcon: string = 'tuiIconLockLarge';
 
   constructor(private router: Router, 
               private authService: AuthService, 

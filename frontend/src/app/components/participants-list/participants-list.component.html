@@ -1,14 +1,16 @@
-<span>Participants</span>
+<h2>Participants</h2>
 <form class="invite-form" [formGroup]="inviteForm" (ngSubmit)="inviteParticipant()" >
   <tui-input formControlName="identity" tuiTextfieldSize="s">
     Invite participant by username
     <input tuiTextfield autocomplete="off" />
   </tui-input>
   <button tuiButton type="submit" size="s" [disabled]="inviteForm.invalid">Invite</button>
-  <button tuiIconButton tuiHint="Copy invite link" type="button" size="s" appearance="icon" icon="tuiIconLinkLarge"></button>
+  <button tuiIconButton tuiHint="Copy invite link" type="button" size="s" icon="tuiIconLinkLarge"></button>
 </form>
-<ul>
+<hr class="divisor">
+<ul class="participants-list">
   <li *ngFor="let participant of participants">
+    <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.identity || ''"></tui-avatar>
     <span>{{participant.identity}}</span>
   </li>
 </ul>

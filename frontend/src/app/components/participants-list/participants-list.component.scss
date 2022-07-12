@@ -1,8 +1,24 @@
 .invite-form {
+  margin-top: 1em;
   display: flex;
   gap: 10px;
 
   tui-input {
     width: 100%;
   }
+}
+
+.participants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  li {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+  }
+}
+.divisor {
+  margin: 2em 1em;
 }
