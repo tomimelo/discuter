@@ -25,7 +25,7 @@ export class ParticipantsListComponent {
   }
 
   constructor(@Inject(POLYMORPHEUS_CONTEXT)
-              private readonly context: TuiDialogContext<Participant[], Participant[]>,
+              private readonly context: TuiDialogContext<void, Participant[]>,
               private twilioService: TwilioService,
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService) { }

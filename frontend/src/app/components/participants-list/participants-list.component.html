@@ -8,9 +8,11 @@
   <button tuiIconButton tuiHint="Copy invite link" type="button" size="s" icon="tuiIconLinkLarge"></button>
 </form>
 <hr class="divisor">
-<ul class="participants-list">
-  <li *ngFor="let participant of participants">
-    <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.identity || ''"></tui-avatar>
-    <span>{{participant.identity}}</span>
-  </li>
-</ul>
+<tui-scrollbar>
+  <ul class="participants-list">
+    <li *ngFor="let participant of participants">
+      <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.identity || ''"></tui-avatar>
+      <span>{{participant.identity}}</span>
+    </li>
+  </ul>
+</tui-scrollbar>

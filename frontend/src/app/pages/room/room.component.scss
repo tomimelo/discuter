@@ -31,6 +31,13 @@
   }
 }
 
+.options-menu {
+  &-wrapper button {
+    justify-content: flex-start;
+    gap: 10px;
+  }
+}
+
 app-chat {
   height: calc(100% - 72px);
 }

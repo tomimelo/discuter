@@ -11,8 +11,9 @@
           <span class="room-name">Room {{conversation?.uniqueName}}</span>
         </div>
         <div class="room-options">
-          <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconLogoutLarge" tuiHint="Leave room"
-            (click)="leaveRoom()"></button>
+          <tui-hosted-dropdown tuiDropdownAlign="left" [content]="moreOptions" [(open)]="isOptionsMenuOpen">
+            <button tuiIconButton type="button" appearance="icon" size="s" icon="tuiIconMoreVertLarge"></button>
+          </tui-hosted-dropdown>
           <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconUsers" tuiHint="Participants" (click)="showParticipants()"></button>
         </div>
       </div>
@@ -21,18 +22,13 @@
   </div>
 </div>
 
-<ng-template #confirmationDialog let-observer let-data="data">
-  <p>{{data.message}}</p>
-  <button tuiButton
-          type="button"
-          size="m"
-          (click)="observer.complete()">
-    {{data.confirmText || 'Confirm'}}
-  </button>
-  <button tuiButton
-          type="button"
-          size="m"
-          (click)="observer.complete()">
-    {{data.cancelText || 'Cancel' }}
-  </button>
+<ng-template #moreOptions>
+  <div class="options-menu-wrapper">
+    <tui-data-list>
+      <button tuiOption (click)="leaveRoom()">
+        <tui-svg src="tuiIconLogoutLarge"></tui-svg>
+        Leave room
+      </button>
+    </tui-data-list>
+  </div>
 </ng-template>

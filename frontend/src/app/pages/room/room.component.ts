@@ -4,10 +4,11 @@ import { Conversation, Message, Participant } from '@twilio/conversations';
 import { TwilioService } from 'src/app/services/twilio.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/types/user';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { TuiAlertService, TuiDialogContext, TuiDialogService, TuiNotification } from '@taiga-ui/core';
 import { PolymorpheusComponent, PolymorpheusContent} from '@tinkoff/ng-polymorpheus';
 import { ParticipantsListComponent } from 'src/app/components/participants-list/participants-list.component';
+import { ConfirmDialogComponent, ConfirmDialogContext } from 'src/app/components/confirm-dialog/confirm-dialog.component';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -23,6 +24,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private alreadyJoined: boolean = false
   public loading: boolean = true
   public messages: Message[] = []
+  public isOptionsMenuOpen: boolean = false
 
   constructor(private twilioService: TwilioService,
               private authService: AuthService,
@@ -130,8 +132,15 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async leaveRoom() {
-    await this.twilioService.leaveConversation()
-    this.router.navigateByUrl('/home')
+    this.showConfirmDialog({
+      message: 'Are you sure you want to leave this room?',
+      confirmText: 'Leave'
+    }).subscribe(async confirmation => {
+      if (confirmation) {
+        await this.twilioService.leaveConversation()
+        this.router.navigateByUrl('/home')
+      }
+    })
   }
 
   async deleteRoom() {
@@ -143,13 +152,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     await this.twilioService.inviteParticipant(participant)
   }
 
-  showDialog(content: PolymorpheusContent<TuiDialogContext>): void {
-    this.dialogService.open(content, {
-      data: {
-        message: "Are you sure you want to leave this room? You will not be able to join again unless someone invite you.",
-        confirm: "Leave"
+  showConfirmDialog(data: ConfirmDialogContext): Observable<boolean> {
+    return this.dialogService.open<boolean>(
+      new PolymorpheusComponent(ConfirmDialogComponent, this.injector),
+      {
+        data,
+        dismissible: true
       }
-    }).subscribe();
+    )
   }
 
   handleError(message: string = 'Something went wrong, please try again.') {

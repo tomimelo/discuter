@@ -4,13 +4,17 @@ import { CommonModule } from '@angular/common';
 import { RoomRoutingModule } from './room-routing.module';
 import { RoomComponent } from './room.component';
 import { NavbarModule } from 'src/app/shared/navbar/navbar.module';
-import { TuiButtonModule, TuiHintModule} from '@taiga-ui/core';
+import { TuiButtonModule, TuiDataListModule, TuiHintModule, TuiHostedDropdownModule, TuiSvgModule} from '@taiga-ui/core';
 import { ChatModule } from 'src/app/components/chat/chat.module';
 import { ParticipantsListModule } from 'src/app/components/participants-list/participants-list.module';
+import { ConfirmDialogModule } from 'src/app/components/confirm-dialog/confirm-dialog.module';
 
 const TAIGA_MODULES = [
   TuiButtonModule,
-  TuiHintModule
+  TuiHintModule,
+  TuiHostedDropdownModule,
+  TuiDataListModule,
+  TuiSvgModule
 ]
 
 @NgModule({
@@ -23,6 +27,7 @@ const TAIGA_MODULES = [
     NavbarModule,
     ChatModule,
     ParticipantsListModule,
+    ConfirmDialogModule,
     ...TAIGA_MODULES
   ]
 })

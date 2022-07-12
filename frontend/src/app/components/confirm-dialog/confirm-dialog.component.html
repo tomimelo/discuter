@@ -1,0 +1,11 @@
+<div class="dialog-wrapper">
+  <p>{{data.message}}</p>
+  <div class="dialog-actions">
+    <button tuiButton size="s" appearance="accent" (click)="close(true)">
+      {{data.confirmText}}
+    </button>
+    <button tuiButton size="s" appearance="flat" (click)="close(false)">
+      {{data.cancelText}}
+    </button>
+  </div>
+</div>
