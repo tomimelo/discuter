@@ -87,6 +87,10 @@ export class TwilioService {
     return this.client?.user.identity === this.conversation?.createdBy
   }
 
+  public getUserIdentity(): string | null {
+    return this.client?.user.identity || null
+  }
+
   private listenOnConversation() {
     this.conversation?.on('messageAdded', (message: Message) => {
       this.onMessage.next(message)
