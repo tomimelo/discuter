@@ -10,8 +10,6 @@ import { TwilioService } from './twilio.service';
   providedIn: 'root'
 })
 export class RoomService {
-
-  private room: Room | null = null
   private room$: BehaviorSubject<Room | null> = new BehaviorSubject<Room | null>(null)
   public onChanges = new Subject<RoomUpdate<RoomEvent>>()
 
@@ -52,11 +50,6 @@ export class RoomService {
     await this.twilioService.inviteParticipant(username)
   }
 
-  private setRoom(room: Room | null): void {
-    this.room = room
-    this.room$.next(this.room)
-  }
-
   private listenConversation(): void {
     this.twilioService.getConversation().subscribe(async conversation => {
       await this.updateRoom(conversation)
@@ -65,35 +58,27 @@ export class RoomService {
 
   private listenOnConversationEvents(): void {
     this.twilioService.onConversationEvent.subscribe(event => {
-      if (this.room) {
-        switch (event.type) {
-          case 'messageAdded':
-            this.onMessageAdded(event.data as TwilioMessage)
-            break
-          case 'participantJoined':
-            this.onParticipantJoined(event.data as TwilioParticipant)
-            break
-          case 'participantLeft':
-            this.onParticipantLeft(event.data as TwilioParticipant)
-            break
-        }
-        this.onChanges.next(event)
+      switch (event.type) {
+        case 'messageAdded':
+          this.onChanges.next({
+            type: event.type,
+            data: this.createMessage(event.data as TwilioMessage)
+          })
+          break
+        case 'participantJoined':
+          this.onChanges.next({
+            type: event.type,
+            data: this.createParticipant(event.data as TwilioParticipant)
+          })
+          break
+        case 'participantLeft':
+          this.onChanges.next({
+            type: event.type,
+            data: this.createParticipant(event.data as TwilioParticipant)
+          })
+          break
       }
     })
-  }
-
-  private onMessageAdded(message: TwilioMessage): void {
-    this.room?.messages.push(this.createMessage(message))
-  }
-
-  private onParticipantJoined(participant: TwilioParticipant): void {
-    this.room?.participants.push(this.createParticipant(participant))
-  }
-
-  private onParticipantLeft(participant: TwilioParticipant): void {
-    if (this.room) {
-      this.room.participants = this.room?.participants.filter(p => p.username !== participant.identity)
-    }
   }
 
   private async updateRoom(conversation: Conversation | null): Promise<void> {
@@ -105,7 +90,7 @@ export class RoomService {
       participants: await this.setParticipants(conversation),
       messages: await this.setMessages(conversation)
     } : null
-    this.setRoom(room)
+    this.room$.next(room)
   }
 
   private async setParticipants(conversation: Conversation): Promise<Participant[]> {
