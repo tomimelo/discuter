@@ -1,4 +1,4 @@
-import { loggerAcquirer } from '../utils/logger-acquirer/logger-acquirer'
+import { loggerAcquirer } from '../utils/acquirers/logger-acquirer'
 import { TwilioClient } from './twilio-client'
 import { TwilioConfig } from './twilio-config'
 import { TwilioController } from './twilio-controller'

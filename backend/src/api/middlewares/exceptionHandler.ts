@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { loggerAcquirer } from '../../utils/logger-acquirer/logger-acquirer'
+import { loggerAcquirer } from '../../utils/acquirers/logger-acquirer'
 
 const logger = loggerAcquirer.acquire().child('ExceptionHandler')
 

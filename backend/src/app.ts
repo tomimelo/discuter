@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { MadServer } from 'mad-server'
 import { ApplicationRunner } from './lib/runner/application-runner/application-runner'
-import { loggerAcquirer } from './utils/logger-acquirer/logger-acquirer'
+import { loggerAcquirer } from './utils/acquirers/logger-acquirer'
 import { serverConfig } from './config'
 
 const environment = process.env.NODE_ENV

@@ -4,7 +4,7 @@ import { MadServerConfig } from 'mad-server'
 import { expressMadLogger } from 'express-mad-logger'
 import serverRouter from './api/routes/api.routes'
 import { normalizePort } from './utils/normalizer'
-import { loggerAcquirer } from './utils/logger-acquirer/logger-acquirer'
+import { loggerAcquirer } from './utils/acquirers/logger-acquirer'
 import exceptionHandler from './api/middlewares/exceptionHandler'
 
 const port = normalizePort(process.env.PORT, 3000)
