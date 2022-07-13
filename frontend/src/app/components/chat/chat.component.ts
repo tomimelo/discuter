@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Message } from '@twilio/conversations';
+import { Message } from 'src/app/types/message';
 
 @Component({
   selector: 'app-chat',
@@ -9,7 +9,6 @@ import { Message } from '@twilio/conversations';
 export class ChatComponent implements OnInit {
 
   @Input() messages: Message[] = [];
-  @Input() username: string = '';
   @Output() onSend = new EventEmitter<string>();
 
   constructor() { }

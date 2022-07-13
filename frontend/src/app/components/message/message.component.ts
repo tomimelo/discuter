@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Message } from '@twilio/conversations';
+import { Message } from 'src/app/types/message';
 
 @Component({
   selector: 'app-message',
@@ -9,7 +9,6 @@ import { Message } from '@twilio/conversations';
 export class MessageComponent implements OnInit {
 
   @Input() message!: Message;
-  @Input() username!: string;
 
   constructor() { }
 

@@ -1,7 +1,7 @@
 <div class="chat-wrapper">
   <div class="messages-wrapper">
     <tui-scrollbar>
-      <app-message *ngFor="let message of messages; let i = index" [message]="message" [username]="username" [class.author-message]="username === message.author"></app-message>
+      <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
     </tui-scrollbar>
   </div>
   <app-messager (onSend)="sendMessage($event)"></app-messager>

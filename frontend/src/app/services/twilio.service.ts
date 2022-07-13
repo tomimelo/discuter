@@ -4,6 +4,18 @@ import { Client, Conversation, Message, Participant, State } from '@twilio/conve
 import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+interface ConversationEvents {
+  'messageAdded': Message,
+  'participantJoined': Participant,
+  'participantLeft': Participant
+}
+
+export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft'
+export interface ConversationUpdate<E extends keyof ConversationEvents> {
+  type: E,
+  data: ConversationEvents[E]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,24 +24,11 @@ export class TwilioService {
   private client: Client | null = null
   private conversation: Conversation | null = null
   private conversation$: BehaviorSubject<Conversation | null> = new BehaviorSubject<Conversation | null>(null)
-  public onMessage = new Subject<Message>()
+  public onConversationEvent = new Subject<ConversationUpdate<ConversationEvent>>()
 
   constructor(private http: HttpClient) { }
 
-  getAccessToken(jwt: string): Observable<string> {
-    return this.http.get(`${environment.apiUrl}/twilio/access-token`,  { headers: this.getAuthorizationHeader(jwt) })
-      .pipe(
-        map((res: any) => res.accessToken)
-      );
-  }
-
-  getAuthorizationHeader(jwt: string) {
-    return {
-      'Authorization': `Bearer ${jwt}`
-    }
-  }
-
-  async joinRoom(room: string) {
+  public async joinRoom(room: string): Promise<void> {
     try {
       const conversation = await this.getConversationByUniqueName(room) || await this.createConversation(room)
       if (conversation.status !== 'joined') {
@@ -45,11 +44,11 @@ export class TwilioService {
     }
   }
 
-  async sendMessage(message: string) {
-    this.conversation?.sendMessage(message)
+  public async sendMessage(message: string): Promise<void> {
+    await this.conversation?.sendMessage(message)
   }
 
-  public async leaveRoom() {
+  public destroyConversation() {
     this.unsubscribeConversation()
     this.setConversation(null)
   }
@@ -60,7 +59,7 @@ export class TwilioService {
     this.setConversation(null)
   }
 
-  public async deleteRoom() {
+  public async deleteConversation() {
     return this.conversation?.delete()
   }
 
@@ -68,7 +67,7 @@ export class TwilioService {
     return this.conversation$.asObservable()
   }
 
-  public async inviteParticipant(identity: string) {
+  public async inviteParticipant(identity: string): Promise<void> {
     try {
       await this.conversation?.add(identity)
     } catch (error) {
@@ -83,23 +82,45 @@ export class TwilioService {
     }
   }
 
-  public isHost(): boolean {
-    return this.client?.user.identity === this.conversation?.createdBy
-  }
-
   public getUserIdentity(): string | null {
     return this.client?.user.identity || null
   }
 
+  public isClientOnConversation(): boolean {
+    return this.conversation?.status === 'joined'
+  }
+
+  private getAccessToken(jwt: string): Observable<string> {
+    return this.http.get(`${environment.apiUrl}/twilio/access-token`,  { headers: this.getAuthorizationHeader(jwt) })
+      .pipe(
+        map((res: any) => res.accessToken)
+      );
+  }
+
+  private getAuthorizationHeader(jwt: string): { 'Authorization': string } {
+    return {
+      'Authorization': `Bearer ${jwt}`
+    }
+  }
+
   private listenOnConversation() {
     this.conversation?.on('messageAdded', (message: Message) => {
-      this.onMessage.next(message)
+      this.onConversationEvent.next({
+        type: 'messageAdded',
+        data: message
+      })
     })
     this.conversation?.on('participantJoined', (participant: Participant) => {
-      console.log(participant)
+      this.onConversationEvent.next({
+        type: 'participantJoined',
+        data: participant
+      })
     })
-    this.conversation?.on('participantLeft', participant => {
-      console.log('participantLeft', participant);
+    this.conversation?.on('participantLeft', (participant: Participant) => {
+      this.onConversationEvent.next({
+        type: 'participantLeft',
+        data: participant
+      })
     })
   }
 
@@ -150,7 +171,7 @@ export class TwilioService {
     return client.createConversation({uniqueName})
   }
 
-  private unsubscribeConversation() {
+  private unsubscribeConversation(): void {
     this.conversation?.removeAllListeners()
   }
 
@@ -170,7 +191,7 @@ export class TwilioService {
     return error.status === 400 || error.message.includes('Bad Request')
   }
 
-  private setConversation(value: Conversation | null) {
+  private setConversation(value: Conversation | null): void {
     this.conversation = value
     this.conversation$.next(value)
   }

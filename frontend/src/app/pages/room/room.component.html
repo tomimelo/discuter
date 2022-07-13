@@ -8,7 +8,7 @@
         <div class="room-info">
           <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconArrowLeftLarge" tuiHint="Go back"
             (click)="goBack()"></button>
-          <span class="room-name">Room {{conversation?.uniqueName}}</span>
+          <span class="room-name">Room {{room?.uniqueName}}</span>
         </div>
         <div class="room-options">
           <tui-hosted-dropdown tuiDropdownAlign="left" [content]="moreOptions" [(open)]="isOptionsMenuOpen">
@@ -18,14 +18,14 @@
         </div>
       </div>
     </app-navbar>
-    <app-chat [messages]="messages" [username]="user ? user.user_name : ''" (onSend)="sendMessage($event)"></app-chat>
+    <app-chat [messages]="room?.messages || []" (onSend)="sendMessage($event)"></app-chat>
   </div>
 </div>
 
 <ng-template #moreOptions>
   <div class="options-menu-wrapper">
     <tui-data-list>
-      <button tuiOption (click)="leaveRoom()">
+      <button tuiOption (click)="abandonRoom()">
         <tui-svg src="tuiIconLogoutLarge"></tui-svg>
         Leave room
       </button>
