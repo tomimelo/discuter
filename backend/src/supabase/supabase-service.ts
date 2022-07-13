@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { Room } from '../types/room'
+import { Room } from '../room/room'
 import { SupabaseConfig } from './supabase-config'
 
 export class SupabaseService {
@@ -11,6 +11,12 @@ export class SupabaseService {
   public async getRooms (): Promise<ReadonlyArray<Room>> {
     const { data: rooms } = await this.client.from<Room>('rooms').select('*')
     return rooms || []
+  }
+
+  public async getRoomById (id: string): Promise<Room | null> {
+    const result = await this.client.from<Room>('rooms').select('*').eq('id', id)
+    if (result.error) throw new Error('Error getting room')
+    return result.data.length ? result.data[0] : null
   }
 
   public async getRoomByUniqueName (uniqueName: string): Promise<Room | null> {
