@@ -6,8 +6,8 @@ import {TuiButtonModule, TuiHostedDropdownModule, TuiDataListModule, TuiSvgModul
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
-import { NavbarModule } from 'src/app/shared/navbar/navbar.module';
-import { NumPassModule } from 'src/app/shared/num-pass/num-pass.module';
+import { NavbarModule } from 'src/app/components/navbar/navbar.module';
+import { NumPassModule } from 'src/app/components/num-pass/num-pass.module';
 
 const TAIGA_MODULES = [
   TuiButtonModule,
@@ -16,7 +16,6 @@ const TAIGA_MODULES = [
   TuiDataListModule,
   TuiSvgModule
 ]
-
 
 @NgModule({
   declarations: [
