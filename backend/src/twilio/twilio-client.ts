@@ -1,5 +1,6 @@
 import twilio, { Twilio } from 'twilio'
 import AccessToken from 'twilio/lib/jwt/AccessToken'
+import { ParticipantInstance } from 'twilio/lib/rest/conversations/v1/conversation/participant'
 import { TwilioConfig } from './twilio-config'
 
 export class TwilioClient {
@@ -27,6 +28,12 @@ export class TwilioClient {
         dateCreated: userConversation.dateCreated,
         dateUpdated: userConversation.dateUpdated
       }
+    })
+  }
+
+  public async addUserToConversation (uniqueName: string, identity: string): Promise<ParticipantInstance> {
+    return this.client.conversations.conversations(uniqueName).participants.create({
+      identity
     })
   }
 
