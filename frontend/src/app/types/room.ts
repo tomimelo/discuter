@@ -2,11 +2,16 @@ import { Message } from "./message"
 import { Participant } from "./participant"
 
 export interface Room {
-  id: string,
+  link: string | null,
   uniqueName: string,
   createdBy: string,
   participants: Participant[]
   messages: Message[]
+}
+
+export interface RoomLink {
+  id: string,
+  uniqueName: string
 }
 
 interface RoomEvents {
