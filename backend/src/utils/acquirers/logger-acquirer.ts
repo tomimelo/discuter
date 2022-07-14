@@ -7,8 +7,12 @@ class LoggerAcquirer implements Acquirer<MadLogger> {
   public constructor (config: any) {
     const loggerManager = new MadLoggerManager()
     const consoleTransport = loggerManager.getConsoleTransport()
-    const fileTransport = loggerManager.getFileTransport(config)
-    loggerManager.addTransport([consoleTransport, fileTransport])
+    const transports: any[] = [consoleTransport]
+    if (process.env.NODE_ENV === 'development') {
+      const fileTransport = loggerManager.getFileTransport(config)
+      transports.push(fileTransport)
+    }
+    loggerManager.addTransport(transports)
     this.logger = loggerManager.createLogger('Root')
   }
 
