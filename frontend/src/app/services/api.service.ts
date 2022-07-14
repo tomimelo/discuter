@@ -58,6 +58,14 @@ export class ApiService {
       );
   }
 
+  public joinRoomById(id: string): Observable<RoomLink> {
+    const jwt = this.getJWT()
+    return this.http.get(`${this.roomLinksRoutesPath}/join/${id}`, { headers: this.getAuthorizationHeader(jwt) })
+      .pipe(
+        map((res: any) => res.room)
+      );
+  }
+
   private getAuthorizationHeader(jwt: string): { 'Authorization': string } {
     return {
       'Authorization': `Bearer ${jwt}`
