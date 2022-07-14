@@ -15,7 +15,10 @@ export class SupabaseService {
 
   public async getRoomById (id: string): Promise<Room | null> {
     const result = await this.client.from<Room>('rooms').select('*').eq('id', id)
-    if (result.error) throw new Error('Error getting room')
+    if (result.error) {
+      if (result.error.code === '22P02') return null
+      throw new Error('Error getting room')
+    }
     return result.data.length ? result.data[0] : null
   }
 
