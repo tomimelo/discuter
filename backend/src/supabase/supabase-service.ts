@@ -40,4 +40,9 @@ export class SupabaseService {
     if (result.error) throw new CustomError('Error deleting room')
     return result.data[0]
   }
+
+  public async deleteAllRooms (): Promise<void> {
+    const rooms = await this.getRooms()
+    await Promise.all(rooms.map(room => this.deleteRoom(room.unique_name)))
+  }
 }
