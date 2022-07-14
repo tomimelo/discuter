@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Conversation, Message as TwilioMessage, Participant as TwilioParticipant } from '@twilio/conversations';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
 import { Room, RoomEvent, RoomUpdate } from '../types/room';
@@ -84,13 +85,25 @@ export class RoomService {
   private async updateRoom(conversation: Conversation | null): Promise<void> {
     const room = conversation 
     ? {
-      id: '',
+      link: await this.getRoomLink(conversation),
       uniqueName: conversation.uniqueName || '',
       createdBy: conversation.createdBy,
       participants: await this.setParticipants(conversation),
       messages: await this.setMessages(conversation)
     } : null
     this.room$.next(room)
+  }
+
+  private async getRoomLink(conversation: Conversation): Promise<string | null> {
+    const attributes = await conversation.getAttributes()
+    if (!attributes) return null
+    const jsonAttributes = JSON.parse(JSON.stringify(attributes))
+    const roomLinkId = jsonAttributes.roomLinkId
+    return roomLinkId ? this.buildRoomLink(roomLinkId) : null
+  }
+
+  private buildRoomLink(roomLinkId: string): string {
+    return `${environment.baseUrl}/invite/${roomLinkId}`
   }
 
   private async setParticipants(conversation: Conversation): Promise<Participant[]> {
