@@ -57,6 +57,28 @@ export class RoomController extends BaseController {
     }
   }
 
+  public async deleteLink (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user: User = httpContext.get('user')
+      const { uniqueName } = req.params
+
+      if (!uniqueName) throw new Error('You need to specify a unique name')
+
+      const roomFound = await this.supabaseService.getRoomByUniqueName(uniqueName)
+      if (!roomFound) throw new Error('Room does not exist')
+      if (roomFound && roomFound.user !== user.user_name) throw new Error('You do not have permission to delete this room')
+
+      const deletedRoom = await this.supabaseService.deleteRoom(uniqueName)
+
+      res.json({
+        ok: true,
+        room: deletedRoom
+      })
+    } catch (error) {
+      this.handleError(error, next)
+    }
+  }
+
   public handleError (error: any, next: NextFunction): void {
     this.logger.error(error.message)
     next(error)

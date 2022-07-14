@@ -30,4 +30,10 @@ export class SupabaseService {
     if (result.error) throw new Error('Error creating room')
     return result.data[0]
   }
+
+  public async deleteRoom (uniqueName: string): Promise<Room> {
+    const result = await this.client.from<Room>('rooms').delete().eq('unique_name', uniqueName)
+    if (result.error) throw new Error('Error deleting room')
+    return result.data[0]
+  }
 }
