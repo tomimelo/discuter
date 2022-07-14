@@ -37,6 +37,13 @@ export class TwilioClient {
     })
   }
 
+  public async removeAllConversations (): Promise<void> {
+    const conversations = await this.client.conversations.conversations.list()
+    await Promise.all(conversations.map(conversation => {
+      return conversation.remove()
+    }))
+  }
+
   private getAccessToken (identity: string): AccessToken {
     const { AccessToken } = twilio.jwt
     return new AccessToken(this.config.accountSid, this.config.apiKey, this.config.apiSecret, { identity })
