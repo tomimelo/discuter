@@ -5,6 +5,7 @@ export interface Room {
   link: string | null,
   uniqueName: string,
   createdBy: string,
+  isOwn: boolean,
   participants: Participant[]
   messages: Message[]
 }

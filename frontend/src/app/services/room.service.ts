@@ -88,6 +88,7 @@ export class RoomService {
       link: await this.getRoomLink(conversation),
       uniqueName: conversation.uniqueName || '',
       createdBy: conversation.createdBy,
+      isOwn: conversation.createdBy === this.twilioService.getUserIdentity(),
       participants: await this.setParticipants(conversation),
       messages: await this.setMessages(conversation)
     } : null
