@@ -1,16 +1,16 @@
 <h2>Participants</h2>
-<form class="invite-form" [formGroup]="inviteForm" (ngSubmit)="inviteParticipant()" >
+<form *ngIf="room.isOwn" class="invite-form" [formGroup]="inviteForm" (ngSubmit)="inviteParticipant()" >
   <tui-input formControlName="identity" tuiTextfieldSize="s">
     Invite participant by username
     <input tuiTextfield autocomplete="off" />
   </tui-input>
   <button tuiButton type="submit" size="s" [disabled]="inviteForm.invalid">Invite</button>
-  <button tuiIconButton tuiHint="Copy invite link" type="button" size="s" icon="tuiIconLinkLarge"></button>
+  <button tuiIconButton tuiHint="Copy permanent invite link" type="button" size="s" icon="tuiIconLinkLarge" (click)="copyLink()"></button>
 </form>
 <hr class="divisor">
 <tui-scrollbar>
   <ul class="participants-list">
-    <li *ngFor="let participant of participants">
+    <li *ngFor="let participant of room.participants">
       <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.identity || ''"></tui-avatar>
       <span>{{participant.identity}}</span>
     </li>

@@ -4,6 +4,7 @@ import { Participant } from '@twilio/conversations';
 import {POLYMORPHEUS_CONTEXT} from '@tinkoff/ng-polymorpheus';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TwilioService } from 'src/app/services/twilio.service';
+import { Room } from 'src/app/types/room';
 
 @Component({
   selector: 'app-participants-list',
@@ -16,8 +17,8 @@ export class ParticipantsListComponent {
     identity: new FormControl('', Validators.required)
   })
 
-  get participants(): Participant[] {
-    return this.context.data;
+  get room(): Room {
+    return this.context.data
   }
 
   get identityControl(): FormControl {
@@ -25,7 +26,7 @@ export class ParticipantsListComponent {
   }
 
   constructor(@Inject(POLYMORPHEUS_CONTEXT)
-              private readonly context: TuiDialogContext<void, Participant[]>,
+              private readonly context: TuiDialogContext<void, Room>,
               private twilioService: TwilioService,
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService) { }
@@ -42,7 +43,16 @@ export class ParticipantsListComponent {
     }
   }
 
-  public handleError(message: string = 'Something went wrong, please try again.'): void {
+  public copyLink(): void {
+    if (!this.room.link) {
+      this.handleError('Room link is not available.')
+      return
+    }
+    navigator.clipboard.writeText(this.room.link)
+    this.alertService.open('Link copied to clipboard', {autoClose: true, hasIcon: true, status: TuiNotification.Success}).subscribe()
+  }
+
+  private handleError(message: string = 'Something went wrong, please try again.'): void {
     this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 
