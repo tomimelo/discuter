@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Client, Conversation, Message, Participant, State } from '@twilio/conversations';
-import { BehaviorSubject, map, Observable, Subject } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { ApiService } from './api.service';
 
 interface ConversationEvents {
   'messageAdded': Message,
@@ -26,7 +25,7 @@ export class TwilioService {
   private conversation$: BehaviorSubject<Conversation | null> = new BehaviorSubject<Conversation | null>(null)
   public onConversationEvent = new Subject<ConversationUpdate<ConversationEvent>>()
 
-  constructor(private http: HttpClient) { }
+  constructor(private apiService: ApiService) { }
 
   public async joinRoom(room: string): Promise<void> {
     try {
@@ -90,19 +89,6 @@ export class TwilioService {
     return this.conversation?.status === 'joined'
   }
 
-  private getAccessToken(jwt: string): Observable<string> {
-    return this.http.get(`${environment.apiUrl}/twilio/access-token`,  { headers: this.getAuthorizationHeader(jwt) })
-      .pipe(
-        map((res: any) => res.accessToken)
-      );
-  }
-
-  private getAuthorizationHeader(jwt: string): { 'Authorization': string } {
-    return {
-      'Authorization': `Bearer ${jwt}`
-    }
-  }
-
   private listenOnConversation() {
     this.conversation?.on('messageAdded', (message: Message) => {
       this.onConversationEvent.next({
@@ -134,8 +120,7 @@ export class TwilioService {
       this.client = null
     }
     return new Promise<Client>((resolve, reject) => {
-      const jwt = JSON.parse(localStorage.getItem('supabase.auth.token') || '').currentSession.access_token;
-      this.getAccessToken(jwt).subscribe({next: accessToken => {
+      this.apiService.getAccessToken().subscribe({next: accessToken => {
         const client = new Client(accessToken)
         client.on('stateChanged', async (state: State) => {
           if (state === 'initialized') {
@@ -168,7 +153,15 @@ export class TwilioService {
 
   private async createConversation(uniqueName: string): Promise<Conversation> {
     const client = await this.getClient()
-    return client.createConversation({uniqueName})
+    return new Promise<Conversation>((resolve, reject) => {
+      this.apiService.createRoomLink(uniqueName).subscribe({next: async roomLink => {
+        const {id} = roomLink
+        const conversationCreated = await client.createConversation({uniqueName, attributes: {roomLinkId: id}})
+        resolve(conversationCreated)
+      }, error: err => {
+        reject(err)
+      }})
+    })
   }
 
   private unsubscribeConversation(): void {
