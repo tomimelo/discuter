@@ -4,9 +4,10 @@ import { SupabaseService } from '../supabase/supabase-service'
 import { Logger } from '../types/logger'
 import { User } from '../types/user'
 import httpContext from 'express-http-context'
+import { TwilioClient } from '../twilio/twilio-client'
 
 export class RoomController extends BaseController {
-  public constructor (private readonly supabaseService: SupabaseService, private readonly logger: Logger) {
+  public constructor (private readonly supabaseService: SupabaseService, private readonly twilioClient: TwilioClient, private readonly logger: Logger) {
     super()
   }
 
@@ -76,6 +77,37 @@ export class RoomController extends BaseController {
       })
     } catch (error) {
       this.handleError(error, next)
+    }
+  }
+
+  public async joinByLink (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user: User = httpContext.get('user')
+      const { id } = req.params
+
+      if (!id) throw new Error('You need to specify an id')
+
+      const roomFound = await this.supabaseService.getRoomById(id)
+      if (!roomFound) throw new Error('Room does not exist')
+
+      await this.twilioClient.addUserToConversation(roomFound.unique_name, user.user_name).catch((error) => {
+        this.logger.error(error.message)
+        if (error.status === 404) {
+          throw new Error('Conversation does not exist')
+        }
+        if (error.status === 409) {
+          throw new Error('User already in conversation')
+        }
+        throw new Error('Failed to add user to conversation')
+      })
+
+      res.json({
+        ok: true,
+        room: roomFound
+      })
+    } catch (error: any) {
+      this.logger.error(error.message)
+      next(error)
     }
   }
 
