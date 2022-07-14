@@ -12,7 +12,7 @@ import { TwilioService } from 'src/app/services/twilio.service';
 })
 export class ParticipantsListComponent {
 
-  public inviteForm = new FormGroup({
+  public inviteForm: FormGroup = new FormGroup({
     identity: new FormControl('', Validators.required)
   })
 
@@ -30,7 +30,7 @@ export class ParticipantsListComponent {
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService) { }
 
-  async inviteParticipant() {
+  public async inviteParticipant(): Promise<void> {
     const identity = this.identityControl.value.trim()
     if (identity === '') this.identityControl.setValue('')
     if (this.inviteForm.invalid) return
@@ -42,7 +42,7 @@ export class ParticipantsListComponent {
     }
   }
 
-  handleError(message: string = 'Something went wrong, please try again.') {
+  public handleError(message: string = 'Something went wrong, please try again.'): void {
     this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 
