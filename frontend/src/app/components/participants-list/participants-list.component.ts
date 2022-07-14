@@ -16,7 +16,7 @@ export class ParticipantsListComponent {
     identity: new FormControl('', Validators.required)
   })
 
-  get participants() {
+  get participants(): Participant[] {
     return this.context.data;
   }
 
