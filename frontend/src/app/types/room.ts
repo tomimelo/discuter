@@ -12,7 +12,8 @@ export interface Room {
 
 export interface RoomLink {
   id: string,
-  uniqueName: string
+  unique_name: string,
+  user: string
 }
 
 interface RoomEvents {
