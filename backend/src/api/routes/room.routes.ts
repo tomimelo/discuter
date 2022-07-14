@@ -28,7 +28,7 @@ const createLink: MadRoute = {
   method: MadRouteMethod.POST,
   path: '/link',
   middlewares: [verifyJWT(authService)],
-  handler: roomController.getLink
+  handler: roomController.createLink
 }
 
 const deleteLink: MadRoute = {
