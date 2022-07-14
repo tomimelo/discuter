@@ -1,13 +1,13 @@
 import { loggerAcquirer } from '../utils/acquirers/logger-acquirer'
+import { twilioClientAcquirer } from '../utils/acquirers/twilio-client-acquirer'
 import { TwilioClient } from './twilio-client'
-import { TwilioConfig } from './twilio-config'
 import { TwilioController } from './twilio-controller'
 
 export class TwilioFactory {
-  public constructor (private readonly config: TwilioConfig) {}
+  public constructor () {}
 
   public getClient (): TwilioClient {
-    return new TwilioClient(this.config)
+    return twilioClientAcquirer.acquire()
   }
 
   public getController (): TwilioController {

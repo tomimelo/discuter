@@ -1,18 +1,9 @@
 import { MadRoute, MadRouteMethod, MadRouter } from 'mad-server'
-import { TwilioConfig } from '../../twilio/twilio-config'
 import { TwilioFactory } from '../../twilio/twilio-factory'
 import { authServiceAcquirer } from '../../utils/acquirers/auth-service-acquirer'
 import verifyJWT from '../middlewares/verifyJwt'
 
-const twilioConfig: TwilioConfig = {
-  accountSid: process.env.TWILIO_ACCOUNT_SID || '',
-  apiKey: process.env.TWILIO_API_KEY || '',
-  apiSecret: process.env.TWILIO_API_SECRET || '',
-  authToken: process.env.TWILIO_AUTH_TOKEN || '',
-  serviceSid: process.env.TWILIO_SERVICE_SID || ''
-}
-const twilioFactory = new TwilioFactory(twilioConfig)
-const twilioController = twilioFactory.getController()
+const twilioController = new TwilioFactory().getController()
 
 const authService = authServiceAcquirer.acquire()
 
