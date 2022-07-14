@@ -7,6 +7,7 @@ const routes: Routes = [
   {path: "home", loadChildren: () => import('./home/home.module').then(m => m.HomeModule)},
   {path: "auth", loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)},
   {path: "room/:id", canActivate: [AuthGuard], loadChildren: () => import('./room/room.module').then(m => m.RoomModule)},
+  {path: "invite/:id", canActivate: [AuthGuard], loadChildren: () => import('./invite/invite.module').then(m => m.InviteModule)},
   {path: '**', redirectTo: 'home'}
 ];
 
