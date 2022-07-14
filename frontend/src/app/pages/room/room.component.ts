@@ -86,7 +86,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.getRoom().pipe(takeUntil(this.destroy$)).subscribe(async room => {
       this.room = room
       if (this.doesUserNeedToJoin()) {
-        const roomId = this.getRoomIdFromParams()
+        const roomId = this.getRoomNameFromParams()
         if (roomId) await this.joinRoom(roomId)
       }
       this.loading = false
@@ -129,8 +129,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getRoomIdFromParams(): string | null {
-    return this.route.snapshot.paramMap.get('id')
+  private getRoomNameFromParams(): string | null {
+    return this.route.snapshot.paramMap.get('name')
   }
 
   private doesUserNeedToJoin(): boolean {
