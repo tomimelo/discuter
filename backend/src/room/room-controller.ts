@@ -5,6 +5,7 @@ import { Logger } from '../types/logger'
 import { User } from '../types/user'
 import httpContext from 'express-http-context'
 import { TwilioClient } from '../twilio/twilio-client'
+import { CustomError } from '../utils/custom-error'
 
 export class RoomController extends BaseController {
   public constructor (private readonly supabaseService: SupabaseService, private readonly twilioClient: TwilioClient, private readonly logger: Logger) {
@@ -16,14 +17,14 @@ export class RoomController extends BaseController {
       const user: User = httpContext.get('user')
       const { uniqueName, id } = req.query
 
-      if (!uniqueName || !id) throw new Error('Missing required parameters')
-      if (uniqueName && id) throw new Error('Only one of uniqueName or id can be specified')
+      if (!uniqueName || !id) throw new CustomError('Missing required parameters', 400)
+      if (uniqueName && id) throw new CustomError('Only one of uniqueName or id can be specified', 400)
 
       const room = uniqueName
         ? await this.supabaseService.getRoomByUniqueName(uniqueName as string)
         : await this.supabaseService.getRoomById(id as string)
 
-      if (room && room.user !== user.user_name) throw new Error('You do not have permission to access this room')
+      if (room && room.user !== user.user_name) throw new CustomError('You do not have permission to access this room', 401)
 
       res.json({
         ok: true,
@@ -39,10 +40,10 @@ export class RoomController extends BaseController {
       const user: User = httpContext.get('user')
       const { uniqueName } = req.body
 
-      if (!uniqueName) throw new Error('You need to specify a unique name')
+      if (!uniqueName) throw new CustomError('You need to specify a unique name', 400)
 
       const roomFound = await this.supabaseService.getRoomByUniqueName(uniqueName)
-      if (roomFound) throw new Error('Room already exists')
+      if (roomFound) throw new CustomError('Room already exists', 400)
 
       const createdRoom = await this.supabaseService.createRoom({
         unique_name: uniqueName,
@@ -63,11 +64,11 @@ export class RoomController extends BaseController {
       const user: User = httpContext.get('user')
       const { uniqueName } = req.params
 
-      if (!uniqueName) throw new Error('You need to specify a unique name')
+      if (!uniqueName) throw new CustomError('You need to specify a unique name', 400)
 
       const roomFound = await this.supabaseService.getRoomByUniqueName(uniqueName)
-      if (!roomFound) throw new Error('Room does not exist')
-      if (roomFound && roomFound.user !== user.user_name) throw new Error('You do not have permission to delete this room')
+      if (!roomFound) throw new CustomError('Room does not exist')
+      if (roomFound && roomFound.user !== user.user_name) throw new CustomError('You do not have permission to delete this room', 401)
 
       const deletedRoom = await this.supabaseService.deleteRoom(uniqueName)
 
@@ -85,20 +86,21 @@ export class RoomController extends BaseController {
       const user: User = httpContext.get('user')
       const { id } = req.params
 
-      if (!id) throw new Error('You need to specify an id')
+      if (!id) throw new CustomError('You need to specify an id', 400)
 
       const roomFound = await this.supabaseService.getRoomById(id)
-      if (!roomFound) throw new Error('Room does not exist')
+      if (!roomFound) throw new CustomError('Room does not exist', 404)
 
       await this.twilioClient.addUserToConversation(roomFound.unique_name, user.user_name).catch((error) => {
         this.logger.error(error.message)
         if (error.status === 404) {
-          throw new Error('Conversation does not exist')
+          throw new CustomError('Conversation does not exist', 404)
         }
         if (error.status === 409) {
-          throw new Error('User already in conversation')
+          // User already in conversation
+          return
         }
-        throw new Error('Failed to add user to conversation')
+        throw new CustomError('Failed to add user to conversation')
       })
 
       res.json({
