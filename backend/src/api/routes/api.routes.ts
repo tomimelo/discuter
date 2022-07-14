@@ -1,5 +1,6 @@
 import { MadRoute, MadRouteMethod, MadRouter } from 'mad-server'
 import exceptionHandler from '../middlewares/exceptionHandler'
+import roomRouter from './room.routes'
 import twilioRouter from './twilio.routes'
 
 const notFound: MadRoute = {
@@ -9,6 +10,6 @@ const notFound: MadRoute = {
   handler: exceptionHandler.notFound
 }
 
-const router = new MadRouter({ basePath: '/api', handlers: [twilioRouter, notFound] })
+const router = new MadRouter({ basePath: '/api', handlers: [twilioRouter, roomRouter, notFound] })
 
 export default router
