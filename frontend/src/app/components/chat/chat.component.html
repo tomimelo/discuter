@@ -1,6 +1,6 @@
 <div class="chat-wrapper">
   <div class="messages-wrapper">
-    <tui-scrollbar>
+    <tui-scrollbar id="messages">
       <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
     </tui-scrollbar>
   </div>
