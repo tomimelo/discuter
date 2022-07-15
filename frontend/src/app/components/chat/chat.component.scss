@@ -13,19 +13,30 @@
   position: relative;
 }
 
-.new-messages-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
+.scroll-button-wrapper {
   z-index: 10;
   position: absolute;
   bottom: 10px;
   left: 10px;
-  background-color: orange;
-  border-radius: 100%;
   cursor: pointer;
+  
+  .content-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 100%;
+    background-color: orange;
+
+    tui-badge { 
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+    }
+  }
 }
+
 
 #messages {
   // scroll-behavior: smooth;

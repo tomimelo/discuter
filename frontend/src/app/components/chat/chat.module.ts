@@ -4,10 +4,13 @@ import { ChatComponent } from './chat.component';
 import { MessagerModule } from '../messager/messager.module';
 import { MessageModule } from '../message/message.module';
 import { TuiScrollbarModule, TuiSvgModule } from '@taiga-ui/core';
+import {TuiBadgedContentModule, TuiBadgeModule} from '@taiga-ui/kit';
 
 const TAIGA_MODULES = [
   TuiScrollbarModule,
-  TuiSvgModule
+  TuiSvgModule,
+  TuiBadgedContentModule,
+  TuiBadgeModule
 ]
 @NgModule({
   declarations: [

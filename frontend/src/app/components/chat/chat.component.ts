@@ -17,6 +17,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>()
   public isScrollOnBottom: boolean = false
   public unreadMessages: number = 0
+  private scrollTimeout: any = 0
 
   constructor(private roomService: RoomService,
               @Inject(DOCUMENT) private document: Document) {
@@ -46,14 +47,18 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private getMessagesContainer(): void {
     this.messagesContainer = this.document.getElementById('messages')
+
     this.messagesContainer?.addEventListener('scroll', (event) => {
-      //TODO: Debounce ?
-      this.checkScroll()
+      clearTimeout(this.scrollTimeout)
+      this.scrollTimeout = setTimeout(() => {
+        this.checkScroll()
+      }, 100)
     })
   }
 
   private onNewMessage() {
     this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(() => {
+      this.playSound()
       if (this.isScrollOnBottom) {
         setTimeout(() => {
           this.scrollToBottom()
@@ -69,6 +74,14 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.messagesContainer) {
       this.isScrollOnBottom = this.messagesContainer.scrollTop + this.messagesContainer.clientHeight >= this.messagesContainer.scrollHeight
     }
+    if (this.isScrollOnBottom) {
+      this.unreadMessages = 0
+    }
+  }
+
+  private async playSound() {
+    const audio = new Audio('/assets/sounds/new-message.mp3')
+    await audio.play()
   }
 
 
