@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
@@ -15,6 +15,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   @Output() onSend = new EventEmitter<string>();
   private messagesContainer: HTMLElement | null = null;
   private destroy$ = new Subject<void>()
+  public isScrollOnBottom: boolean = false
 
   constructor(private roomService: RoomService,
               @Inject(DOCUMENT) private document: Document) {
@@ -34,22 +35,30 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.onSend.emit(message);
   }
 
+  public scrollToBottom() {
+    if (this.messagesContainer) {
+      this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+    }
+    this.isScrollOnBottom = true
+  }
+
   private getMessagesContainer(): void {
     this.messagesContainer = this.document.getElementById('messages')
   }
 
   private onNewMessage() {
     this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(() => {
-      setTimeout(() => {
-        this.scrollToBottom()
-      }, 100)
+      this.checkScroll()
     })
   }
 
-  private scrollToBottom() {
+  private checkScroll() {
     if (this.messagesContainer) {
-      this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+      console.log({scrollTop: this.messagesContainer.scrollTop, scrollHeight: this.messagesContainer.scrollHeight, clientHeight: this.messagesContainer.clientHeight});
+      this.isScrollOnBottom = this.messagesContainer.scrollTop + this.messagesContainer.clientHeight >= this.messagesContainer.scrollHeight
+      console.log({scrollTop: this.messagesContainer.scrollTop, scrollHeight: this.messagesContainer.scrollHeight, clientHeight: this.messagesContainer.clientHeight});
     }
   }
+
 
 }

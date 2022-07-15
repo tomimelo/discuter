@@ -1,5 +1,8 @@
 <div class="chat-wrapper">
   <div class="messages-wrapper">
+    <div class="new-messages-indicator" *ngIf="!isScrollOnBottom" (click)="scrollToBottom()">
+      <span>New messages</span>
+    </div>
     <tui-scrollbar id="messages">
       <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
     </tui-scrollbar>

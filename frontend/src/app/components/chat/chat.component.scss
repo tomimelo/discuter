@@ -10,4 +10,21 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.new-messages-indicator {
+  z-index: 10;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: black;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#messages {
+  // scroll-behavior: smooth;
 }
