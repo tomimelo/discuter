@@ -5,6 +5,7 @@ import { MessagerModule } from '../messager/messager.module';
 import { MessageModule } from '../message/message.module';
 import { TuiScrollbarModule, TuiSvgModule } from '@taiga-ui/core';
 import {TuiBadgedContentModule, TuiBadgeModule} from '@taiga-ui/kit';
+import { SkeletonMessageModule } from '../skeleton-message/skeleton-message.module';
 
 const TAIGA_MODULES = [
   TuiScrollbarModule,
@@ -20,6 +21,7 @@ const TAIGA_MODULES = [
     CommonModule,
     MessagerModule,
     MessageModule,
+    SkeletonMessageModule,
     ...TAIGA_MODULES
   ],
   exports: [

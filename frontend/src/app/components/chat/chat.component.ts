@@ -12,6 +12,7 @@ import { Message } from 'src/app/types/message';
 export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() messages: Message[] = [];
+  @Input() skeleton: boolean = true;
   @Output() onSend = new EventEmitter<string>();
   public isScrollOnBottom: boolean = true
   public unreadMessages: number = 0
@@ -19,6 +20,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private scrollTimeout: any = 0
   private soundsEnabled: boolean = true
   private destroy$ = new Subject<void>()
+
+  public skeletonMessages = [
+    {reversed: false},
+    {reversed: false},
+    {reversed: false},
+    {reversed: true},
+    {reversed: true},
+    {reversed: false},
+  ]
 
   constructor(private roomService: RoomService,
               @Inject(DOCUMENT) private document: Document) {}
@@ -64,7 +74,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private onNewMessage() {
-    this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(({data: message}) => {
+    this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(({data: message}: any) => {
       if (!message.isOwn) this.playSound()
       if (this.isScrollOnBottom || message.isOwn) {
         setTimeout(() => {

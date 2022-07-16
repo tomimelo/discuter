@@ -1,16 +1,13 @@
 <div class="room-wrapper">
-  <div *ngIf="loading">
-    <p>Loading... please wait</p>
-  </div>
-  <div class="conversation-wrapper" *ngIf="!loading">
+  <div class="conversation-wrapper">
     <app-navbar>
       <div class="navbar-content-wrapper">
         <div class="room-info">
           <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconArrowLeftLarge" tuiHint="Go back"
             (click)="goBack()"></button>
-          <span class="room-name">Room {{room?.uniqueName}}</span>
+          <span class="room-name" [class.tui-skeleton]="loading">Room {{room?.uniqueName}}</span>
         </div>
-        <div class="room-options">
+        <div class="room-options" [class.tui-skeleton]="loading">
           <tui-hosted-dropdown tuiDropdownAlign="left" [content]="moreOptions" [(open)]="isOptionsMenuOpen">
             <button tuiIconButton type="button" appearance="icon" size="s" icon="tuiIconMoreVertLarge"></button>
           </tui-hosted-dropdown>
@@ -18,7 +15,7 @@
         </div>
       </div>
     </app-navbar>
-    <app-chat [messages]="room?.messages || []" (onSend)="sendMessage($event)"></app-chat>
+    <app-chat [skeleton]="loading" [messages]="room?.messages || []" (onSend)="sendMessage($event)"></app-chat>
   </div>
 </div>
 
@@ -29,7 +26,7 @@
         <tui-svg src="tuiIconLogoutLarge"></tui-svg>
         Leave room
       </button>
-      <button tuiOption (click)="deleteRoom()">
+      <button tuiOption (click)="deleteRoom()" *ngIf="room?.isOwn">
         <tui-svg src="tuiIconTrashLarge"></tui-svg>
         Delete room
       </button>

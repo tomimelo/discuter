@@ -7,8 +7,13 @@
       </div>
     </div>
     <tui-scrollbar id="messages">
-      <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
+      <ng-container *ngIf="!skeleton else skeletonMessagesTemplate">
+        <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
+      </ng-container>
+      <ng-template #skeletonMessagesTemplate>
+        <app-skeleton-message *ngFor="let skeletonMessage of skeletonMessages" [class.reversed-message]="skeletonMessage.reversed"></app-skeleton-message>
+      </ng-template>
     </tui-scrollbar>
   </div>
-  <app-messager (onSend)="sendMessage($event)"></app-messager>
+  <app-messager [class.tui-skeleton]="skeleton" (onSend)="sendMessage($event)"></app-messager>
 </div>
