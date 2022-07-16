@@ -1,0 +1,66 @@
+:host-context(.reversed-message) .message {
+  direction: rtl;
+
+  .message-body {
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -webkit-border-top-right-radius: 0;
+    -moz-border-radius: 8px;
+    -moz-border-radius-topright: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 100%;
+  -webkit-border-radius: 100%;
+  -moz-border-radius: 100%;
+  -o-border-radius: 100%;
+  -ms-border-radius: 100%;
+}
+
+.message {
+  padding: 10px;
+  display: flex;
+  gap: 15px;
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    
+    .message-time {
+      font-size: 10px;
+      color: #8e8e8e;
+      direction: ltr;
+    }
+
+    .message-author {
+      font-weight: bold;
+    }
+  }
+
+  &-body {
+    width: fit-content;
+    background-color: #212121;
+    padding: 8px 16px;
+    -webkit-border-radius: 8px;
+    -webkit-border-top-left-radius: 0;
+    -moz-border-radius: 8px;
+    -moz-border-radius-topleft: 0;
+    border-radius: 8px;
+    border-top-left-radius: 0;
+    direction: ltr;
+
+    p {
+      font-size: 14px;
+    }
+  }
+}
