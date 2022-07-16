@@ -13,18 +13,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() messages: Message[] = [];
   @Output() onSend = new EventEmitter<string>();
-  private messagesContainer: HTMLElement | null = null;
-  private destroy$ = new Subject<void>()
   public isScrollOnBottom: boolean = true
   public unreadMessages: number = 0
+  private messagesContainer: HTMLElement | null = null;
   private scrollTimeout: any = 0
+  private soundsEnabled: boolean = true
+  private destroy$ = new Subject<void>()
 
   constructor(private roomService: RoomService,
               @Inject(DOCUMENT) private document: Document) {}
   
   public ngOnInit(): void {
     this.getMessagesContainer()
-    this.onNewMessage();
+    this.onNewMessage()
+    this.listenSettings()
   }
   
   public ngOnDestroy(): void {
@@ -75,6 +77,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
+  private listenSettings(): void {
+    this.roomService.onSettingsChanges().pipe(takeUntil(this.destroy$)).subscribe(settings => {
+      this.soundsEnabled = settings.sounds ? settings.sounds.newMessage : true
+    })
+  }
+
   private checkScroll() {
     if (this.messagesContainer) {
       this.isScrollOnBottom = this.messagesContainer.scrollTop + this.messagesContainer.clientHeight >= this.messagesContainer.scrollHeight
@@ -85,8 +93,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async playSound() {
-    const audio = new Audio('/assets/sounds/new-message.mp3')
-    await audio.play()
+    if (this.soundsEnabled) {
+      const audio = new Audio('/assets/sounds/new-message.mp3')
+      await audio.play()
+    }
   }
 
 
