@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
 import { Room, RoomEvent, RoomUpdate } from '../types/room';
+import { ApiService } from './api.service';
 import { TwilioService } from './twilio.service';
 
 @Injectable({
@@ -14,7 +15,7 @@ export class RoomService {
   private room$: BehaviorSubject<Room | null> = new BehaviorSubject<Room | null>(null)
   public onChanges = new Subject<RoomUpdate<RoomEvent>>()
 
-  constructor(private twilioService: TwilioService) {
+  constructor(private twilioService: TwilioService, private apiService: ApiService) {
     this.listenConversation()
     this.listenOnConversationEvents()
   }
@@ -43,8 +44,15 @@ export class RoomService {
     this.twilioService.leaveConversation()
   }
 
-  public async deleteRoom(): Promise<void> {
+  public async deleteRoom(room: string): Promise<void> {
     await this.twilioService.deleteConversation()
+    return new Promise<void>(async (resolve, reject) => {
+      this.apiService.deleteRoomLink(room).subscribe({next: () => {
+        resolve()
+      }, error: error => {
+        reject(error)
+      }})
+    })
   }
 
   public async inviteParticipant(username: string): Promise<void> {

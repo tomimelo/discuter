@@ -78,8 +78,16 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public async deleteRoom() {
-    await this.roomService.deleteRoom()
-    this.router.navigateByUrl('/home')
+    if (!this.room || !this.room.isOwn) return
+    this.showConfirmDialog({
+      message: 'Are you sure you want to delete this room?',
+      confirmText: 'Delete'
+    }).subscribe(async confirmation => {
+      if (confirmation) {
+        await this.roomService.deleteRoom(this.room!.uniqueName)
+        this.router.navigateByUrl('/home')
+      }
+    })
   }
 
   private getRoom(): void {
