@@ -14,9 +14,15 @@
   gap: 1em;
   max-height: 400px;
 
-  li {
+  &-item {
     display: flex;
-    gap: 1em;
     align-items: center;
+    justify-content: space-between;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+    }
   }
 }

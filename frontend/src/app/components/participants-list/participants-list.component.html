@@ -10,9 +10,21 @@
 <hr class="divisor">
 <tui-scrollbar>
   <ul class="participants-list">
-    <li *ngFor="let participant of room.participants">
-      <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.identity || ''"></tui-avatar>
-      <span>{{participant.identity}}</span>
+    <li *ngFor="let participant of room.participants" class="participants-list-item">
+      <div class="user-info">
+        <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.username || ''"></tui-avatar>
+        <span>{{participant.username}}</span>
+      </div>
+      <div class="user-actions">
+        <button tuiIconButton 
+                appearance="flat" 
+                tuiHint="Kick participant" 
+                type="button" 
+                size="s" 
+                icon="tuiIconTrashLarge"
+                *ngIf="room.isOwn && participant.username !== user.user_name"
+                (click)="kickParticipant(participant.username)"></button>
+      </div>
     </li>
   </ul>
 </tui-scrollbar>

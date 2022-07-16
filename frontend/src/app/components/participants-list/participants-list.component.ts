@@ -4,6 +4,7 @@ import {POLYMORPHEUS_CONTEXT} from '@tinkoff/ng-polymorpheus';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TwilioService } from 'src/app/services/twilio.service';
 import { Room } from 'src/app/types/room';
+import { User } from 'src/app/types/user';
 
 @Component({
   selector: 'app-participants-list',
@@ -17,7 +18,11 @@ export class ParticipantsListComponent {
   })
 
   get room(): Room {
-    return this.context.data
+    return this.context.data.room
+  }
+
+  get user(): User {
+    return this.context.data.user
   }
 
   get identityControl(): FormControl {
@@ -25,7 +30,7 @@ export class ParticipantsListComponent {
   }
 
   constructor(@Inject(POLYMORPHEUS_CONTEXT)
-              private readonly context: TuiDialogContext<void, Room>,
+              private readonly context: TuiDialogContext<void, {room: Room, user: User}>,
               private twilioService: TwilioService,
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService) { }
@@ -36,7 +41,17 @@ export class ParticipantsListComponent {
     if (this.inviteForm.invalid) return
     try {
       await this.twilioService.inviteParticipant(identity)
+      this.alertService.open(`User ${identity} invited successfully`, {autoClose: true, hasIcon: true, status: TuiNotification.Success}).subscribe()
       this.inviteForm.reset({ identity: '' })
+    } catch (error: any) {
+      this.handleError(error.message)
+    }
+  }
+
+  public async kickParticipant(username: string): Promise<void> {
+    try {
+      await this.twilioService.removeParticipant(username)
+      this.alertService.open(`User ${username} kicked successfully`, {autoClose: true, hasIcon: true, status: TuiNotification.Info}).subscribe()
     } catch (error: any) {
       this.handleError(error.message)
     }
