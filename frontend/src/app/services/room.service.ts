@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
-import { Room, RoomEvent, RoomUpdate } from '../types/room';
+import { Room, RoomEvent, RoomSettings, RoomUpdate } from '../types/room';
 import { ApiService } from './api.service';
 import { TwilioService } from './twilio.service';
 
@@ -12,8 +12,14 @@ import { TwilioService } from './twilio.service';
   providedIn: 'root'
 })
 export class RoomService {
-  private room$: BehaviorSubject<Room | null> = new BehaviorSubject<Room | null>(null)
   public onChanges = new Subject<RoomUpdate<RoomEvent>>()
+  private room$: BehaviorSubject<Room | null> = new BehaviorSubject<Room | null>(null)
+  private defaultRoomSettings: RoomSettings = {
+    sounds: {
+      newMessage: true
+    }
+  }
+  private settings$: BehaviorSubject<RoomSettings> = new BehaviorSubject<RoomSettings>(this.getSettings())
 
   constructor(private twilioService: TwilioService, private apiService: ApiService) {
     this.listenConversation()
@@ -22,6 +28,10 @@ export class RoomService {
 
   public getRoom(): Observable<Room | null> {
     return this.room$.asObservable()
+  }
+
+  public onSettingsChanges(): Observable<RoomSettings> {
+    return this.settings$.asObservable()
   }
 
   public isUserInRoom(): boolean {
@@ -57,6 +67,24 @@ export class RoomService {
 
   public async inviteParticipant(username: string): Promise<void> {
     await this.twilioService.inviteParticipant(username)
+  }
+
+  public getSettings(): RoomSettings {
+    const globalSettings = localStorage.getItem('discuter.settings')
+    if (!globalSettings) return this.defaultRoomSettings
+    const parsedGlobalSettings = JSON.parse(globalSettings)
+    return parsedGlobalSettings.room ? parsedGlobalSettings.room : this.defaultRoomSettings
+  }
+
+  public setSettings(settings: RoomSettings) {
+    const globalSettings = localStorage.getItem('settings') || '{}'
+    const parsedGlobalSettings = JSON.parse(globalSettings)
+    parsedGlobalSettings.room = {
+      ...parsedGlobalSettings.room,
+      ...settings
+    }
+    localStorage.setItem('discuter.settings', JSON.stringify(parsedGlobalSettings))
+    this.settings$.next(parsedGlobalSettings.room)
   }
 
   private listenConversation(): void {
