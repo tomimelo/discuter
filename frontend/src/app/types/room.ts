@@ -19,10 +19,11 @@ export interface RoomLink {
 interface RoomEvents {
   'messageAdded': Message,
   'participantJoined': Participant,
-  'participantLeft': Participant
+  'participantLeft': Participant,
+  'roomRemoved': undefined
 }
 
-export type RoomEvent = 'messageAdded' | 'participantJoined' | 'participantLeft'
+export type RoomEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved'
 export interface RoomUpdate<E extends keyof RoomEvents> {
   type: E,
   data: RoomEvents[E]
