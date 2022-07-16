@@ -45,7 +45,7 @@
 .message.own-message {
   direction: rtl;
 
-  &-body {
+  .message-body {
     border-radius: 8px;
     -webkit-border-radius: 8px;
     -webkit-border-top-right-radius: 0;
