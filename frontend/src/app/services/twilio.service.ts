@@ -6,10 +6,11 @@ import { ApiService } from './api.service';
 interface ConversationEvents {
   'messageAdded': Message,
   'participantJoined': Participant,
-  'participantLeft': Participant
+  'participantLeft': Participant,
+  'removed': Conversation
 }
 
-export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft'
+export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'removed'
 export interface ConversationUpdate<E extends keyof ConversationEvents> {
   type: E,
   data: ConversationEvents[E]
@@ -74,7 +75,22 @@ export class TwilioService {
         throw new Error("You don't have permission to invite this user")
       } else if (this.isConflict(error)) {
         throw new Error(`User ${identity} is already in this conversation`)
-      } else if(this.isBadRequest(error)) {
+      } else if (this.isBadRequest(error)) {
+        throw new Error(`User ${identity} not found`)
+      }
+      throw new Error('Something went wrong, please try again')
+    }
+  }
+
+  public async removeParticipant(identity: string): Promise<void> {
+    try {
+      await this.conversation?.removeParticipant(identity)
+    } catch (error) {
+      if (this.isForbidden(error)) {
+        throw new Error("You don't have permission to remove this user")
+      } else if (this.isConflict(error)) {
+        throw new Error(`User ${identity} is not in this conversation`)
+      } else if (this.isBadRequest(error)) {
         throw new Error(`User ${identity} not found`)
       }
       throw new Error('Something went wrong, please try again')
@@ -106,6 +122,12 @@ export class TwilioService {
       this.onConversationEvent.next({
         type: 'participantLeft',
         data: participant
+      })
+    })
+    this.conversation?.on('removed', (conversation: Conversation) => {
+      this.onConversationEvent.next({
+        type: 'removed',
+        data: conversation
       })
     })
   }
