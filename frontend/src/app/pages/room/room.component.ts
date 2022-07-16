@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Participant } from '@twilio/conversations';
 import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/types/user';
 import { Observable, Subject, takeUntil } from 'rxjs';
@@ -12,6 +11,7 @@ import { Room } from 'src/app/types/room';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
 import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';
+import { Participant } from 'src/app/types/participant';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -52,7 +52,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     await this.roomService.sendMessage(message)
   }
 
-  public async goBack() {
+  public goBack() {
     this.router.navigateByUrl('/home')
   }
 
@@ -60,10 +60,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.dialogService.open<void>(
       new PolymorpheusComponent(ParticipantsListComponent, this.injector),
       {
-        data: this.room,
+        data: {room: this.room, user: this.user},
         dismissible: true
       }
-    ).subscribe()
+    ).pipe(takeUntil(this.destroy$)).subscribe()
   }
 
   public showSettings() {
@@ -72,14 +72,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       {
         dismissible: true
       }
-    ).subscribe()
+    ).pipe(takeUntil(this.destroy$)).subscribe()
   }
 
   public async abandonRoom() {
     this.showConfirmDialog({
       message: 'Are you sure you want to leave this room?',
       confirmText: 'Leave'
-    }).subscribe(async confirmation => {
+    }).pipe(takeUntil(this.destroy$)).subscribe(async confirmation => {
       if (confirmation) {
         await this.roomService.abandonRoom()
         this.router.navigateByUrl('/home')
@@ -92,7 +92,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.showConfirmDialog({
       message: 'Are you sure you want to delete this room?',
       confirmText: 'Delete'
-    }).subscribe(async confirmation => {
+    }).pipe(takeUntil(this.destroy$)).subscribe(async confirmation => {
       if (confirmation) {
         await this.roomService.deleteRoom(this.room!.uniqueName)
         this.router.navigateByUrl('/home')
@@ -129,6 +129,9 @@ export class RoomComponent implements OnInit, OnDestroy {
         case 'participantLeft':
           this.onParticipantLeft(event.data as Participant)
           break
+        case 'roomRemoved':
+          this.onRoomRemoved()
+          break
       }
     })
   }
@@ -142,8 +145,19 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private onParticipantLeft(participant: Participant) {
+    if (participant.username === this.user?.user_name) {
+      this.goBack()
+      this.alertService.open('You were kicked from the room', {autoClose: true, hasIcon: true, status: TuiNotification.Warning}).subscribe()
+    }
     if (this.room) {
-      this.room.participants = this.room?.participants.filter(p => p.username !== participant.identity)
+      this.room.participants = this.room?.participants.filter(p => p.username !== participant.username)
+    }
+  }
+
+  private onRoomRemoved() {
+    if (this.room && !this.room.isOwn) {
+      this.goBack()
+      this.alertService.open('The room was removed by the host', {autoClose: true, hasIcon: true, status: TuiNotification.Warning}).subscribe()
     }
   }
 
@@ -175,8 +189,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private handleError(message: string = 'Something went wrong, please try again.') {
-    this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe({next: (some) => {
-      console.log(some);
-    }})
+    this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 }
