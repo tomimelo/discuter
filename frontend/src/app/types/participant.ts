@@ -1,1 +1,3 @@
-export type Participant = any
+export interface Participant {
+  username: string
+}
