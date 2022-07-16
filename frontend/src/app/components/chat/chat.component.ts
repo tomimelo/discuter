@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
@@ -9,19 +9,18 @@ import { Message } from 'src/app/types/message';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() messages: Message[] = [];
   @Output() onSend = new EventEmitter<string>();
   private messagesContainer: HTMLElement | null = null;
   private destroy$ = new Subject<void>()
-  public isScrollOnBottom: boolean = false
+  public isScrollOnBottom: boolean = true
   public unreadMessages: number = 0
   private scrollTimeout: any = 0
 
   constructor(private roomService: RoomService,
-              @Inject(DOCUMENT) private document: Document) {
-  }
+              @Inject(DOCUMENT) private document: Document) {}
   
   public ngOnInit(): void {
     this.getMessagesContainer()
@@ -31,6 +30,12 @@ export class ChatComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.destroy$.next()
     this.destroy$.complete()
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.checkScroll()
+    }, 1000)
   }
   
   public sendMessage(message: string) {
