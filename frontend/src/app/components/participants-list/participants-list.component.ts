@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { TuiAlertService, TuiDialogContext, TuiNotification } from '@taiga-ui/core';
-import { Participant } from '@twilio/conversations';
 import {POLYMORPHEUS_CONTEXT} from '@tinkoff/ng-polymorpheus';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TwilioService } from 'src/app/services/twilio.service';
