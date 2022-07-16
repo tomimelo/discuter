@@ -56,7 +56,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   public showParticipants() {
-    this.dialogService.open<Participant[]>(
+    this.dialogService.open<void>(
       new PolymorpheusComponent(ParticipantsListComponent, this.injector),
       {
         data: this.room,
