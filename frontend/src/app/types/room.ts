@@ -27,3 +27,9 @@ export interface RoomUpdate<E extends keyof RoomEvents> {
   type: E,
   data: RoomEvents[E]
 }
+
+export interface RoomSettings {
+  sounds?: {
+    newMessage: boolean
+  }
+}
