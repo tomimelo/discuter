@@ -114,6 +114,12 @@ export class RoomService {
             data: this.createParticipant(event.data as TwilioParticipant)
           })
           break
+        case 'removed':
+          this.onChanges.next({
+            type: 'roomRemoved',
+            data: undefined
+          })
+          break
       }
     })
   }
@@ -154,7 +160,9 @@ export class RoomService {
   }
 
   private createParticipant(participant: TwilioParticipant): Participant {
-    return participant
+    return {
+      username: participant.identity!
+    }
   }
 
   private createMessage(message: TwilioMessage): Message {
