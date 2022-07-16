@@ -1,0 +1,16 @@
+form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-group {
+  &-header {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  &-content {
+    margin-left: 20px;
+  }
+}

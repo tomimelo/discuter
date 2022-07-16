@@ -8,6 +8,7 @@ import { TuiButtonModule, TuiDataListModule, TuiHintModule, TuiHostedDropdownMod
 import { ChatModule } from 'src/app/components/chat/chat.module';
 import { ParticipantsListModule } from 'src/app/components/participants-list/participants-list.module';
 import { ConfirmDialogModule } from 'src/app/components/confirm-dialog/confirm-dialog.module';
+import { RoomSettingsModule } from 'src/app/components/room-settings/room-settings.module';
 
 const TAIGA_MODULES = [
   TuiButtonModule,
@@ -28,6 +29,7 @@ const TAIGA_MODULES = [
     ChatModule,
     ParticipantsListModule,
     ConfirmDialogModule,
+    RoomSettingsModule,
     ...TAIGA_MODULES
   ]
 })

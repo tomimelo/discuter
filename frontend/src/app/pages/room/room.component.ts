@@ -11,6 +11,7 @@ import { ConfirmDialogComponent, ConfirmDialogContext } from 'src/app/components
 import { Room } from 'src/app/types/room';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
+import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -20,9 +21,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public user: User | null = null
   public room: Room | null = null
-  private destroy$ = new Subject<void>()
   public loading: boolean = true
   public isOptionsMenuOpen: boolean = false
+  private destroy$ = new Subject<void>()
 
   constructor(private roomService: RoomService,
               private authService: AuthService,
@@ -60,6 +61,15 @@ export class RoomComponent implements OnInit, OnDestroy {
       new PolymorpheusComponent(ParticipantsListComponent, this.injector),
       {
         data: this.room,
+        dismissible: true
+      }
+    ).subscribe()
+  }
+
+  public showSettings() {
+    this.dialogService.open<void>(
+      new PolymorpheusComponent(RoomSettingsComponent, this.injector),
+      {
         dismissible: true
       }
     ).subscribe()
