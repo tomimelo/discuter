@@ -18,7 +18,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   public unreadMessages: number = 0
   private messagesContainer: HTMLElement | null = null;
   private scrollTimeout: any = 0
-  private soundsEnabled: boolean = true
   private destroy$ = new Subject<void>()
 
   public skeletonMessages = [
@@ -36,7 +35,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   public ngOnInit(): void {
     this.getMessagesContainer()
     this.onNewMessage()
-    this.listenSettings()
   }
   
   public ngOnDestroy(): void {
@@ -75,7 +73,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private onNewMessage() {
     this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(({data: message}: any) => {
-      if (!message.isOwn) this.playSound()
       if (this.isScrollOnBottom || message.isOwn) {
         setTimeout(() => {
           this.scrollToBottom()
@@ -87,12 +84,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   }
 
-  private listenSettings(): void {
-    this.roomService.onSettingsChanges().pipe(takeUntil(this.destroy$)).subscribe(settings => {
-      this.soundsEnabled = settings.sounds ? settings.sounds.newMessage : true
-    })
-  }
-
   private checkScroll() {
     if (this.messagesContainer) {
       this.isScrollOnBottom = this.messagesContainer.scrollTop + this.messagesContainer.clientHeight >= this.messagesContainer.scrollHeight
@@ -101,13 +92,5 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.unreadMessages = 0
     }
   }
-
-  private async playSound() {
-    if (this.soundsEnabled) {
-      const audio = new Audio('/assets/sounds/new-message.mp3')
-      await audio.play()
-    }
-  }
-
 
 }
