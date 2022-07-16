@@ -62,9 +62,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private onNewMessage() {
-    this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(() => {
-      this.playSound()
-      if (this.isScrollOnBottom) {
+    this.roomService.onChanges.pipe(filter(event => event.type === 'messageAdded'), takeUntil(this.destroy$)).subscribe(({data: message}) => {
+      if (!message.isOwn) this.playSound()
+      if (this.isScrollOnBottom || message.isOwn) {
         setTimeout(() => {
           this.scrollToBottom()
         }, 50)
