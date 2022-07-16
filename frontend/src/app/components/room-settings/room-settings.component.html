@@ -4,11 +4,11 @@
   <div class="settings-group">
     <span class="settings-group-header">Sounds <tui-svg src="tuiIconSound"></tui-svg></span>
     <div class="settings-group-content">
-      <div class="settings-item">
-        <form [formGroup]="soundsForm">
-          <label>New messages</label>
-          <tui-toggle formControlName="newMessage"></tui-toggle>
-        </form>
-      </div>
+      <form [formGroup]="soundsForm">
+        <div class="settings-item" *ngFor="let settingsItem of soundsSettingsItems">
+          <label>{{settingsItem.label}}</label>
+          <tui-toggle [formControlName]="settingsItem.name"></tui-toggle>
+        </div>
+      </form>
   </div>
 </div>

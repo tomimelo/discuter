@@ -16,7 +16,8 @@ export class RoomService {
   private room$: BehaviorSubject<Room | null> = new BehaviorSubject<Room | null>(null)
   private defaultRoomSettings: RoomSettings = {
     sounds: {
-      newMessage: true
+      newMessage: true,
+      userJoin: true
     }
   }
   private settings$: BehaviorSubject<RoomSettings> = new BehaviorSubject<RoomSettings>(this.getSettings())

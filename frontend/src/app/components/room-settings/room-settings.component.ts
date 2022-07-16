@@ -16,8 +16,20 @@ export class RoomSettingsComponent implements OnInit {
   public settingsForm = new FormGroup({
     sounds: new FormGroup({
       newMessage: new FormControl(true),
+      userJoin: new FormControl(true),
     })
   })
+
+  public soundsSettingsItems = [
+    {
+      name: 'newMessage',
+      label: 'New messages',
+    },
+    {
+      name: 'userJoin',
+      label: 'User join room',
+    }
+  ]
 
   constructor(private roomService: RoomService) { }
 

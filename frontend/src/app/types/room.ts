@@ -31,6 +31,7 @@ export interface RoomUpdate<E extends keyof RoomEvents> {
 
 export interface RoomSettings {
   sounds?: {
-    newMessage: boolean
+    newMessage: boolean,
+    userJoin: boolean
   }
 }

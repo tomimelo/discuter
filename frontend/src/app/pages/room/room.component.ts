@@ -7,7 +7,7 @@ import { TuiAlertService, TuiDialogService, TuiNotification } from '@taiga-ui/co
 import { PolymorpheusComponent} from '@tinkoff/ng-polymorpheus';
 import { ParticipantsListComponent } from 'src/app/components/participants-list/participants-list.component';
 import { ConfirmDialogComponent, ConfirmDialogContext } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { Room } from 'src/app/types/room';
+import { Room, RoomSettings } from 'src/app/types/room';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
 import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';
@@ -23,6 +23,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   public room: Room | null = null
   public loading: boolean = true
   public isOptionsMenuOpen: boolean = false
+  private soundsSettings: RoomSettings['sounds'] = {
+    newMessage: true,
+    userJoin: true
+  }
   private destroy$ = new Subject<void>()
 
   constructor(private roomService: RoomService,
@@ -40,6 +44,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.getRoom()
     this.getUser()
     this.listenOnChanges()
+    this.listenSettings()
   }
 
   public ngOnDestroy(): void {
@@ -138,10 +143,12 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private onMessageAdded(message: Message) {
     this.room?.messages.push(message)
+    if (!message.isOwn) this.playNewMessageSound()
   }
 
   private onParticipantJoined(participant: Participant) {
     this.room?.participants.push(participant)
+    this.playUserJoinSound()
   }
 
   private onParticipantLeft(participant: Participant) {
@@ -159,6 +166,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.goBack()
       this.alertService.open('The room was removed by the host', {autoClose: true, hasIcon: true, status: TuiNotification.Warning}).subscribe()
     }
+  }
+
+  private listenSettings(): void {
+    this.roomService.onSettingsChanges().pipe(takeUntil(this.destroy$)).subscribe(settings => {
+      if (settings.sounds) {
+        this.soundsSettings = settings.sounds
+      }
+    })
   }
 
   private getRoomNameFromParams(): string | null {
@@ -186,6 +201,25 @@ export class RoomComponent implements OnInit, OnDestroy {
         dismissible: true
       }
     )
+  }
+
+  private async playSound(src: string) {
+    const audio = new Audio(src)
+    await audio.play()
+  }
+
+  private async playNewMessageSound() {
+    const src = '/assets/sounds/new-message.mp3'
+    if (this.soundsSettings?.newMessage) {
+      await this.playSound(src)
+    }
+  }
+
+  private async playUserJoinSound() {
+    const src = '/assets/sounds/user-join.mp3'
+    if (this.soundsSettings?.userJoin) {
+      await this.playSound(src)
+    }
   }
 
   private handleError(message: string = 'Something went wrong, please try again.') {
