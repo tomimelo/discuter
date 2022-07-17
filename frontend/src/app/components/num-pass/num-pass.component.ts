@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { TuiInputNumberComponent } from '@taiga-ui/kit';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -8,6 +9,8 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./num-pass.component.scss']
 })
 export class NumPassComponent implements OnInit, OnDestroy {
+
+  @ViewChildren('input') inputsList!: QueryList<TuiInputNumberComponent>;
 
   @Input() set digits(value: number) {
     this._digits = value
@@ -48,11 +51,43 @@ export class NumPassComponent implements OnInit, OnDestroy {
     }
   }
 
+  public onKeyUp(event: any, index: number) {
+    if (!event.target) return
+    const isEmpty = this.isEmpty(event.target.value)
+    if (isEmpty) return
+    const actualValue = event.target.value
+    const pressedKey = event.key
+    if (!this.isValidKey(pressedKey)) return
+    if (actualValue !== pressedKey) {
+      setTimeout(() => {
+        this.replaceValue(index, pressedKey)
+      }, 0)
+    }
+    const nextInput = this.inputsList.find((_, i) => i === index + 1)
+    if (nextInput) {
+      nextInput.nativeFocusableElement?.focus()
+    }
+  }
+
+  private replaceValue(index: number, value: string) {
+    this.digitsControls[index].setValue(Number(value))
+  }
+
+  private isValidKey(key: string): boolean {
+    const keyParsedToNumber = parseInt(key)
+    return !isNaN(keyParsedToNumber) && keyParsedToNumber >= 0 && keyParsedToNumber <= 9
+  }
+
+  private isEmpty(value: any): boolean {
+    return !value || value.toString().trim().length === 0
+  }
+
   private setDigitsControls(length: number) {
     this.numPassForm = new FormGroup({
       digits: new FormArray(Array.from({ length }, (_, i) => new FormControl(0)))
     })
     this.numPassForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((a) => {
+      console.log(a);
       this.onDigitsChange.emit(this.getDigitsValue())
     })
   }
