@@ -26,26 +26,16 @@ export class HomeComponent implements OnInit, OnDestroy {
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.getUser()
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.destroy$.next()
     this.destroy$.complete()
   }
 
-  getUser(): void {
-    this.authService.getUser().pipe(takeUntil(this.destroy$)).subscribe({next: user => {
-      if (user) this.authenticating = false;
-      this.user = user
-    }, error: err => {
-      this.user = null
-      this.handleError()
-    }})
-  }
-
-  async signIn(): Promise<void> {
+  public async signIn(): Promise<void> {
     try {
       if (this.authenticating) return
       this.authenticating = true;
@@ -56,7 +46,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  async signOut(): Promise<void> {
+  public async signOut(): Promise<void> {
     try {
       await this.authService.signOut();
     } catch (error) {
@@ -66,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  async joinRoom() {
+  public async joinRoom() {
     try {
       if (!this.selectedRoom || this.joining) return
       this.joining = true;
@@ -79,11 +69,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  onRoomValueChange(room: string) {
+  public onRoomValueChange(room: string) {
     this.selectedRoom = room
   }
 
-  handleError(message: string = 'Something went wrong, please try again') {
+  private getUser(): void {
+    this.authService.getUser().pipe(takeUntil(this.destroy$)).subscribe({next: user => {
+      if (user) this.authenticating = false;
+      this.user = user
+    }, error: err => {
+      this.user = null
+      this.handleError()
+    }})
+  }
+
+  private handleError(message: string = 'Something went wrong, please try again') {
     this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 }
