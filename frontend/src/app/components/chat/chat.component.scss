@@ -13,13 +13,43 @@
   position: relative;
 }
 
+.no-messages {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  svg {
+    width: 150px;
+    fill: #6e6e6e;
+  }
+
+  &-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    &-header {
+      font-weight: bold;
+    }
+
+    &-body {
+      font-size: 14px;
+    }
+  }
+}
+
 .scroll-button-wrapper {
   z-index: 10;
   position: absolute;
   bottom: 10px;
   left: 10px;
   cursor: pointer;
-  
+
   .content-wrapper {
     position: relative;
     display: flex;
@@ -29,7 +59,7 @@
     border-radius: 100%;
     background-color: orange;
 
-    tui-badge { 
+    tui-badge {
       position: absolute;
       bottom: -5px;
       right: -5px;

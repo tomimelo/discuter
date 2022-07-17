@@ -6,7 +6,16 @@
         <svg width="21px" height="21px" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(6 6)"><path d="m8.5.5-4 4-4-4"/><path d="m8.5 4.5-4 4-4-4"/></g></svg>
       </div>
     </div>
-    <tui-scrollbar id="messages">
+    <div class="no-messages" *ngIf="!skeleton && !messages.length">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512" xml:space="preserve"><path d="M283.826 0H50.091C22.473 0 .005 22.467.005 50.086v166.953c0 27.619 22.467 50.086 50.086 50.086h16.695v50.086c0 14.843 18.005 22.298 28.499 11.804l61.89-61.89h126.65c27.618 0 50.086-22.467 50.086-50.086V50.086C333.912 22.467 311.444 0 283.826 0zM100.177 150.258c-9.22 0-16.695-7.475-16.695-16.695s7.475-16.695 16.695-16.695 16.695 7.475 16.695 16.695-7.475 16.695-16.695 16.695zm66.781 0c-9.22 0-16.695-7.475-16.695-16.695s7.475-16.695 16.695-16.695 16.695 7.475 16.695 16.695-7.474 16.695-16.695 16.695zm66.782 0c-9.22 0-16.695-7.475-16.695-16.695s7.475-16.695 16.695-16.695 16.695 7.475 16.695 16.695-7.475 16.695-16.695 16.695z"/><path d="M461.909 178.083h-94.607v38.956c0 43.807-33.927 79.815-76.882 83.192 2.805 2.986 4.536 6.994 4.536 11.415 0 9.22-7.475 16.695-16.695 16.695s-16.695-7.475-16.695-16.695c0-4.282 1.626-8.175 4.276-11.13h-87.753v94.607c0 27.603 22.483 50.086 50.086 50.086h126.662l61.883 61.884c10.55 10.548 28.494 2.927 28.494-11.798v-50.086h16.695c27.603 0 50.086-22.483 50.086-50.086V228.169c0-27.602-22.484-50.086-50.086-50.086zM345.042 328.341c-9.22 0-16.695-7.475-16.695-16.695s7.475-16.695 16.695-16.695 16.695 7.475 16.695 16.695-7.475 16.695-16.695 16.695zm66.781 0c-9.22 0-16.695-7.475-16.695-16.695s7.475-16.695 16.695-16.695 16.695 7.475 16.695 16.695-7.475 16.695-16.695 16.695z"/></svg>
+      <div class="no-messages-text">
+        <p class="no-messages-text-header">No messages yet</p>
+        <p class="no-messages-text-body">
+          Start the conversation by sending a message!
+        </p>
+      </div>
+    </div>
+    <tui-scrollbar id="messages" *ngIf="skeleton || messages.length">
       <ng-container *ngIf="!skeleton else skeletonMessagesTemplate">
         <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
       </ng-container>
