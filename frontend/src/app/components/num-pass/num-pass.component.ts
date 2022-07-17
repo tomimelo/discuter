@@ -37,8 +37,7 @@ export class NumPassComponent implements OnInit, OnDestroy {
   }
 
   public incrementDigit(index: number, value: number) {
-    const digitsControl = this.numPassForm.get('digits') as FormArray
-    const digitControl = digitsControl.controls[index] as FormControl
+    const digitControl = this.digitsControls[index] as FormControl
     const newValue = digitControl.value + value
     if (newValue < 0) {
       digitControl.setValue(9)
