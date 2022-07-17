@@ -27,7 +27,7 @@ export class ConfirmDialogComponent {
     this.data = {...this.defaultContext, ...context.data};
   }
 
-  close(value: boolean): void {
+  public close(value: boolean): void {
     this.context.completeWith(value);
   }
 

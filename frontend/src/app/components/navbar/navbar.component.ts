@@ -33,7 +33,7 @@ export class NavbarComponent implements OnInit {
     return this.align === 'right';
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
 }

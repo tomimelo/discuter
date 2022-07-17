@@ -28,24 +28,15 @@ export class NumPassComponent implements OnInit, OnDestroy {
     this.setDigitsControls(this._digits)
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.destroy$.next()
     this.destroy$.complete()
   }
 
-  setDigitsControls(length: number) {
-    this.numPassForm = new FormGroup({
-      digits: new FormArray(Array.from({ length }, (_, i) => new FormControl(0)))
-    })
-    this.numPassForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((a) => {
-      this.onDigitsChange.emit(this.getDigitsValue())
-    })
-  }
-
-  incrementDigit(index: number, value: number) {
+  public incrementDigit(index: number, value: number) {
     const digitsControl = this.numPassForm.get('digits') as FormArray
     const digitControl = digitsControl.controls[index] as FormControl
     const newValue = digitControl.value + value
@@ -58,7 +49,16 @@ export class NumPassComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDigitsValue(): string {
+  private setDigitsControls(length: number) {
+    this.numPassForm = new FormGroup({
+      digits: new FormArray(Array.from({ length }, (_, i) => new FormControl(0)))
+    })
+    this.numPassForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((a) => {
+      this.onDigitsChange.emit(this.getDigitsValue())
+    })
+  }
+
+  private getDigitsValue(): string {
     return this.numPassForm.value.digits.map((digit: number) => `${digit}`).join('')
   }
 }

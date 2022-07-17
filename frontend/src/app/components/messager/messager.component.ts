@@ -20,10 +20,10 @@ export class MessagerComponent implements OnInit {
 
   constructor() {}
   
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
   
-  sendMessage() {
+  public sendMessage() {
     if (this.textControl.value.trim() === '') {
       this.textControl.setValue('')
     }
