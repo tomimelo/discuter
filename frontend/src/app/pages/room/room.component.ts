@@ -110,7 +110,13 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.room = room
       if (this.doesUserNeedToJoin()) {
         const roomId = this.getRoomNameFromParams()
-        if (roomId) await this.joinRoom(roomId)
+        if (roomId) {
+          if (!this.roomService.isRoomCodeValid(roomId)) {
+            this.alertService.open('Invalid room code', {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
+            this.goBack()
+          }
+          await this.joinRoom(roomId)
+        }
       }
       this.loading = false
     })

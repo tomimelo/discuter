@@ -88,6 +88,10 @@ export class RoomService {
     this.settings$.next(parsedGlobalSettings.room)
   }
 
+  public isRoomCodeValid(roomCode: string): boolean {
+    return /^\d{5}$/g.test(roomCode)
+  }
+
   private listenConversation(): void {
     this.twilioService.getConversation().subscribe(async conversation => {
       await this.updateRoom(conversation)
