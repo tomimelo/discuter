@@ -147,6 +147,9 @@ export class TwilioService {
         client.on('stateChanged', async (state: State) => {
           if (state === 'initialized') {
             this.client = client
+            await this.client.user.updateAttributes({
+              'avatar_url': null
+            })
             resolve(this.client)
           }
           if (state === 'failed') {
