@@ -1,9 +1,7 @@
 <div class="numpass-wrapper">
-  <form [formGroup]="numPassForm">
-    <div class="input-wrapper" *ngFor="let control of digitsControls; let i=index" >
-      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronUp" (click)="incrementDigit(i, 1)"></button>
-      <tui-input-number #input tuiTextfieldSize="l" [formControl]="control" [min]="0" [max]="9" (keyup)="onKeyUp($event, i)"></tui-input-number>
-      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronDown" (click)="incrementDigit(i, -1)"></button>
-    </div>
-  </form>
+  <div class="input-wrapper" *ngFor="let inputPlaceholder of inputsPlaceholder; let i=index" >
+    <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronUp" (click)="incrementDigit(i, 1)"></button>
+    <input #input (keydown)="onKeyDown($event, i)" (paste)="onPaste($event)" [value]="inputPlaceholder"/>
+    <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronDown" (click)="incrementDigit(i, -1)"></button>
+  </div>
 </div>
