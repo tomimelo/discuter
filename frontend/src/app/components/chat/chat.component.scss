@@ -46,8 +46,8 @@
 .scroll-button-wrapper {
   z-index: 10;
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  bottom: 15px;
+  right: 15px;
   cursor: pointer;
 
   .content-wrapper {
@@ -63,6 +63,8 @@
       position: absolute;
       bottom: -5px;
       right: -5px;
+      color: white;
+      background-color: rgb(255, 81, 0);
     }
   }
 }
