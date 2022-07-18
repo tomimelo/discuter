@@ -15,7 +15,7 @@
         </p>
       </div>
     </div>
-    <tui-scrollbar id="messages" *ngIf="skeleton || messages.length">
+    <tui-scrollbar id="messages" *ngIf="skeleton || messages.length" class="mr">
       <ng-container *ngIf="!skeleton else skeletonMessagesTemplate">
         <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
       </ng-container>
