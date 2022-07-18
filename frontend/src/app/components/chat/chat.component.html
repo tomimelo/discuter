@@ -17,11 +17,12 @@
     </div>
     <tui-scrollbar id="messages" *ngIf="skeleton || messages.length" class="mr">
       <ng-container *ngIf="!skeleton else skeletonMessagesTemplate">
-        <app-message *ngFor="let message of messages; let i = index" [message]="message"></app-message>
+        <app-chat-event *ngFor="let event of events" [event]="event"></app-chat-event>
       </ng-container>
       <ng-template #skeletonMessagesTemplate>
         <app-skeleton-message *ngFor="let skeletonMessage of skeletonMessages" [class.reversed-message]="skeletonMessage.reversed"></app-skeleton-message>
       </ng-template>
+      
     </tui-scrollbar>
   </div>
   <app-messager [class.tui-skeleton]="skeleton" (onSend)="sendMessage($event)"></app-messager>

@@ -7,11 +7,12 @@ import { TuiAlertService, TuiDialogService, TuiNotification } from '@taiga-ui/co
 import { PolymorpheusComponent} from '@tinkoff/ng-polymorpheus';
 import { ParticipantsListComponent } from 'src/app/components/participants-list/participants-list.component';
 import { ConfirmDialogComponent, ConfirmDialogContext } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { Room, RoomSettings } from 'src/app/types/room';
+import { Room, RoomEventType, RoomSettings } from 'src/app/types/room';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
 import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';
 import { Participant } from 'src/app/types/participant';
+import { ChatEvent } from 'src/app/types/chat';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -21,6 +22,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   public user: User | null = null
   public room: Room | null = null
+  public events: ChatEvent[] = []
   public loading: boolean = true
   public isOptionsMenuOpen: boolean = false
   private soundsSettings: RoomSettings['sounds'] = {
@@ -149,11 +151,13 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private onMessageAdded(message: Message) {
     this.room?.messages.push(message)
+    this.addEvent('messageAdded', message)
     if (!message.isOwn) this.playNewMessageSound()
   }
 
   private onParticipantJoined(participant: Participant) {
     this.room?.participants.push(participant)
+    this.addEvent('participantJoined', participant)
     this.playUserJoinSound()
   }
 
@@ -172,6 +176,9 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.goBack()
       this.alertService.open('The room was removed by the host', {autoClose: true, hasIcon: true, status: TuiNotification.Warning}).subscribe()
     }
+  }
+
+  private addEvent(type: RoomEventType, data: Message | Participant) {
   }
 
   private listenSettings(): void {
@@ -227,6 +234,23 @@ export class RoomComponent implements OnInit, OnDestroy {
       await this.playSound(src)
     }
   }
+
+  // private buildEvents(participants: Participant[], messages: Message[]): RoomEvent<'messageAdded' | 'participantJoined'>[] {
+  //   const messageEvents = messages.map(message => {
+  //     return {
+  //       type: 'messageAdded',
+  //       data: message
+  //     }
+  //   })
+  //   const participantEvents = participants.filter(participant => participant.username !== this.twilioService.getUserIdentity()).map(participant => {
+  //     return {
+  //       type: 'participantJoined',
+  //       data: participant
+  //     }
+  //   })
+  //   const mergedEvents = [...messageEvents, ...participantEvents]
+  //   return mergedEvents.sort((a, b) => a.data.dateCreated > b.data.dateCreated ? 1 : -1) as RoomEvent<'messageAdded' | 'participantJoined'>[]
+  // }
 
   private handleError(message: string = 'Something went wrong, please try again.') {
     this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()

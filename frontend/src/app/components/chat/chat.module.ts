@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatComponent } from './chat.component';
 import { MessagerModule } from '../messager/messager.module';
-import { MessageModule } from '../message/message.module';
 import { TuiScrollbarModule, TuiSvgModule } from '@taiga-ui/core';
 import {TuiBadgedContentModule, TuiBadgeModule} from '@taiga-ui/kit';
 import { SkeletonMessageModule } from '../skeleton-message/skeleton-message.module';
+import { ChatEventModule } from '../chat-event/chat-event.module';
 
 const TAIGA_MODULES = [
   TuiScrollbarModule,
@@ -20,7 +20,7 @@ const TAIGA_MODULES = [
   imports: [
     CommonModule,
     MessagerModule,
-    MessageModule,
+    ChatEventModule,
     SkeletonMessageModule,
     ...TAIGA_MODULES
   ],

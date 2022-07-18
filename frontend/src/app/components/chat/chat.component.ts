@@ -3,7 +3,6 @@ import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnIni
 import { filter, Subject, takeUntil } from 'rxjs';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
-
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -12,6 +11,7 @@ import { Message } from 'src/app/types/message';
 export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() messages: Message[] = [];
+  @Input() events: any[] = []
   @Input() skeleton: boolean = true;
   @Output() onSend = new EventEmitter<string>();
   public isScrollOnBottom: boolean = true
@@ -92,5 +92,4 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.unreadMessages = 0
     }
   }
-
 }

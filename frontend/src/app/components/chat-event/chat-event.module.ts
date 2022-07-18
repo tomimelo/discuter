@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {TuiAvatarModule} from '@taiga-ui/kit';
 
-import { MessageComponent } from './message.component';
+import { ChatEventComponent } from './chat-event.component';
+import { TimePipe } from '../../pipes/time.pipe';
 
 const TAIGA_MODULES = [
   TuiAvatarModule
@@ -10,14 +11,15 @@ const TAIGA_MODULES = [
 
 @NgModule({
   declarations: [
-    MessageComponent
+    ChatEventComponent,
+    TimePipe
   ],
   imports: [
     CommonModule,
     ...TAIGA_MODULES
   ],
   exports: [
-    MessageComponent
+    ChatEventComponent
   ]
 })
-export class MessageModule { }
+export class ChatEventModule { }

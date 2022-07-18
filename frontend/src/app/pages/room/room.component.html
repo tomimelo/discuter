@@ -15,7 +15,7 @@
         </div>
       </div>
     </app-navbar>
-    <app-chat [skeleton]="loading" [messages]="room?.messages || []" (onSend)="sendMessage($event)"></app-chat>
+    <app-chat [skeleton]="loading" [messages]="room?.messages || []" [events]="events" (onSend)="sendMessage($event)"></app-chat>
   </div>
 </div>
 
