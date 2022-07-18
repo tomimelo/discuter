@@ -12,6 +12,10 @@ $primary: #0D7377;
 
 .app-logo {
   display: none;
+
+  &-img {
+    width: 25px;
+  }
 }
 
 .mobile-container {
@@ -26,7 +30,9 @@ $primary: #0D7377;
   }
 
   .app-logo {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     position: fixed;
     top: 20px;
     left: 20px;
