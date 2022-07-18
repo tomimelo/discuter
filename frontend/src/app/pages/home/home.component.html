@@ -34,13 +34,14 @@
     </app-navbar>
     <div class="room-code-wrapper">
       <h3>Enter room code</h3>
-      <app-num-pass [digits]="5" (onDigitsChange)="onRoomValueChange($event)"></app-num-pass>
+      <app-num-pass [digits]="5" (onDigitsChange)="onRoomValueChange($event)" (onDigitsComplete)="onRoomValueComplete($event)"></app-num-pass>
       <button tuiButton 
               appearance="accent" 
               [showLoader]="joining" 
-              [disabled]="joining" 
+              [disabled]="joining || !isRoomValid" 
               (click)="joinRoom()" 
-              icon="tuiIconLockLarge">
+              icon="tuiIconLockLarge"
+              #joinRoomButton>
         Join
       </button>
     </div>

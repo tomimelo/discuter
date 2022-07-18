@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
-import { TwilioService } from 'src/app/services/twilio.service';
+import { RoomService } from 'src/app/services/room.service';
 import { User } from 'src/app/types/user';
 
 @Component({
@@ -13,16 +13,19 @@ import { User } from 'src/app/types/user';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
+  @ViewChild('joinRoomButton', {read: ElementRef}) joinRoomButton!: ElementRef;
+
   public user: User | null = null;
   private destroy$ = new Subject<void>()
   public authenticating: boolean = false;
   public isAvatarMenuOpen: boolean = false;
+  public isRoomValid: boolean = true;
   private selectedRoom: string | null = '00000';
   public joining: boolean = false;
 
   constructor(private router: Router, 
               private authService: AuthService, 
-              private twilioService: TwilioService,
+              private roomService: RoomService,
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService) { }
 
@@ -60,7 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     try {
       if (!this.selectedRoom || this.joining) return
       this.joining = true;
-      await this.twilioService.joinRoom(this.selectedRoom)
+      await this.roomService.joinRoom(this.selectedRoom)
       this.router.navigateByUrl(`/room/${this.selectedRoom}`)
     } catch (error: any) {
       this.handleError(error.message)
@@ -71,6 +74,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public onRoomValueChange(room: string) {
     this.selectedRoom = room
+    this.isRoomValid = this.roomService.isRoomCodeValid(room)
+  }
+
+  public onRoomValueComplete(room: string) {
+    this.joinRoomButton.nativeElement.focus()
   }
 
   private getUser(): void {
