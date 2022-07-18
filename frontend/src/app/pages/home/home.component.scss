@@ -1,10 +1,27 @@
+$locked-color: #ff5153;
+$unlocking-color: #949494;
+$unlocked-color: var(--tui-accent);
+
 :host {
   width: 100%;
   height: 100%;
 }
 
-h1 {
-  margin-bottom: 1.5em;
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &-img {
+    width: 150px;
+  }
+
+  &-text {
+    margin: 0;
+  }
+
+  margin-bottom: 40px;
 }
 
 .avatar-button {
@@ -36,5 +53,108 @@ h1 {
   gap: 10px;
   flex-direction: column;
   align-items: center;
-  justify-content: center;      
+  justify-content: center;
+
+  h3 {
+    color: var(--tui-accent);
+  }
+  
+  tui-loader {
+    aspect-ratio: 1;
+    height: 50px;
+  }
+}
+
+//Lock
+
+.lock {
+  margin-top: 20px;
+  width: 24px;
+  height: 21px;
+  border: 3px solid $locked-color;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+  -webkit-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+
+.lock.unlocking {
+  border-color: $unlocking-color;
+
+  &:after {
+    background: $unlocking-color;
+  }
+
+  &:before {
+    border-color: $unlocking-color;
+    animation: unlocking 500ms;
+    animation-iteration-count: infinite;
+  }
+}
+
+.lock:after {
+  content: "";
+  display: block;
+  background: $locked-color;
+  width: 3px;
+  height: 7px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -3.5px 0 0 -2px;
+  -webkit-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+.lock:before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  bottom: 100%;
+  position: absolute;
+  left: 50%;
+  margin-left: -8px;
+  border: 3px solid $locked-color;
+  border-top-right-radius: 50%;
+  border-top-left-radius: 50%;
+  border-bottom: 0;
+  -webkit-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+
+.lock:hover:before {
+  height: 12px;
+}
+
+.unlocked {
+  transform: rotate(10deg);
+}
+.unlocked:before {
+  bottom: 130%;
+  left: 31%;
+  margin-left: -11.5px;
+  transform: rotate(-45deg);
+}
+.unlocked,
+.unlocked:before {
+  border-color: $unlocked-color;
+}
+.unlocked:after {
+  background: $unlocked-color;
+}
+
+.unlocked:hover {
+  transform: rotate(3deg);
+}
+.unlocked:hover:before {
+  height: 10px;
+  left: 40%;
+  bottom: 124%;
+  transform: rotate(-30deg);
+}
+
+@keyframes unlocking {
+  0% { height: 10px; }
+  100% { height: 12px; }
 }

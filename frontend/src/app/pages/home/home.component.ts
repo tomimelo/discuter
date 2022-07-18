@@ -13,15 +13,13 @@ import { User } from 'src/app/types/user';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  @ViewChild('joinRoomButton', {read: ElementRef}) joinRoomButton!: ElementRef;
-
   public user: User | null = null;
   private destroy$ = new Subject<void>()
   public authenticating: boolean = false;
   public isAvatarMenuOpen: boolean = false;
-  public isRoomValid: boolean = true;
   private selectedRoom: string | null = '00000';
   public joining: boolean = false;
+  public lockUnlocked: boolean = false;
 
   constructor(private router: Router, 
               private authService: AuthService, 
@@ -64,7 +62,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       if (!this.selectedRoom || this.joining) return
       this.joining = true;
       await this.roomService.joinRoom(this.selectedRoom)
-      this.router.navigateByUrl(`/room/${this.selectedRoom}`)
+      this.lockUnlocked = true
+      setTimeout(() => {
+        this.router.navigateByUrl(`/room/${this.selectedRoom}`)
+      }, 1000)
     } catch (error: any) {
       this.handleError(error.message)
     } finally {
@@ -74,11 +75,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public onRoomValueChange(room: string) {
     this.selectedRoom = room
-    this.isRoomValid = this.roomService.isRoomCodeValid(room)
   }
 
-  public onRoomValueComplete(room: string) {
-    this.joinRoomButton.nativeElement.focus()
+  public async onRoomValueComplete(room: string) {
+    if (!this.roomService.isRoomCodeValid(room)) {
+      this.handleError('Room code is invalid')
+      return;
+    }
+    this.selectedRoom = room
+    await this.joinRoom()
   }
 
   private getUser(): void {

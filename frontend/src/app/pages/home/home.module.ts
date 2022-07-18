@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import {TuiAvatarModule} from '@taiga-ui/kit';
-import {TuiButtonModule, TuiHostedDropdownModule, TuiDataListModule, TuiSvgModule} from '@taiga-ui/core';
+import {TuiButtonModule, TuiHostedDropdownModule, TuiDataListModule, TuiSvgModule, TuiLoaderModule, TuiHintModule} from '@taiga-ui/core';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
@@ -14,7 +14,9 @@ const TAIGA_MODULES = [
   TuiAvatarModule,
   TuiHostedDropdownModule,
   TuiDataListModule,
-  TuiSvgModule
+  TuiSvgModule,
+  TuiLoaderModule,
+  TuiHintModule
 ]
 
 @NgModule({

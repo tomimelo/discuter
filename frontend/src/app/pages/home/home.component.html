@@ -1,5 +1,9 @@
 <div class="page-wrapper">
-  <h1>Discuter</h1>
+  <div class="logo">
+    <img class="logo-img" src="/assets/img/discuter-logo-inverted.png" alt="Discuter logo">
+    <h1 class="logo-text">Discuter</h1>
+  </div>
+
 
   <button tuiButton *ngIf="!user" [disabled]="authenticating" [showLoader]="authenticating" class="github-button" (click)="signIn()" [icon]="githubIcon">
     Sign In with GitHub
@@ -34,16 +38,10 @@
     </app-navbar>
     <div class="room-code-wrapper">
       <h3>Enter room code</h3>
-      <app-num-pass [digits]="5" (onDigitsChange)="onRoomValueChange($event)" (onDigitsComplete)="onRoomValueComplete($event)"></app-num-pass>
-      <button tuiButton 
-              appearance="accent" 
-              [showLoader]="joining" 
-              [disabled]="joining || !isRoomValid" 
-              (click)="joinRoom()" 
-              icon="tuiIconLockLarge"
-              #joinRoomButton>
-        Join
-      </button>
+      <app-num-pass [disabled]="joining" [digits]="5" (onDigitsChange)="onRoomValueChange($event)" (onDigitsComplete)="onRoomValueComplete($event)"></app-num-pass>
+      <span class="lock" tuiHint="Join room" (click)="joinRoom()" [ngClass]="{'unlocking': joining, 'unlocked': lockUnlocked}"></span>
+      <tui-loader [showLoader]="joining" [inheritColor]="true">
+      </tui-loader>
     </div>
   </ng-container>
 </div>
