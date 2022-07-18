@@ -1,0 +1,20 @@
+:root {
+  //Custom variables
+  --darkest: #161616;
+  --darker: #212121;
+  --dark: #323232;
+  --accent: #14FFEC;
+  --accent-hover: #31ffee;
+  --accent-active: #12c7b8;
+  --primary: #0D7377;
+  --primary-hover: #108c91;
+  --primary-active: #094d50;
+  
+  //Override with custom variables
+  --tui-primary: var(--primary);
+  --tui-primary-hover: var(--primary-hover);
+  --tui-primary-active: var(--primary-active);
+  --tui-accent: var(--accent);
+  --tui-accent-hover: var(--accent-hover);
+  --tui-accent-active: var(--accent-active);
+}
