@@ -55,11 +55,11 @@ $unlocked-color: var(--tui-accent);
   align-items: center;
   justify-content: center;
 
-  h3 {
+  & > h3 {
     color: var(--tui-accent);
   }
   
-  tui-loader {
+  & > tui-loader {
     aspect-ratio: 1;
     height: 50px;
   }
