@@ -1,56 +1,12 @@
-.message {
-  padding: 10px;
+.badge-wrapper {
   display: flex;
-  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
 
-  &-content {
-    display: flex;
-    flex-direction: column;
-  }
-
-  &-header {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    
-    .message-time {
-      font-size: 10px;
-      color: #8e8e8e;
-      direction: ltr;
-    }
-
-    .message-author {
-      font-weight: bold;
-    }
-  }
-
-  &-body {
-    width: fit-content;
-    background-color: #212121;
-    padding: 8px 16px;
-    -webkit-border-radius: 8px;
-    -webkit-border-top-left-radius: 0;
-    -moz-border-radius: 8px;
-    -moz-border-radius-topleft: 0;
-    border-radius: 8px;
-    border-top-left-radius: 0;
-    direction: ltr;
-
-    p {
-      font-size: 14px;
-    }
-  }
-}
-
-.message.reversed-message {
-  direction: rtl;
-
-  .message-body {
-    border-radius: 8px;
-    -webkit-border-radius: 8px;
-    -webkit-border-top-right-radius: 0;
-    -moz-border-radius: 8px;
-    -moz-border-radius-topright: 0;
-    border-top-right-radius: 0;
+  tui-badge {
+    font-size: 12px;
+    color: #FFF;
+    background-color: #686868;
   }
 }

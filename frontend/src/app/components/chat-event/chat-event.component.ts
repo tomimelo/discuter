@@ -1,14 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { ChatEvent } from 'src/app/types/chat';
+import { Message } from 'src/app/types/message';
 import { Participant } from 'src/app/types/participant';
 
 interface SimplifiedEvent {
-  author: string,
-  header: string,
-  date: Date,
-  content: string,
-  isReversed: boolean,
-  isAction: boolean
+  type: string;
+  data: any;
+  label: string | undefined;
 }
 
 @Component({
@@ -29,41 +27,25 @@ export class ChatEventComponent {
 
   constructor() { }
 
-  private buildSimplifiedEvent(event: any): SimplifiedEvent {
-    const isMessage = event.type === 'message'
+  private buildSimplifiedEvent(event: ChatEvent): SimplifiedEvent {
     return {
-      author: this.getEventAuthor(event),
-      header: this.getEventHeader(event),
-      date: this.getEventDate(event),
-      content: this.getEventContent(event),
-      isReversed: isMessage ? event.data.isOwn : false,
-      isAction: !isMessage
+      type: event.type,
+      data: event.data,
+      label: this.getEventLabel(event)
     }
   }
 
-  private getEventAuthor(event: any): string {
-    const isMessage = event.type === 'message'
-    return isMessage ? event.data.author : event.data[0].username
-  }
-
-  private getEventHeader(event: any): string {
-    const isMessage = event.type === 'message'
-    return isMessage 
-      ? event.data.isOwn 
-      ? 'You' 
-      : event.data.author 
-      : event.data[0].username
-  }
-
-  private getEventDate(event: any): Date {
-    const isMessage = event.type === 'message'
-    return isMessage ? event.data.dateCreated : event.data[0].dateCreated
-  }
-
-  private getEventContent(event: any): string {
-    const isMessage = event.type === 'message'
-    if (isMessage) return event.data.body
-    return `${event.data.map((participant: Participant) => participant.username).join(', ')} joined the room`
+  private getEventLabel(event: ChatEvent): string | undefined {
+    if (event.type === 'message') return undefined
+    const eventData = event.data as Participant[]
+    if (eventData.length === 1) { 
+      return `${eventData[0].username} joined the room`
+    } else if (eventData.length >= 4) {
+      const firstTwoParticipants = eventData.slice(0, 2)
+      return `${firstTwoParticipants.map(p => p.username).join(' and ')} joined the room along with ${eventData.length - 2} others`
+    } else {
+      return `${eventData.map(participant => participant.username).join(', ').replace(/, ([^,]*)$/, ' and $1')} joined the room`
+    }
   }
 
 }

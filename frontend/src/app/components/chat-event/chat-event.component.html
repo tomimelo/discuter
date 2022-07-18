@@ -1,12 +1,6 @@
-<div class="message" [class.reversed-message]="simplifiedEvent.isReversed">
-  <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="simplifiedEvent.author"></tui-avatar>
-  <div class="message-content">
-    <div class="message-header">
-      <span class="message-author">{{simplifiedEvent.header}}</span>
-      <span class="message-time">{{simplifiedEvent.date | time}}</span>
-    </div>
-    <div class="message-body">
-      <p>{{simplifiedEvent.content}}</p>
-    </div>
+<app-message *ngIf="simplifiedEvent.type === 'message' else badge" [message]="simplifiedEvent.data"></app-message>
+<ng-template #badge>
+  <div class="badge-wrapper">
+    <tui-badge [value]="simplifiedEvent.label || ''" status="custom"></tui-badge>
   </div>
-</div>
+</ng-template>

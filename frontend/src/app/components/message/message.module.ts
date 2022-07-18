@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {TuiAvatarModule} from '@taiga-ui/kit';
 
 import { MessageComponent } from './message.component';
+import { TimePipe } from 'src/app/pipes/time.pipe';
 
 const TAIGA_MODULES = [
   TuiAvatarModule
@@ -10,7 +11,8 @@ const TAIGA_MODULES = [
 
 @NgModule({
   declarations: [
-    MessageComponent
+    MessageComponent,
+    TimePipe
   ],
   imports: [
     CommonModule,

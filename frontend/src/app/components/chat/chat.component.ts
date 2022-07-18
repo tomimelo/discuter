@@ -1,24 +1,34 @@
 import { DOCUMENT } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { RoomService } from 'src/app/services/room.service';
-import { Message } from 'src/app/types/message';
+import { ChatEvent } from 'src/app/types/chat';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ChatComponent implements OnInit, OnDestroy {
 
-  @Input() messages: Message[] = [];
-  @Input() events: any[] = []
-  @Input() skeleton: boolean = true;
+  @Input() set events(value: ChatEvent[]) {
+    this._events = value
+    setTimeout(() => {
+      this.getMessagesContainer()
+      this.checkScroll()
+    }, 1000)
+  }
+  @Input() skeleton: boolean = false
   @Output() onSend = new EventEmitter<string>();
   public isScrollOnBottom: boolean = true
   public unreadMessages: number = 0
   private messagesContainer: HTMLElement | null = null;
   private scrollTimeout: any = 0
   private destroy$ = new Subject<void>()
+  private _events: ChatEvent[] = []
+
+  get events(): ChatEvent[] {
+    return this._events
+  }
 
   public skeletonMessages = [
     {reversed: false},
@@ -33,19 +43,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
               @Inject(DOCUMENT) private document: Document) {}
   
   public ngOnInit(): void {
-    this.getMessagesContainer()
     this.onNewMessage()
   }
   
   public ngOnDestroy(): void {
     this.destroy$.next()
     this.destroy$.complete()
-  }
-
-  public ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.checkScroll()
-    }, 1000)
   }
   
   public sendMessage(message: string) {
@@ -62,13 +65,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getMessagesContainer(): void {
     this.messagesContainer = this.document.getElementById('messages')
-
-    this.messagesContainer?.addEventListener('scroll', (event) => {
-      clearTimeout(this.scrollTimeout)
-      this.scrollTimeout = setTimeout(() => {
-        this.checkScroll()
-      }, 100)
-    })
+    if (this.messagesContainer) {
+      this.messagesContainer?.addEventListener('scroll', (event) => {
+        clearTimeout(this.scrollTimeout)
+        this.scrollTimeout = setTimeout(() => {
+          this.checkScroll()
+        }, 100)
+      })
+    }
   }
 
   private onNewMessage() {

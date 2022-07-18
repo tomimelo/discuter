@@ -12,7 +12,7 @@ import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
 import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';
 import { Participant } from 'src/app/types/participant';
-import { ChatEvent } from 'src/app/types/chat';
+import { ChatEvent, ChatEventType } from 'src/app/types/chat';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -120,6 +120,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           await this.joinRoom(roomId)
         }
       }
+      this.events = this.buildEvents(room)
       this.loading = false
     })
   }
@@ -151,13 +152,13 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private onMessageAdded(message: Message) {
     this.room?.messages.push(message)
-    this.addEvent('messageAdded', message)
+    this.addEvent('message', message)
     if (!message.isOwn) this.playNewMessageSound()
   }
 
   private onParticipantJoined(participant: Participant) {
     this.room?.participants.push(participant)
-    this.addEvent('participantJoined', participant)
+    this.addEvent('joined', participant)
     this.playUserJoinSound()
   }
 
@@ -178,7 +179,26 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  private addEvent(type: RoomEventType, data: Message | Participant) {
+  private addEvent(type: ChatEventType, data: Message | Participant) {
+    const lastEvent = this.events[this.events.length - 1]
+    let eventToAdd;
+    if (type === 'joined') {
+      eventToAdd = {
+        type,
+        data: [data]
+      }
+      if (lastEvent && lastEvent.type === 'joined') {
+        this.assertsEventDataIsParticipantArray(lastEvent.data)
+        lastEvent.data.push(data as Participant)
+        return
+      }
+    } else {
+      eventToAdd = {
+        type,
+        data
+      }
+    }
+    this.events.push(eventToAdd as ChatEvent)
   }
 
   private listenSettings(): void {
@@ -235,22 +255,54 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  // private buildEvents(participants: Participant[], messages: Message[]): RoomEvent<'messageAdded' | 'participantJoined'>[] {
-  //   const messageEvents = messages.map(message => {
-  //     return {
-  //       type: 'messageAdded',
-  //       data: message
-  //     }
-  //   })
-  //   const participantEvents = participants.filter(participant => participant.username !== this.twilioService.getUserIdentity()).map(participant => {
-  //     return {
-  //       type: 'participantJoined',
-  //       data: participant
-  //     }
-  //   })
-  //   const mergedEvents = [...messageEvents, ...participantEvents]
-  //   return mergedEvents.sort((a, b) => a.data.dateCreated > b.data.dateCreated ? 1 : -1) as RoomEvent<'messageAdded' | 'participantJoined'>[]
-  // }
+  private buildEvents(room: Room | null): ChatEvent[] {
+    if (!room) return []
+    const messageEvents: ChatEvent[] = room.messages.map(message => this.buildMessageEvent(message))
+    const participantEvents: ChatEvent[] = room.participants
+      .filter(participant => participant.username !== this.user?.user_name)
+      .map(participant => this.buildParticipantEvent(participant))
+    const mergedEvents = [...messageEvents, ...participantEvents]
+    return mergedEvents.sort((a, b) => a.dateCreated > b.dateCreated ? 1 : -1).reduce((events: ChatEvent[], event: ChatEvent, index) => {
+      if (index === 0) {
+        if (event.type === 'joined' && (event.data as Participant[])[0].username === room.createdBy) {
+          return events
+        }
+        events.push(event)
+        return events
+      }
+      const lastEvent = events[events.length - 1]
+      if (lastEvent && lastEvent.type === 'joined' && event.type === 'joined') {
+        this.assertsEventDataIsParticipantArray(lastEvent.data)
+        this.assertsEventDataIsParticipantArray(event.data)
+        lastEvent.data.push(...event.data)
+      } else {
+        events.push(event)
+      }
+      return events
+    }, [])
+  }
+
+  private buildMessageEvent(message: Message): ChatEvent {
+    return {
+      type: 'message',
+      dateCreated: message.dateCreated,
+      data: message
+    }
+  }
+
+  private buildParticipantEvent(participant: Participant): ChatEvent {
+    return {
+      type: 'joined',
+      dateCreated: participant.dateCreated,
+      data: [participant]
+    }
+  }
+
+  private assertsEventDataIsParticipantArray(data: any): asserts data is Participant[] {
+    if (!Array.isArray(data)) {
+      throw new Error('Event data is not an array')
+    }
+  }
 
   private handleError(message: string = 'Something went wrong, please try again.') {
     this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
