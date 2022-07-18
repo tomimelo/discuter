@@ -6,7 +6,7 @@ export interface Room {
   uniqueName: string,
   createdBy: string,
   isOwn: boolean,
-  participants: Participant[]
+  participants: Participant[],
   messages: Message[]
 }
 
@@ -23,8 +23,8 @@ interface RoomEvents {
   'roomRemoved': undefined
 }
 
-export type RoomEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved'
-export interface RoomUpdate<E extends keyof RoomEvents> {
+export type RoomEventType = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved'
+export interface RoomEvent<E extends keyof RoomEvents> {
   type: E,
   data: RoomEvents[E]
 }

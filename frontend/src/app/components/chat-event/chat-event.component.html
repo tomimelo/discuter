@@ -1,0 +1,6 @@
+<app-message *ngIf="simplifiedEvent.type === 'message' else badge" [message]="simplifiedEvent.data"></app-message>
+<ng-template #badge>
+  <div class="badge-wrapper">
+    <tui-badge [value]="simplifiedEvent.label || ''" status="custom"></tui-badge>
+  </div>
+</ng-template>

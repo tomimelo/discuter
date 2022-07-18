@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
-import { Room, RoomEvent, RoomSettings, RoomUpdate } from '../types/room';
+import { Room, RoomEventType, RoomSettings, RoomEvent } from '../types/room';
 import { ApiService } from './api.service';
 import { TwilioService } from './twilio.service';
 
@@ -12,7 +12,7 @@ import { TwilioService } from './twilio.service';
   providedIn: 'root'
 })
 export class RoomService {
-  public onChanges = new Subject<RoomUpdate<RoomEvent>>()
+  public onChanges = new Subject<RoomEvent<RoomEventType>>()
   private room$: BehaviorSubject<Room | null> = new BehaviorSubject<Room | null>(null)
   private defaultRoomSettings: RoomSettings = {
     sounds: {
@@ -166,7 +166,8 @@ export class RoomService {
 
   private createParticipant(participant: TwilioParticipant): Participant {
     return {
-      username: participant.identity!
+      username: participant.identity!,
+      dateCreated: participant.dateCreated!
     }
   }
 
@@ -177,5 +178,22 @@ export class RoomService {
       dateCreated: message.dateCreated!,
       isOwn: message.author === this.twilioService.getUserIdentity()
     }
+  }
+
+  private buildEvents(participants: Participant[], messages: Message[]): RoomEvent<'messageAdded' | 'participantJoined'>[] {
+    const messageEvents = messages.map(message => {
+      return {
+        type: 'messageAdded',
+        data: message
+      }
+    })
+    const participantEvents = participants.filter(participant => participant.username !== this.twilioService.getUserIdentity()).map(participant => {
+      return {
+        type: 'participantJoined',
+        data: participant
+      }
+    })
+    const mergedEvents = [...messageEvents, ...participantEvents]
+    return mergedEvents.sort((a, b) => a.data.dateCreated > b.data.dateCreated ? 1 : -1) as RoomEvent<'messageAdded' | 'participantJoined'>[]
   }
 }

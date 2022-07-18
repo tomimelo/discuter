@@ -1,3 +1,4 @@
 export interface Participant {
-  username: string
+  username: string,
+  dateCreated: Date
 }
