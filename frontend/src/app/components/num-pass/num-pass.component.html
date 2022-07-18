@@ -1,7 +1,7 @@
 <div class="numpass-wrapper">
   <div class="input-wrapper" *ngFor="let inputPlaceholder of inputsPlaceholder; let i=index" >
-    <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronUp" (click)="incrementDigit(i, 1)"></button>
-    <input #input (keydown)="onKeyDown($event, i)" (paste)="onPaste($event)" [value]="inputPlaceholder"/>
-    <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronDown" (click)="incrementDigit(i, -1)"></button>
+    <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronUp" (click)="incrementDigit(i, 1)" [disabled]="disabled"></button>
+    <input #input (keydown)="onKeyDown($event, i)" (paste)="onPaste($event)" [value]="inputPlaceholder" [disabled]="disabled"/>
+    <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronDown" (click)="incrementDigit(i, -1)" [disabled]="disabled"></button>
   </div>
 </div>

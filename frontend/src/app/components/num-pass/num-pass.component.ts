@@ -12,6 +12,7 @@ export class NumPassComponent {
     this._digits = value
     this.setDigitsPlaceholders(value)
   }
+  @Input() disabled: boolean = false
   private _digits: number = 3
 
   @Output() onDigitsChange = new EventEmitter<string>()
@@ -42,6 +43,10 @@ export class NumPassComponent {
     event.preventDefault()
     const input = event.target
     const pressedKey = event.key
+    if (this.isEnterKey(event)) {
+      this.onDigitsComplete.emit(this.getDigitsValue())
+      return
+    }
     if (this.isBackspaceKey(event)) {
       this.setInputValue(index, "")
       const previousInput = this.inputsList.get(index - 1)
@@ -55,9 +60,6 @@ export class NumPassComponent {
     const nextInput = this.inputsList.get(index + 1)
     if (nextInput) {
       nextInput.nativeElement.focus()
-    } else {
-      input.blur()
-      this.onDigitsComplete.emit(this.getDigitsValue())
     }
   }
 
@@ -73,6 +75,10 @@ export class NumPassComponent {
 
   private isBackspaceKey(event: any): boolean {
     return (event.key && event.key.toLowerCase() === 'backspace') || (event.keyCode && event.keyCode === 8);
+  }
+
+  private isEnterKey(event: any): boolean {
+    return (event.key && event.key.toLowerCase() === 'enter') || (event.keyCode && event.keyCode === 13);
   }
 
   private setDigitsPlaceholders(length: number) {
