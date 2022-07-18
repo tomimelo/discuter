@@ -1,6 +1,12 @@
 <app-message *ngIf="simplifiedEvent.type === 'message' else badge" [message]="simplifiedEvent.data"></app-message>
 <ng-template #badge>
   <div class="badge-wrapper">
-    <tui-badge [value]="simplifiedEvent.label || ''" status="custom"></tui-badge>
+    <tui-badge [value]="simplifiedEvent.label || ''" status="custom" [tuiHint]="simplifiedEvent.type === 'joined' && simplifiedEvent.data.length >= 4 ? participantsList : null" tuiHintMode="onDark" [tuiHintShowDelay]="200"></tui-badge>
+  </div>
+</ng-template>
+
+<ng-template #participantsList>
+  <div class="tooltip-wrapper">
+    <p>{{simplifiedEvent.data | join:'username'}}</p>
   </div>
 </ng-template>

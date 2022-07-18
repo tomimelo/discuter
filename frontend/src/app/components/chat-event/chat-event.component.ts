@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ChatEvent } from 'src/app/types/chat';
-import { Message } from 'src/app/types/message';
 import { Participant } from 'src/app/types/participant';
 
 interface SimplifiedEvent {
