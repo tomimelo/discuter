@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -8,7 +8,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class MessagerComponent implements OnInit {
 
-  @Output() onSend = new EventEmitter<string>();
+  @Output() onSend = new EventEmitter<string>()
+  @Input() maxLength: number = 1500
 
   public messageForm = new FormGroup({
     text: new FormControl('', Validators.required)
@@ -27,7 +28,7 @@ export class MessagerComponent implements OnInit {
     if (this.textControl.value.trim() === '') {
       this.textControl.setValue('')
     }
-    if (this.messageForm.invalid) return
+    if (this.messageForm.invalid || this.textControl.value.length >= this.maxLength) return
     this.onSend.emit(this.messageForm.value.text)
     this.messageForm.reset({ text: '' })
   }

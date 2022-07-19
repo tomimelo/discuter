@@ -1,15 +1,18 @@
 <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-  <tui-input formControlName="text" tuiTextfieldSize="s">
-    Type a message...
-    <input tuiTextfield autocomplete="off" />
-  </tui-input>
-  <button
-    tuiIconButton
-    type="submit"
-    size="s"
-    [icon]="sendIcon"
-    [disabled]="messageForm.invalid"
-    ></button>
+  <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length >= maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
+  <div class="input-wrapper">
+    <tui-input formControlName="text" tuiTextfieldSize="s">
+      Type a message...
+      <input tuiTextfield autocomplete="off" />
+    </tui-input>
+    <button
+      tuiIconButton
+      type="submit"
+      size="s"
+      [icon]="sendIcon"
+      [disabled]="messageForm.invalid || messageForm.value.text.length >= maxLength"
+      ></button>
+  </div>
 </form>
 
 <ng-template #sendIcon>
