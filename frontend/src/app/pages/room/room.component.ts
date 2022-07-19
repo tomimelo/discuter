@@ -256,10 +256,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private buildEvents(room: Room | null): ChatEvent[] {
+    //I'm not proud of this method. Don't judge me. Deadlines are coming.
     if (!room) return []
     const messageEvents: ChatEvent[] = room.messages.map(message => this.buildMessageEvent(message))
     const participantEvents: ChatEvent[] = room.participants
-      .filter(participant => participant.username !== this.user?.user_name)
       .map(participant => this.buildParticipantEvent(participant))
     const mergedEvents = [...messageEvents, ...participantEvents]
     return mergedEvents.sort((a, b) => a.dateCreated > b.dateCreated ? 1 : -1).reduce((events: ChatEvent[], event: ChatEvent, index) => {
