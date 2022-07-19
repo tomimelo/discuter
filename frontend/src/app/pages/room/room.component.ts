@@ -7,7 +7,7 @@ import { TuiAlertService, TuiDialogService, TuiNotification } from '@taiga-ui/co
 import { PolymorpheusComponent} from '@tinkoff/ng-polymorpheus';
 import { ParticipantsListComponent } from 'src/app/components/participants-list/participants-list.component';
 import { ConfirmDialogComponent, ConfirmDialogContext } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { Room, RoomEventType, RoomSettings } from 'src/app/types/room';
+import { Room, RoomSettings } from 'src/app/types/room';
 import { RoomService } from 'src/app/services/room.service';
 import { Message } from 'src/app/types/message';
 import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';

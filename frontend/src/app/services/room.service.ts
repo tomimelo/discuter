@@ -188,21 +188,4 @@ export class RoomService {
     const participant = await message.getParticipant()
     return this.createParticipant(participant)
   }
-
-  private buildEvents(participants: Participant[], messages: Message[]): RoomEvent<'messageAdded' | 'participantJoined'>[] {
-    const messageEvents = messages.map(message => {
-      return {
-        type: 'messageAdded',
-        data: message
-      }
-    })
-    const participantEvents = participants.filter(participant => participant.username !== this.twilioService.getUserIdentity()).map(participant => {
-      return {
-        type: 'participantJoined',
-        data: participant
-      }
-    })
-    const mergedEvents = [...messageEvents, ...participantEvents]
-    return mergedEvents.sort((a, b) => a.data.dateCreated > b.data.dateCreated ? 1 : -1) as RoomEvent<'messageAdded' | 'participantJoined'>[]
-  }
 }
