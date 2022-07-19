@@ -97,11 +97,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   public async deleteRoom() {
     if (!this.room || !this.room.isOwn) return
     this.showConfirmDialog({
-      message: 'Are you sure you want to delete this room?',
+      message: 'Are you sure you want to delete this room? All participants will be kicked',
       confirmText: 'Delete'
     }).pipe(takeUntil(this.destroy$)).subscribe(async confirmation => {
       if (confirmation) {
         await this.roomService.deleteRoom(this.room!.uniqueName)
+        this.alertService.open('Room successfully deleted', {autoClose: true, hasIcon: true, status: TuiNotification.Info}).subscribe()
         this.router.navigateByUrl('/home')
       }
     })

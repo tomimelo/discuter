@@ -22,7 +22,7 @@
 <ng-template #moreOptions>
   <div class="options-menu-wrapper">
     <tui-data-list>
-      <button tuiOption (click)="abandonRoom()">
+      <button tuiOption (click)="abandonRoom()" *ngIf="!room?.isOwn">
         <tui-svg src="tuiIconLogoutLarge"></tui-svg>
         Leave room
       </button>
