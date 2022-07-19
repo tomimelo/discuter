@@ -168,7 +168,6 @@ export class TwilioService {
       const user = this.supabaseService.getUser()
       if (!user || !participant) return
       const {avatar_url} = user.user_metadata
-      console.log(avatar_url);
       await participant.updateAttributes({
         avatar_url: avatar_url || null,
       })
