@@ -1,17 +1,30 @@
 :host {
   width: 100%;
-  height: 50px;
   padding: 5px 10px;
   display: flex;
 }
 
 form {
   width: 100%;
-  display: flex;
-  gap: .5em;
-  align-items: center;
 
-  tui-input {
+  .input-wrapper {
     width: 100%;
+    display: flex;
+    gap: .5em;
+    align-items: center;
+  
+    tui-input {
+      width: 100%;
+    }
+  }
+
+  .length-indicator {
+    display: block;
+    padding: 5px;
+    font-size: 10px;
+
+    &.limit-reached {
+      color: red;
+    }
   }
 }
