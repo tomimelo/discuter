@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client, Conversation, Message, Participant, State } from '@twilio/conversations';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ApiService } from './api.service';
+import { SupabaseService } from './supabase.service';
 
 interface ConversationEvents {
   'messageAdded': Message,
@@ -26,7 +27,7 @@ export class TwilioService {
   private conversation$: BehaviorSubject<Conversation | null> = new BehaviorSubject<Conversation | null>(null)
   public onConversationEvent = new Subject<ConversationUpdate<ConversationEvent>>()
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private supabaseService: SupabaseService) { }
 
   public async joinRoom(room: string): Promise<void> {
     try {
@@ -34,6 +35,7 @@ export class TwilioService {
       if (conversation.status !== 'joined') {
         await conversation.join()
       }
+      await this.setupParticipant(conversation)
       this.setConversation(conversation)
       this.listenOnConversation()
     } catch (error) {
@@ -147,9 +149,6 @@ export class TwilioService {
         client.on('stateChanged', async (state: State) => {
           if (state === 'initialized') {
             this.client = client
-            await this.client.user.updateAttributes({
-              'avatar_url': null
-            })
             resolve(this.client)
           }
           if (state === 'failed') {
@@ -161,6 +160,21 @@ export class TwilioService {
         reject(err)
       }})
     })
+  }
+
+  private async setupParticipant(conversation: Conversation): Promise<void> {
+    try {
+      const participant = await conversation.getParticipantByIdentity(this.getUserIdentity())
+      const user = this.supabaseService.getUser()
+      if (!user || !participant) return
+      const {avatar_url} = user.user_metadata
+      console.log(avatar_url);
+      await participant.updateAttributes({
+        avatar_url: avatar_url || null,
+      })
+    } catch (error) {
+      return
+    }
   }
 
   private async getConversationByUniqueName(uniqueName: string): Promise<Conversation | null> {

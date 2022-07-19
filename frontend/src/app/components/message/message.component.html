@@ -1,8 +1,8 @@
 <div class="message" [class.own-message]="message.isOwn">
-  <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="message.author || ''"></tui-avatar>
+  <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="message.author.username" [avatarUrl]="message.author.avatarUrl"></tui-avatar>
   <div class="message-content">
     <div class="message-header">
-      <span class="message-author">{{message.isOwn ? 'You' : message.author}}</span>
+      <span class="message-author">{{message.isOwn ? 'You' : message.author.username}}</span>
       <span class="message-time">{{message.dateCreated! | time}}</span>
     </div>
     <div class="message-body">

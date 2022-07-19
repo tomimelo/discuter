@@ -12,7 +12,7 @@
   <ul class="participants-list">
     <li *ngFor="let participant of room.participants" class="participants-list-item">
       <div class="user-info">
-        <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.username || ''"></tui-avatar>
+        <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.username" [avatarUrl]="participant.avatarUrl"></tui-avatar>
         <span>{{participant.username}}</span>
       </div>
       <div class="user-actions">
