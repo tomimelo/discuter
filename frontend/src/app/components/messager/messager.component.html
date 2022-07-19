@@ -1,5 +1,5 @@
 <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-  <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length >= maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
+  <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length > maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
   <div class="input-wrapper">
     <tui-input formControlName="text" tuiTextfieldSize="s">
       Type a message...
@@ -10,7 +10,7 @@
       type="submit"
       size="s"
       [icon]="sendIcon"
-      [disabled]="messageForm.invalid || messageForm.value.text.length >= maxLength"
+      [disabled]="messageForm.invalid || messageForm.value.text.length > maxLength"
       ></button>
   </div>
 </form>

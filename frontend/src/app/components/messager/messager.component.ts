@@ -28,7 +28,7 @@ export class MessagerComponent implements OnInit {
     if (this.textControl.value.trim() === '') {
       this.textControl.setValue('')
     }
-    if (this.messageForm.invalid || this.textControl.value.length >= this.maxLength) return
+    if (this.messageForm.invalid || this.textControl.value.length > this.maxLength) return
     this.onSend.emit(this.messageForm.value.text)
     this.messageForm.reset({ text: '' })
   }
