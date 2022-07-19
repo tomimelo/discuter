@@ -99,12 +99,12 @@ export class RoomService {
   }
 
   private listenOnConversationEvents(): void {
-    this.twilioService.onConversationEvent.subscribe(event => {
+    this.twilioService.onConversationEvent.subscribe(async event => {
       switch (event.type) {
         case 'messageAdded':
           this.onChanges.next({
             type: event.type,
-            data: this.createMessage(event.data as TwilioMessage)
+            data: await this.createMessage(event.data as TwilioMessage)
           })
           break
         case 'participantJoined':
@@ -160,24 +160,33 @@ export class RoomService {
   }
 
   private async setMessages(conversation: Conversation): Promise<Message[]> {
-    const messages = await conversation.getMessages()
-    return messages.items.map(message => this.createMessage(message))
+    const paginatedMessages = await conversation.getMessages()
+    const messages = await Promise.all(paginatedMessages.items.map(message => this.createMessage(message)))
+    return messages.sort((a, b) => a.dateCreated > b.dateCreated ? 1 : -1)
   }
 
   private createParticipant(participant: TwilioParticipant): Participant {
+    const jsonAttributes = JSON.parse(JSON.stringify(participant.attributes))
     return {
       username: participant.identity!,
-      dateCreated: participant.dateCreated!
+      dateCreated: participant.dateCreated!,
+      avatarUrl: jsonAttributes.avatar_url || null
     }
   }
 
-  private createMessage(message: TwilioMessage): Message {
+  private async createMessage(message: TwilioMessage): Promise<Message> {
+    const participant = await this.getParticipantFromMessage(message)
     return {
-      author: message.author || '',
+      author: participant,
       body: message.body,
       dateCreated: message.dateCreated!,
       isOwn: message.author === this.twilioService.getUserIdentity()
     }
+  }
+
+  private async getParticipantFromMessage(message: TwilioMessage): Promise<Participant> {
+    const participant = await message.getParticipant()
+    return this.createParticipant(participant)
   }
 
   private buildEvents(participants: Participant[], messages: Message[]): RoomEvent<'messageAdded' | 'participantJoined'>[] {

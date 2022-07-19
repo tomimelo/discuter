@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createClient, Session, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, Session, SupabaseClient, User } from '@supabase/supabase-js';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -45,6 +45,10 @@ export class SupabaseService {
 
   public getSession(): Session | null {
     return this.supabase.auth.session()
+  }
+
+  public getUser(): User | null {
+    return this.supabase.auth.user()
   }
 
   private getSupabaseClient(): SupabaseClient {
