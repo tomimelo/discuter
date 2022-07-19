@@ -1,4 +1,4 @@
-<h2>Participants</h2>
+<h2>Participants ({{room.participants.length}})</h2>
 <form *ngIf="room.isOwn" class="invite-form" [formGroup]="inviteForm" (ngSubmit)="inviteParticipant()" >
   <tui-input formControlName="identity" tuiTextfieldSize="s">
     Invite participant by username
