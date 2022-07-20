@@ -1,4 +1,5 @@
 $locked-color: #ff5153;
+$disabled-color: #6d6d6d;
 $unlocking-color: #949494;
 $unlocked-color: var(--tui-accent);
 
@@ -96,6 +97,19 @@ $unlocked-color: var(--tui-accent);
     border-color: $unlocking-color;
     animation: unlocking 500ms;
     animation-iteration-count: infinite;
+  }
+}
+
+.lock.disabled {
+  border-color: $disabled-color;
+  cursor: default;
+
+  &:after {
+    background: $disabled-color;
+  }
+
+  &:before {
+    border-color: $disabled-color;
   }
 }
 

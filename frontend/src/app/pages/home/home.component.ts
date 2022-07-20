@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private selectedRoom: string | null = '00000';
   public joining: boolean = false;
   public lockUnlocked: boolean = false;
+  public isRoomCodeValid: boolean = true;
 
   constructor(private router: Router, 
               private authService: AuthService, 
@@ -59,7 +60,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public async joinRoom() {
     try {
-      if (!this.selectedRoom || this.joining) return
+      if (!this.selectedRoom || this.joining || !this.isRoomCodeValid) return
       this.joining = true;
       await this.roomService.joinRoom(this.selectedRoom)
       this.lockUnlocked = true
@@ -75,6 +76,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public onRoomValueChange(room: string) {
     this.selectedRoom = room
+    this.isRoomCodeValid = this.roomService.isRoomCodeValid(room)
   }
 
   public async onRoomValueComplete(room: string) {

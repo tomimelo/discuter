@@ -40,7 +40,7 @@
       <h3>Enter room code</h3>
       <app-num-pass [disabled]="joining" [digits]="5" (onDigitsChange)="onRoomValueChange($event)" (onDigitsComplete)="onRoomValueComplete($event)"></app-num-pass>
       <div class="lock-wrapper">
-        <span class="lock" tuiHint="Join room" (click)="joinRoom()" [ngClass]="{'unlocking': joining, 'unlocked': lockUnlocked}"></span>
+        <span class="lock" tuiHint="Join room" (click)="joinRoom()" [ngClass]="{'unlocking': joining, 'unlocked': lockUnlocked, 'disabled': !isRoomCodeValid}"></span>
       </div>
       <tui-loader [showLoader]="joining" [inheritColor]="true">
       </tui-loader>
