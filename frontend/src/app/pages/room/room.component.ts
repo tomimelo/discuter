@@ -25,7 +25,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public events: ChatEvent[] = []
   public loading: boolean = true
   public isOptionsMenuOpen: boolean = false
-  public participantsTyping: Participant[] = []
+  public participantsTyping: string[] = []
   private soundsSettings: RoomSettings['sounds'] = {
     newMessage: true,
     userJoin: true
@@ -188,11 +188,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private onParticipantStartedTyping(participant: Participant) {
-    this.participantsTyping = [...this.participantsTyping, participant]
+    this.participantsTyping = [...new Set([...this.participantsTyping, participant.username])]
   }
 
   private onParticipantEndedTyping(participant: Participant) {
-    this.participantsTyping = this.participantsTyping.filter(p => p.username !== participant.username)
+    this.participantsTyping = this.participantsTyping.filter(p => p !== participant.username)
   }
 
   private addEvent(type: ChatEventType, data: Message | Participant) {
