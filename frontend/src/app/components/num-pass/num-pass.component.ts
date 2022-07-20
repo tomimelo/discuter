@@ -18,6 +18,7 @@ export class NumPassComponent {
   @Output() onDigitsChange = new EventEmitter<string>()
   @Output() onDigitsComplete = new EventEmitter<string>()
   public inputsPlaceholder: string[] = new Array(this._digits).fill('0')
+  public hasErrors: boolean = false
 
   constructor() {
     this.setDigitsPlaceholders(this._digits)
@@ -66,6 +67,7 @@ export class NumPassComponent {
   private setInputValue(index: number, value: string) {
     this.inputsList.get(index)!.nativeElement.value = value
     this.onDigitsChange.emit(this.getDigitsValue())
+    this.checkErrors()
   }
 
   private isValidKey(key: string): boolean {
@@ -87,5 +89,17 @@ export class NumPassComponent {
 
   private getDigitsValue(): string {
     return this.inputsList.map(input => input.nativeElement.value).join('')
+  }
+
+  private isInputEmpty(index: number): boolean {
+    return this.inputsList.get(index)!.nativeElement.value === ''
+  }
+
+  private checkErrors() {
+    if (this.inputsList.some((input, index) => this.isInputEmpty(index))) {
+      this.hasErrors = true
+    } else {
+      this.hasErrors = false
+    }
   }
 }
