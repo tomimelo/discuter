@@ -24,5 +24,5 @@
       </tui-scrollbar>
     </ng-template>
   </div>
-  <app-messager [class.tui-skeleton]="skeleton" (onSend)="sendMessage($event)"></app-messager>
+  <app-messager [class.tui-skeleton]="skeleton" (onSend)="sendMessage($event)" (typing)="onTyping()"></app-messager>
 </div>

@@ -15,7 +15,7 @@
         </div>
       </div>
     </app-navbar>
-    <app-chat [skeleton]="loading" [events]="events" (onSend)="sendMessage($event)"></app-chat>
+    <app-chat [skeleton]="loading" [events]="events" (onSend)="sendMessage($event)" [participantsTyping]="participantsTyping"></app-chat>
   </div>
 </div>
 

@@ -22,10 +22,12 @@ export interface RoomEvents {
   'participantJoined': Participant,
   'participantLeft': Participant,
   'roomRemoved': undefined,
-  'roomLinkUpdated': string | null
+  'roomLinkUpdated': string | null,
+  'typingStarted': Participant,
+  'typingEnded': Participant
 }
 
-export type RoomEventType = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved' | 'roomLinkUpdated'
+export type RoomEventType = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved' | 'roomLinkUpdated' | 'typingStarted' | 'typingEnded'
 export interface RoomEvent<E extends keyof RoomEvents> {
   type: E,
   data: RoomEvents[E]

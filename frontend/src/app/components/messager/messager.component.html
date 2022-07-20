@@ -3,7 +3,7 @@
   <div class="input-wrapper">
     <tui-input formControlName="text" tuiTextfieldSize="s">
       Type a message...
-      <input tuiTextfield autocomplete="off" />
+      <input tuiTextfield autocomplete="off" (keydown)="onKeyDown($event)"/>
     </tui-input>
     <button
       tuiIconButton

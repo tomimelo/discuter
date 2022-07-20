@@ -9,6 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class MessagerComponent implements OnInit {
 
   @Output() onSend = new EventEmitter<string>()
+  @Output() typing = new EventEmitter<void>()
   @Input() maxLength: number = 1500
 
   public messageForm = new FormGroup({
@@ -31,6 +32,16 @@ export class MessagerComponent implements OnInit {
     if (this.messageForm.invalid || this.textControl.value.length > this.maxLength) return
     this.onSend.emit(this.messageForm.value.text)
     this.messageForm.reset({ text: '' })
+  }
+
+  public onKeyDown(event: KeyboardEvent) {
+    if (!this.isEnterKey(event)) {
+      this.typing.emit()
+    }
+  }
+
+  private isEnterKey(event: KeyboardEvent) {
+    return event.key === 'Enter' || event.keyCode === 13
   }
 
 }

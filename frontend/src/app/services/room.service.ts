@@ -93,6 +93,10 @@ export class RoomService {
     return /^\d{5}$/g.test(roomCode)
   }
 
+  public typing(): void {
+    this.twilioService.typing()
+  }
+
   private listenConversation(): void {
     this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
       await this.updateRoom(conversation)
@@ -128,6 +132,18 @@ export class RoomService {
           break
         case 'updated':
           this.onConversationUpdated(event.data as ConversationEvents['updated'])
+          break
+        case 'typingStarted':
+          this.onChanges.next({
+            type: event.type,
+            data: this.createParticipant(event.data as TwilioParticipant)
+          })
+          break
+        case 'typingEnded':
+          this.onChanges.next({
+            type: event.type,
+            data: this.createParticipant(event.data as TwilioParticipant)
+          })
           break
       }
     })

@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } fro
 import { filter, Subject, takeUntil } from 'rxjs';
 import { RoomService } from 'src/app/services/room.service';
 import { ChatEvent } from 'src/app/types/chat';
+import { Participant } from 'src/app/types/participant';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -18,9 +19,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     }, 1000)
   }
   @Input() skeleton: boolean = false
+  @Input() set participantsTyping(participants: Participant[]) {
+    this.setTypingMessage(participants)
+  }
   @Output() onSend = new EventEmitter<string>();
   public isScrollOnBottom: boolean = true
   public unreadMessages: number = 0
+  public typingMessage: string | null = null
   private messagesContainer: HTMLElement | null = null;
   private scrollTimeout: any = 0
   private destroy$ = new Subject<void>()
@@ -61,6 +66,14 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
     this.isScrollOnBottom = true
     this.unreadMessages = 0
+  }
+
+  public onTyping() {
+    this.roomService.typing()
+  }
+
+  private setTypingMessage(participants: Participant[]) {
+    this.typingMessage = ''
   }
 
   private getMessagesContainer(): void {
