@@ -30,8 +30,8 @@ export class InviteComponent implements OnInit {
       this.handleError()
       return
     }
-    this.apiService.joinRoomById(roomId).subscribe({next: async room => {
-      this.router.navigateByUrl(`/room/${room.unique_name}`)
+    this.apiService.joinRoomById(roomId).subscribe({next: async roomLink => {
+      this.router.navigateByUrl(`/room/${roomLink.room_name}`)
     }, error: error => {
       if (error.status === 404) {
         this.handleError('Room not found')

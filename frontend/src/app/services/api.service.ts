@@ -28,7 +28,7 @@ export class ApiService {
     const jwt = this.getJWT()
     return this.http.get(`${this.roomLinksRoutesPath}/link`,  { params, headers: this.getAuthorizationHeader(jwt) })
       .pipe(
-        map((res: any) => res.room)
+        map((res: any) => res.link)
       );
   }
 
@@ -37,7 +37,7 @@ export class ApiService {
     const jwt = this.getJWT()
     return this.http.get(`${this.roomLinksRoutesPath}/link`,  { params, headers: this.getAuthorizationHeader(jwt) })
       .pipe(
-        map((res: any) => res.room)
+        map((res: any) => res.link)
       );
   }
 
@@ -54,7 +54,7 @@ export class ApiService {
     const jwt = this.getJWT()
     return this.http.post(`${this.roomLinksRoutesPath}/link`,  { uniqueName }, { headers: this.getAuthorizationHeader(jwt) })
       .pipe(
-        map((res: any) => res.room)
+        map((res: any) => res.link)
       );
   }
 
@@ -62,7 +62,7 @@ export class ApiService {
     const jwt = this.getJWT()
     return this.http.delete(`${this.roomLinksRoutesPath}/link/${uniqueName}`, { headers: this.getAuthorizationHeader(jwt) })
       .pipe(
-        map((res: any) => res.room)
+        map((res: any) => res.link)
       );
   }
 
@@ -70,7 +70,7 @@ export class ApiService {
     const jwt = this.getJWT()
     return this.http.get(`${this.roomLinksRoutesPath}/join/${id}`, { headers: this.getAuthorizationHeader(jwt) })
       .pipe(
-        map((res: any) => res.room)
+        map((res: any) => res.link)
       );
   }
 

@@ -13,7 +13,7 @@ export class AdminController extends BaseController {
     try {
       this.logger.info('Wiping out database')
       await Promise.all([
-        this.supabaseService.deleteAllRooms(),
+        this.supabaseService.deleteAllRoomLinks(),
         this.twilioClient.removeAllConversations()
       ])
       this.logger.info('Database wiped out')

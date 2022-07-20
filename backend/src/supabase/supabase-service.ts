@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import { Room } from '../room/room'
+import { RoomLink } from '../room/room'
 import { CustomError } from '../utils/custom-error'
 import { SupabaseConfig } from './supabase-config'
 
@@ -9,40 +9,40 @@ export class SupabaseService {
     this.client = createClient(this.config.url, this.config.serviceRole)
   }
 
-  public async getRooms (): Promise<ReadonlyArray<Room>> {
-    const { data: rooms } = await this.client.from<Room>('rooms').select('*')
+  public async getRoomLinks (): Promise<ReadonlyArray<RoomLink>> {
+    const { data: rooms } = await this.client.from<RoomLink>('room_links').select('*')
     return rooms || []
   }
 
-  public async getRoomById (id: string): Promise<Room | null> {
-    const result = await this.client.from<Room>('rooms').select('*').eq('id', id)
+  public async getRoomLinkByLinkId (id: string): Promise<RoomLink | null> {
+    const result = await this.client.from<RoomLink>('room_links').select('*').eq('link_id', id)
     if (result.error) {
       if (result.error.code === '22P02') return null
-      throw new CustomError('Error getting room')
+      throw new CustomError('Error getting room link')
     }
     return result.data.length ? result.data[0] : null
   }
 
-  public async getRoomByUniqueName (uniqueName: string): Promise<Room | null> {
-    const result = await this.client.from<Room>('rooms').select('*').eq('unique_name', uniqueName)
-    if (result.error) throw new CustomError('Error getting room')
+  public async getRoomLinkByName (roomName: string): Promise<RoomLink | null> {
+    const result = await this.client.from<RoomLink>('room_links').select('*').eq('room_name', roomName)
+    if (result.error) throw new CustomError('Error getting room link')
     return result.data.length ? result.data[0] : null
   }
 
-  public async createRoom (room: Pick<Room, 'unique_name' | 'user'>): Promise<Room> {
-    const result = await this.client.from<Room>('rooms').insert(room)
-    if (result.error) throw new CustomError('Error creating room')
+  public async createRoomLink (room: Pick<RoomLink, 'room_name' | 'created_by'>): Promise<RoomLink> {
+    const result = await this.client.from<RoomLink>('room_links').insert(room)
+    if (result.error) throw new CustomError('Error creating room link')
     return result.data[0]
   }
 
-  public async deleteRoom (uniqueName: string): Promise<Room> {
-    const result = await this.client.from<Room>('rooms').delete().eq('unique_name', uniqueName)
-    if (result.error) throw new CustomError('Error deleting room')
+  public async deleteRoomLink (roomName: string): Promise<RoomLink> {
+    const result = await this.client.from<RoomLink>('room_links').delete().eq('room_name', roomName)
+    if (result.error) throw new CustomError('Error deleting room link')
     return result.data[0]
   }
 
-  public async deleteAllRooms (): Promise<void> {
-    const rooms = await this.getRooms()
-    await Promise.all(rooms.map(room => this.deleteRoom(room.unique_name)))
+  public async deleteAllRoomLinks (): Promise<void> {
+    const roomLinks = await this.getRoomLinks()
+    await Promise.all(roomLinks.map(roomLink => this.deleteRoomLink(roomLink.room_name)))
   }
 }

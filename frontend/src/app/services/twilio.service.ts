@@ -193,8 +193,8 @@ export class TwilioService {
     const client = await this.getClient()
     return new Promise<Conversation>((resolve, reject) => {
       this.apiService.createRoomLink(uniqueName).subscribe({next: async roomLink => {
-        const {id} = roomLink
-        const conversationCreated = await client.createConversation({uniqueName, attributes: {roomLinkId: id}})
+        const {link_id} = roomLink
+        const conversationCreated = await client.createConversation({uniqueName, attributes: {roomLinkId: link_id}})
         resolve(conversationCreated)
       }, error: err => {
         reject(err)

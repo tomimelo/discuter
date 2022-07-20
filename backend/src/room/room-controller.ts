@@ -20,15 +20,15 @@ export class RoomController extends BaseController {
       if (!uniqueName || !id) throw new CustomError('Missing required parameters', 400)
       if (uniqueName && id) throw new CustomError('Only one of uniqueName or id can be specified', 400)
 
-      const room = uniqueName
-        ? await this.supabaseService.getRoomByUniqueName(uniqueName as string)
-        : await this.supabaseService.getRoomById(id as string)
+      const link = uniqueName
+        ? await this.supabaseService.getRoomLinkByName(uniqueName as string)
+        : await this.supabaseService.getRoomLinkByLinkId(id as string)
 
-      if (room && room.user !== user.user_name) throw new CustomError('You do not have permission to access this room', 401)
+      if (link && link.created_by !== user.user_name) throw new CustomError('You do not have permission to access this room', 401)
 
       res.json({
         ok: true,
-        room
+        link
       })
     } catch (error) {
       this.handleError(error, next)
@@ -42,17 +42,17 @@ export class RoomController extends BaseController {
 
       if (!uniqueName) throw new CustomError('You need to specify a unique name', 400)
 
-      const roomFound = await this.supabaseService.getRoomByUniqueName(uniqueName)
-      if (roomFound) throw new CustomError('Room already exists', 400)
+      const linkFound = await this.supabaseService.getRoomLinkByName(uniqueName)
+      if (linkFound) throw new CustomError('Room link already exists', 400)
 
-      const createdRoom = await this.supabaseService.createRoom({
-        unique_name: uniqueName,
-        user: user.user_name
+      const createdLink = await this.supabaseService.createRoomLink({
+        room_name: uniqueName,
+        created_by: user.user_name
       })
 
       res.json({
         ok: true,
-        room: createdRoom
+        link: createdLink
       })
     } catch (error) {
       this.handleError(error, next)
@@ -66,15 +66,15 @@ export class RoomController extends BaseController {
 
       if (!uniqueName) throw new CustomError('You need to specify a unique name', 400)
 
-      const roomFound = await this.supabaseService.getRoomByUniqueName(uniqueName)
-      if (!roomFound) throw new CustomError('Room does not exist')
-      if (roomFound && roomFound.user !== user.user_name) throw new CustomError('You do not have permission to delete this room', 401)
+      const linkFound = await this.supabaseService.getRoomLinkByName(uniqueName)
+      if (!linkFound) throw new CustomError('Room does not exist')
+      if (linkFound && linkFound.created_by !== user.user_name) throw new CustomError('You do not have permission to delete this room link', 401)
 
-      const deletedRoom = await this.supabaseService.deleteRoom(uniqueName)
+      const deletedLink = await this.supabaseService.deleteRoomLink(uniqueName)
 
       res.json({
         ok: true,
-        room: deletedRoom
+        link: deletedLink
       })
     } catch (error) {
       this.handleError(error, next)
@@ -88,10 +88,10 @@ export class RoomController extends BaseController {
 
       if (!id) throw new CustomError('You need to specify an id', 400)
 
-      const roomFound = await this.supabaseService.getRoomById(id)
-      if (!roomFound) throw new CustomError('Room does not exist', 404)
+      const linkFound = await this.supabaseService.getRoomLinkByLinkId(id)
+      if (!linkFound) throw new CustomError('Room link does not exist', 404)
 
-      await this.twilioClient.addUserToConversation(roomFound.unique_name, user.user_name).catch((error) => {
+      await this.twilioClient.addUserToConversation(linkFound.room_name, user.user_name).catch((error) => {
         this.logger.error(error.message)
         if (error.status === 404) {
           throw new CustomError('Conversation does not exist', 404)
@@ -105,7 +105,7 @@ export class RoomController extends BaseController {
 
       res.json({
         ok: true,
-        room: roomFound
+        link: linkFound
       })
     } catch (error: any) {
       this.logger.error(error.message)
