@@ -5,7 +5,10 @@
     <input tuiTextfield autocomplete="off" />
   </tui-input>
   <button tuiButton type="submit" size="s" [disabled]="inviteForm.invalid">Invite</button>
-  <button tuiIconButton tuiHint="Copy permanent invite link" type="button" size="s" icon="tuiIconLinkLarge" (click)="copyLink()"></button>
+  <div tuiGroup class="group" [collapsed]="false">
+    <button tuiIconButton tuiHint="Copy permanent invite link" type="button" size="s" icon="tuiIconLinkLarge" (click)="copyLink()"></button>
+    <button tuiIconButton tuiHint="Generate new invite link" type="button" size="s" icon="tuiIconRefreshLarge" [disabled]="true"></button>
+  </div>
 </form>
 <hr class="divisor">
 <tui-scrollbar class="mr">

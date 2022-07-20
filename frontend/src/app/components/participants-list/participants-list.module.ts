@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ParticipantsListComponent } from './participants-list.component';
 import { TuiAvatarModule, TuiInputModule } from '@taiga-ui/kit';
-import { TuiButtonModule, TuiHintModule, TuiTextfieldControllerModule, TuiScrollbarModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiHintModule, TuiTextfieldControllerModule, TuiScrollbarModule, TuiGroupModule } from '@taiga-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const TAIGA_MODULES = [
@@ -11,7 +11,8 @@ const TAIGA_MODULES = [
   TuiButtonModule,
   TuiHintModule,
   TuiAvatarModule,
-  TuiScrollbarModule
+  TuiScrollbarModule,
+  TuiGroupModule
 ]
 
 @NgModule({
