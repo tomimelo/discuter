@@ -12,9 +12,12 @@ export class AuthService implements OnDestroy {
   private destroy$ = new Subject<void>()
 
   constructor(private supabaseService: SupabaseService) {
-    this.supabaseService.onSignEvent.pipe(takeUntil(this.destroy$)).subscribe(({event, session}) => {
-      const user = this.getUserFromSession(session)
-      this.user$.next(user)
+    this.supabaseService.onSignEvent.pipe(takeUntil(this.destroy$)).subscribe((signEvent) => {
+      if (signEvent) {
+        const {session} = signEvent
+        const user = this.getUserFromSession(session)
+        this.user$.next(user)
+      }
     })
   }
 

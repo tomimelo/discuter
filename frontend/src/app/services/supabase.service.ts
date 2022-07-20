@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient, Session, SupabaseClient, User } from '@supabase/supabase-js';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 export interface SignEvent {
@@ -13,7 +13,7 @@ export interface SignEvent {
 })
 export class SupabaseService {
   private supabase: SupabaseClient
-  public onSignEvent = new Subject<SignEvent>()
+  public onSignEvent = new BehaviorSubject<SignEvent | null>(null)
 
   constructor() {
     this.supabase = this.getSupabaseClient();
