@@ -58,6 +58,14 @@ export class ApiService {
       );
   }
 
+  public updateRoomLink(uniqueName: string): Observable<RoomLink> {
+    const jwt = this.getJWT()
+    return this.http.put(`${this.roomLinksRoutesPath}/link/${uniqueName}`, {}, { headers: this.getAuthorizationHeader(jwt) })
+      .pipe(
+        map((res: any) => res.link)
+      );
+  }
+
   public deleteRoomLink(uniqueName: string): Observable<RoomLink> {
     const jwt = this.getJWT()
     return this.http.delete(`${this.roomLinksRoutesPath}/link/${uniqueName}`, { headers: this.getAuthorizationHeader(jwt) })

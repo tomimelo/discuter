@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Conversation, Message as TwilioMessage, Participant as TwilioParticipant } from '@twilio/conversations';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
 import { Room, RoomEventType, RoomSettings, RoomEvent } from '../types/room';
 import { ApiService } from './api.service';
-import { TwilioService } from './twilio.service';
+import { ConversationEvents, TwilioService } from './twilio.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,7 @@ export class RoomService {
     }
   }
   private settings$: BehaviorSubject<RoomSettings> = new BehaviorSubject<RoomSettings>(this.getSettings())
+  private destroy$ = new Subject<void>()
 
   constructor(private twilioService: TwilioService, private apiService: ApiService) {
     this.listenConversation()
@@ -93,13 +94,13 @@ export class RoomService {
   }
 
   private listenConversation(): void {
-    this.twilioService.getConversation().subscribe(async conversation => {
+    this.twilioService.getConversation().pipe(takeUntil(this.destroy$)).subscribe(async conversation => {
       await this.updateRoom(conversation)
     })
   }
 
   private listenOnConversationEvents(): void {
-    this.twilioService.onConversationEvent.subscribe(async event => {
+    this.twilioService.onConversationEvent.pipe(takeUntil(this.destroy$)).subscribe(async event => {
       switch (event.type) {
         case 'messageAdded':
           this.onChanges.next({
@@ -125,8 +126,21 @@ export class RoomService {
             data: undefined
           })
           break
+        case 'updated':
+          this.onConversationUpdated(event.data as ConversationEvents['updated'])
+          break
       }
     })
+  }
+
+  private async onConversationUpdated(data: ConversationEvents['updated']) {
+    await this.updateRoom(data.conversation)
+    if (data.updateReasons.includes('attributes')) {
+      this.onChanges.next({
+        type: 'roomLinkUpdated',
+        data: await this.getRoomLink(data.conversation),
+      })
+    }
   }
 
   private async updateRoom(conversation: Conversation | null): Promise<void> {

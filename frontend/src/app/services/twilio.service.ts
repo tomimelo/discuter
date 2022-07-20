@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Client, Conversation, Message, Participant, State } from '@twilio/conversations';
+import { Client, Conversation, ConversationUpdateReason, Message, Participant, State } from '@twilio/conversations';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { RoomLink } from '../types/room';
 import { ApiService } from './api.service';
 import { SupabaseService } from './supabase.service';
 
-interface ConversationEvents {
+export interface ConversationEvents {
   'messageAdded': Message,
   'participantJoined': Participant,
   'participantLeft': Participant,
-  'removed': Conversation
+  'removed': Conversation,
+  'updated': {
+    conversation: Conversation,
+    updateReasons: ConversationUpdateReason[]
+  }
 }
 
-export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'removed'
+export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'removed' | 'updated'
 export interface ConversationUpdate<E extends keyof ConversationEvents> {
   type: E,
   data: ConversationEvents[E]
@@ -107,7 +112,26 @@ export class TwilioService {
     return this.conversation?.status === 'joined'
   }
 
+  public async updateConversationLink(uniqueName: string): Promise<RoomLink> {
+    return new Promise<RoomLink>((resolve, reject) => {
+      if (!this.conversation) reject(new Error('Something went wrong, please try again'))
+      this.apiService.updateRoomLink(uniqueName).subscribe({next: async roomLink => {
+        const {link_id} = roomLink
+        await this.conversation?.updateAttributes({roomLinkId: link_id})
+        resolve(roomLink)
+      }, error: err => {
+        reject(err)
+      }})
+    })
+  }
+
   private listenOnConversation() {
+    this.conversation?.on('updated', update => {
+      this.onConversationEvent.next({
+        type: 'updated',
+        data: update
+      })
+    })
     this.conversation?.on('messageAdded', (message: Message) => {
       this.onConversationEvent.next({
         type: 'messageAdded',

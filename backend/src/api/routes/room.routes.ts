@@ -27,6 +27,13 @@ const createLink: MadRoute = {
   handler: roomController.createLink
 }
 
+const updateLink: MadRoute = {
+  method: MadRouteMethod.PUT,
+  path: '/link/:uniqueName',
+  middlewares: [verifyJWT(authService)],
+  handler: roomController.updateLink
+}
+
 const deleteLink: MadRoute = {
   method: MadRouteMethod.DELETE,
   path: '/link/:uniqueName',
@@ -44,7 +51,7 @@ const joinByLink: MadRoute = {
 const roomRouter = new MadRouter({
   basePath: '/rooms',
   name: 'Rooms',
-  handlers: [getLink, createLink, deleteLink, joinByLink]
+  handlers: [getLink, createLink, updateLink, deleteLink, joinByLink]
 })
 
 export default roomRouter

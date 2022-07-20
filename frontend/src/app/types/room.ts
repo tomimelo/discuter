@@ -17,14 +17,15 @@ export interface RoomLink {
   created_by: string
 }
 
-interface RoomEvents {
+export interface RoomEvents {
   'messageAdded': Message,
   'participantJoined': Participant,
   'participantLeft': Participant,
-  'roomRemoved': undefined
+  'roomRemoved': undefined,
+  'roomLinkUpdated': string | null
 }
 
-export type RoomEventType = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved'
+export type RoomEventType = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'roomRemoved' | 'roomLinkUpdated'
 export interface RoomEvent<E extends keyof RoomEvents> {
   type: E,
   data: RoomEvents[E]

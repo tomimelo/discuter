@@ -59,6 +59,28 @@ export class RoomController extends BaseController {
     }
   }
 
+  public async updateLink (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user: User = httpContext.get('user')
+      const { uniqueName } = req.params
+
+      if (!uniqueName) throw new CustomError('You need to specify a unique name', 400)
+
+      const linkFound = await this.supabaseService.getRoomLinkByName(uniqueName)
+      if (!linkFound) throw new CustomError('Room does not exist')
+      if (linkFound.created_by !== user.user_name) throw new CustomError('You do not have permission to update this room link', 401)
+
+      const updatedLink = await this.supabaseService.updateRoomLink(uniqueName)
+
+      res.json({
+        ok: true,
+        link: updatedLink
+      })
+    } catch (error) {
+      this.handleError(error, next)
+    }
+  }
+
   public async deleteLink (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const user: User = httpContext.get('user')
@@ -68,7 +90,7 @@ export class RoomController extends BaseController {
 
       const linkFound = await this.supabaseService.getRoomLinkByName(uniqueName)
       if (!linkFound) throw new CustomError('Room does not exist')
-      if (linkFound && linkFound.created_by !== user.user_name) throw new CustomError('You do not have permission to delete this room link', 401)
+      if (linkFound.created_by !== user.user_name) throw new CustomError('You do not have permission to delete this room link', 401)
 
       const deletedLink = await this.supabaseService.deleteRoomLink(uniqueName)
 
