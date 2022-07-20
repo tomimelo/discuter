@@ -1,0 +1,28 @@
+<div class="card">
+  <div class="card-header">
+    <h3>Your rooms</h3>
+  </div>
+  <div class="card-body">
+    <tui-loader *ngIf="loading" [showLoader]="true" [inheritColor]="true"></tui-loader>
+    <p *ngIf="!rooms.length && !loading">It seems that you haven't joined a room yet.</p>
+    <tui-scrollbar *ngIf="rooms.length && !loading" class="mr">
+      <ul class="rooms-list">
+        <li class="rooms-list-item" *ngFor="let room of rooms">
+          <span>{{room.uniqueName}}</span>
+          <div class="room-actions">
+            <div class="participants-wrapper" tuiHint="Participants">
+              {{room.participantsCount}}
+              <tui-svg src="tuiIconUsers"></tui-svg>
+            </div>
+            <a tuiIconButton 
+               tuiHint="Join room"
+               size="s"
+               [routerLink]="['/room', room.uniqueName]"
+               icon="tuiIconLoginLarge">
+            </a>
+          </div>
+        </li>
+      </ul>
+    </tui-scrollbar>
+  </div>
+</div>

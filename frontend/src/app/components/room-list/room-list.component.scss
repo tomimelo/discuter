@@ -1,0 +1,61 @@
+.card {
+  border-radius: 12px;
+  background-color: var(--darker);
+  overflow: hidden;
+  min-width: 300px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+
+  &-header {
+    background-color: var(--darkest);
+    padding: 10px;
+  }
+
+  &-body {
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    tui-loader {
+      aspect-ratio: 1;
+      width: 50px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+
+    tui-scrollbar {
+      width: 100%;
+      max-height: 110px;
+    }
+
+  }
+}
+
+.rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+  }
+}
+
+.room-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.participants-wrapper {
+  display: flex;
+  align-items: center;
+}

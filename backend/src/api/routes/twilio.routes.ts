@@ -14,17 +14,10 @@ const getAccessToken: MadRoute = {
   handler: twilioController.getAccessToken
 }
 
-const getRooms: MadRoute = {
-  method: MadRouteMethod.GET,
-  path: '/rooms',
-  middlewares: [verifyJWT(authService)],
-  handler: twilioController.getRooms
-}
-
 const twilioRouter = new MadRouter({
   basePath: '/twilio',
   name: 'Twilio',
-  handlers: [getAccessToken, getRooms]
+  handlers: [getAccessToken]
 })
 
 export default twilioRouter

@@ -10,6 +10,12 @@ export interface Room {
   messages: Message[]
 }
 
+export interface UserRoom {
+  uniqueName: string,
+  createdBy: string,
+  participantsCount: number
+}
+
 export interface RoomLink {
   id: number,
   link_id: string,
