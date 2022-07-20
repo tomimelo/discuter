@@ -1,6 +1,7 @@
 :host {
   background-color: #161616;
   width: 100%;
+  z-index: 1000;
 }
 
 :host-context(.align-left) .navbar-wrapper {
