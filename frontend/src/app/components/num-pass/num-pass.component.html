@@ -7,7 +7,8 @@
            (paste)="onPaste($event)" 
            [value]="inputPlaceholder" 
            [disabled]="disabled"
-           [class.has-error]="hasErrors"/>
+           [class.has-error]="hasErrors"
+           autocomplete="off"/>
     <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconChevronDown" (click)="incrementDigit(i, -1)" [disabled]="disabled"></button>
   </div>
 </div>
