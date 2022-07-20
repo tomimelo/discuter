@@ -68,8 +68,13 @@ $unlocked-color: var(--tui-accent);
 
 //Lock
 
+.lock-wrapper {
+  display: flex;
+  transform: scale(1.8);
+  margin-top: 50px;
+}
+
 .lock {
-  margin-top: 20px;
   width: 24px;
   height: 21px;
   border: 3px solid $locked-color;
