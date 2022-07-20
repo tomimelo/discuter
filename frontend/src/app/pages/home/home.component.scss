@@ -3,9 +3,17 @@ $disabled-color: #6d6d6d;
 $unlocking-color: #949494;
 $unlocked-color: var(--tui-accent);
 
+tui-scrollbar {
+  max-height: 100%;
+}
+
 :host {
   width: 100%;
   height: 100%;
+}
+
+.page-wrapper {
+  justify-content: flex-start;
 }
 
 .logo {
@@ -14,6 +22,7 @@ $unlocked-color: var(--tui-accent);
   align-items: center;
   justify-content: center;
   gap: 30px;
+  margin: 70px 0px 40px 0px;
 
   &-img {
     width: 150px;
@@ -23,7 +32,6 @@ $unlocked-color: var(--tui-accent);
     margin: 0;
   }
 
-  margin-bottom: 40px;
 }
 
 .avatar-button {
@@ -71,8 +79,8 @@ $unlocked-color: var(--tui-accent);
 
 .lock-wrapper {
   display: flex;
-  transform: scale(1.8);
-  margin-top: 50px;
+  transform: scale(1.4);
+  margin-top: 40px;
 }
 
 .lock {
