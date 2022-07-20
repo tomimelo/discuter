@@ -25,6 +25,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   public events: ChatEvent[] = []
   public loading: boolean = true
   public isOptionsMenuOpen: boolean = false
+  public participantsTyping: string[] = []
   private soundsSettings: RoomSettings['sounds'] = {
     newMessage: true,
     userJoin: true
@@ -147,6 +148,12 @@ export class RoomComponent implements OnInit, OnDestroy {
         case 'roomRemoved':
           this.onRoomRemoved()
           break
+        case 'typingStarted':
+          this.onParticipantStartedTyping(event.data as Participant)
+          break
+        case 'typingEnded':
+          this.onParticipantEndedTyping(event.data as Participant)
+          break
       }
     })
   }
@@ -178,6 +185,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.goBack()
       this.alertService.open('The room was removed by the host', {autoClose: true, hasIcon: true, status: TuiNotification.Warning}).subscribe()
     }
+  }
+
+  private onParticipantStartedTyping(participant: Participant) {
+    this.participantsTyping = [...new Set([...this.participantsTyping, participant.username])]
+  }
+
+  private onParticipantEndedTyping(participant: Participant) {
+    this.participantsTyping = this.participantsTyping.filter(p => p !== participant.username)
   }
 
   private addEvent(type: ChatEventType, data: Message | Participant) {

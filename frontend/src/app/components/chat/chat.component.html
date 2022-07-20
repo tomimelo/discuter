@@ -23,6 +23,9 @@
         <app-skeleton-message *ngFor="let skeletonMessage of skeletonMessages" [class.reversed-message]="skeletonMessage.reversed"></app-skeleton-message>
       </tui-scrollbar>
     </ng-template>
+    <div class="typing-indicator" *ngIf="typingMessage">
+      <span class="typing-indicator-message">{{typingMessage}}</span>
+    </div>
   </div>
-  <app-messager [class.tui-skeleton]="skeleton" (onSend)="sendMessage($event)"></app-messager>
+  <app-messager [class.tui-skeleton]="skeleton" (onSend)="sendMessage($event)" (typing)="onTyping()"></app-messager>
 </div>

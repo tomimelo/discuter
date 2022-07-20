@@ -13,10 +13,12 @@ export interface ConversationEvents {
   'updated': {
     conversation: Conversation,
     updateReasons: ConversationUpdateReason[]
-  }
+  },
+  'typingStarted': Participant,
+  'typingEnded': Participant
 }
 
-export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'removed' | 'updated'
+export type ConversationEvent = 'messageAdded' | 'participantJoined' | 'participantLeft' | 'removed' | 'updated' | 'typingStarted' | 'typingEnded'
 export interface ConversationUpdate<E extends keyof ConversationEvents> {
   type: E,
   data: ConversationEvents[E]
@@ -125,13 +127,11 @@ export class TwilioService {
     })
   }
 
+  public typing() {
+    this.conversation?.typing()
+  }
+
   private listenOnConversation() {
-    this.conversation?.on('updated', update => {
-      this.onConversationEvent.next({
-        type: 'updated',
-        data: update
-      })
-    })
     this.conversation?.on('messageAdded', (message: Message) => {
       this.onConversationEvent.next({
         type: 'messageAdded',
@@ -154,6 +154,24 @@ export class TwilioService {
       this.onConversationEvent.next({
         type: 'removed',
         data: conversation
+      })
+    })
+    this.conversation?.on('updated', update => {
+      this.onConversationEvent.next({
+        type: 'updated',
+        data: update
+      })
+    })
+    this.conversation?.on('typingStarted', (participant: Participant) => {
+      this.onConversationEvent.next({
+        type: 'typingStarted',
+        data: participant
+      })
+    })
+    this.conversation?.on('typingEnded', (participant: Participant) => {
+      this.onConversationEvent.next({
+        type: 'typingEnded',
+        data: participant
       })
     })
   }

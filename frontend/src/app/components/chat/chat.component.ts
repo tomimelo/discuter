@@ -3,6 +3,7 @@ import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } fro
 import { filter, Subject, takeUntil } from 'rxjs';
 import { RoomService } from 'src/app/services/room.service';
 import { ChatEvent } from 'src/app/types/chat';
+
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -18,9 +19,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     }, 1000)
   }
   @Input() skeleton: boolean = false
+  @Input() set participantsTyping(participants: string[]) {
+    this.setTypingMessage(participants)
+  }
   @Output() onSend = new EventEmitter<string>();
   public isScrollOnBottom: boolean = true
   public unreadMessages: number = 0
+  public typingMessage: string | null = null
   private messagesContainer: HTMLElement | null = null;
   private scrollTimeout: any = 0
   private destroy$ = new Subject<void>()
@@ -61,6 +66,23 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
     this.isScrollOnBottom = true
     this.unreadMessages = 0
+  }
+
+  public onTyping() {
+    this.roomService.typing()
+  }
+
+  private setTypingMessage(participants: string[]): void {
+    if (!participants.length) {
+      this.typingMessage = null
+    } else if (participants.length === 1) { 
+      this.typingMessage = `${participants[0]} is typing...`
+    } else if (participants.length >= 4) {
+      const firstTwoParticipants = participants.slice(0, 2)
+      this.typingMessage = `${firstTwoParticipants.map(p => p).join(', ')} and ${participants.length - 2} more are typing...`
+    } else {
+      this.typingMessage = `${participants.map(participant => participant).join(', ').replace(/, ([^,]*)$/, ' and $1')} are typing...`
+    }
   }
 
   private getMessagesContainer(): void {
