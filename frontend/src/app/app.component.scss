@@ -10,12 +10,24 @@ $primary: #0D7377;
   height: 100vh;
 }
 
-.app-logo {
+.app-logo, .app-author {
   display: none;
+}
 
-  &-img {
-    width: 25px;
+.app-author {
+  color: white;
+
+  a {
+    color: var(--accent);
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
+}
+
+.app-logo-img {
+  width: 25px;
 }
 
 .mobile-container {
@@ -36,6 +48,15 @@ $primary: #0D7377;
     position: fixed;
     top: 20px;
     left: 20px;
+    z-index: 1;
+  }
+
+  .app-author {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1;
   }
 
