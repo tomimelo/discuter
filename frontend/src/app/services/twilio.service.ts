@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Client, Conversation, ConversationUpdateReason, Message, Participant, State } from '@twilio/conversations';
+import { Client, Conversation, ConversationUpdateReason, JSONValue, Message, Participant, State } from '@twilio/conversations';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { RoomLink } from '../types/room';
 import { ApiService } from './api.service';
@@ -54,7 +54,13 @@ export class TwilioService {
   }
 
   public async sendMessage(message: string): Promise<void> {
-    await this.conversation?.sendMessage(message)
+    const userMetadata = this.getUserMetadata()
+    const attributes: any = userMetadata ? {
+      author: {
+        avatar_url: userMetadata['avatar_url']
+      }
+    } : undefined
+    await this.conversation?.sendMessage(message, attributes)
   }
 
   public destroyConversation() {
@@ -207,15 +213,21 @@ export class TwilioService {
   private async setupParticipant(conversation: Conversation): Promise<void> {
     try {
       const participant = await conversation.getParticipantByIdentity(this.getUserIdentity())
-      const user = this.supabaseService.getUser()
-      if (!user || !participant) return
-      const {avatar_url} = user.user_metadata
+      const userMetadata = this.getUserMetadata()
+      if (!userMetadata || !participant) return
+      const {avatar_url} = userMetadata
       await participant.updateAttributes({
         avatar_url: avatar_url || null,
       })
     } catch (error) {
       return
     }
+  }
+
+  private getUserMetadata(): {[key:string]: any} | null {
+    const user = this.supabaseService.getUser()
+    if (!user) return null
+    return user.user_metadata || null
   }
 
   private async getConversationByUniqueName(uniqueName: string): Promise<Conversation | null> {

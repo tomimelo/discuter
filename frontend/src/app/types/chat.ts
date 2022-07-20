@@ -5,6 +5,6 @@ export type ChatEventType = 'message' | 'joined'
 
 export interface ChatEvent {
   type: ChatEventType,
-  dateCreated: Date,
+  dateCreated?: Date,
   data: Message | Participant[]
 }

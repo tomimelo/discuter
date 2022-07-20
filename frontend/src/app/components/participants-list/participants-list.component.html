@@ -28,7 +28,7 @@
 <hr class="divisor">
 <tui-scrollbar class="mr">
   <ul class="participants-list">
-    <li *ngFor="let participant of room.participants" class="participants-list-item">
+    <li *ngFor="let participant of participants" class="participants-list-item">
       <div class="user-info">
         <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="participant.username" [avatarUrl]="participant.avatarUrl"></tui-avatar>
         <span>{{participant.username}}</span>

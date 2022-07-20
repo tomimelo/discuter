@@ -278,7 +278,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     const participantEvents: ChatEvent[] = room.participants
       .map(participant => this.buildParticipantEvent(participant))
     const mergedEvents = [...messageEvents, ...participantEvents]
-    return mergedEvents.sort((a, b) => a.dateCreated > b.dateCreated ? 1 : -1).reduce((events: ChatEvent[], event: ChatEvent, index) => {
+    return mergedEvents.filter(event => !!event.dateCreated).sort((a, b) => a.dateCreated! > b.dateCreated! ? 1 : -1).reduce((events: ChatEvent[], event: ChatEvent, index) => {
       if (index === 0) {
         if (event.type === 'joined' && (event.data as Participant[])[0].username === room.createdBy) {
           return events

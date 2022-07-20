@@ -7,6 +7,7 @@ import { Room, RoomEvents } from 'src/app/types/room';
 import { User } from 'src/app/types/user';
 import { RoomService } from 'src/app/services/room.service';
 import { filter, Subject, takeUntil } from 'rxjs';
+import { Participant } from 'src/app/types/participant';
 
 @Component({
   selector: 'app-participants-list',
@@ -20,15 +21,10 @@ export class ParticipantsListComponent implements OnInit {
   })
   public roomLink: string | null
   public updatingLink: boolean = false
+  public room: Room
+  public participants: Participant[]
+  public user: User
   private destroy$ = new Subject<void>()
-
-  get room(): Room {
-    return this.context.data.room
-  }
-
-  get user(): User {
-    return this.context.data.user
-  }
 
   get identityControl(): FormControl {
     return this.inviteForm.get('identity') as FormControl
@@ -41,7 +37,11 @@ export class ParticipantsListComponent implements OnInit {
               @Inject(TuiAlertService)
               private readonly alertService: TuiAlertService,
               private ref: ChangeDetectorRef) {
-    this.roomLink = this.context.data.room.link
+    const {room, user} = this.context.data
+    this.room = room
+    this.roomLink = room.link
+    this.participants = room.participants
+    this.user = user
   }
 
   public ngOnInit(): void {
@@ -64,6 +64,7 @@ export class ParticipantsListComponent implements OnInit {
   public async kickParticipant(username: string): Promise<void> {
     try {
       await this.twilioService.removeParticipant(username)
+      this.participants = this.context.data.room.participants
       this.alertService.open(`User ${username} kicked successfully`, {autoClose: true, hasIcon: true, status: TuiNotification.Info}).subscribe()
     } catch (error: any) {
       this.handleError(error.message)

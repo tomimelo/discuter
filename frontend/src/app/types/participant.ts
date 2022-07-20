@@ -1,5 +1,5 @@
 export interface Participant {
   username: string,
-  dateCreated: Date,
+  dateCreated?: Date,
   avatarUrl: string | null
 }

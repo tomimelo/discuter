@@ -204,6 +204,14 @@ export class RoomService {
     }
   }
 
+  private createParticipantFromMessage(message: TwilioMessage): Participant {
+    const jsonAttributes = JSON.parse(JSON.stringify(message.attributes))
+    return {
+      username: message.author!,
+      avatarUrl: jsonAttributes.author?.avatar_url || null
+    }
+  }
+
   private async createMessage(message: TwilioMessage): Promise<Message> {
     const participant = await this.getParticipantFromMessage(message)
     return {
@@ -215,7 +223,11 @@ export class RoomService {
   }
 
   private async getParticipantFromMessage(message: TwilioMessage): Promise<Participant> {
-    const participant = await message.getParticipant()
-    return this.createParticipant(participant)
+    try {
+      const participant = await message.getParticipant()
+      return this.createParticipant(participant)
+    } catch (error) {
+      return this.createParticipantFromMessage(message)
+    }
   }
 }
