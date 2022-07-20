@@ -4,6 +4,7 @@ import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RoomService } from 'src/app/services/room.service';
+import { UserRoom } from 'src/app/types/room';
 import { User } from 'src/app/types/user';
 
 @Component({
@@ -14,6 +15,8 @@ import { User } from 'src/app/types/user';
 export class HomeComponent implements OnInit, OnDestroy {
 
   public user: User | null = null;
+  public userRooms: UserRoom[] = [];
+  public loadingRooms: boolean = true;
   private destroy$ = new Subject<void>()
   public authenticating: boolean = false;
   public isAvatarMenuOpen: boolean = false;
@@ -30,6 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.getUser()
+    this.getUserRooms()
   }
 
   public ngOnDestroy(): void {
@@ -86,6 +90,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     this.selectedRoom = room
     await this.joinRoom()
+  }
+
+  public getUserRooms(): void {
+    this.loadingRooms = true
+    this.roomService.getUserRooms().pipe(takeUntil(this.destroy$)).subscribe({next: rooms => {
+      this.userRooms = rooms
+    }, complete: () => {
+      this.loadingRooms = false
+    }})
   }
 
   private getUser(): void {

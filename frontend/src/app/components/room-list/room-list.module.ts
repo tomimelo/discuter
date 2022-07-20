@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoomListComponent } from './room-list.component';
-import { TuiButtonModule, TuiHintModule, TuiScrollbarModule } from '@taiga-ui/core';
+import { TuiButtonModule, TuiHintModule, TuiLoaderModule, TuiScrollbarModule, TuiSvgModule } from '@taiga-ui/core';
+import { RouterModule } from '@angular/router';
 
 const TAIGA_MODULES = [
   TuiScrollbarModule,
   TuiButtonModule,
-  TuiHintModule
+  TuiHintModule,
+  TuiLoaderModule,
+  TuiSvgModule
 ]
 
 @NgModule({
@@ -15,6 +18,7 @@ const TAIGA_MODULES = [
   ],
   imports: [
     CommonModule,
+    RouterModule,
     ...TAIGA_MODULES
   ],
   exports: [

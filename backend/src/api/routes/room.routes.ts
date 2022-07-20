@@ -13,6 +13,13 @@ const authService = authServiceAcquirer.acquire()
 const twilioClient = twilioClientAcquirer.acquire()
 const roomController = new RoomController(supabaseService, twilioClient, logger)
 
+const getUserRooms: MadRoute = {
+  method: MadRouteMethod.GET,
+  path: '/',
+  middlewares: [verifyJWT(authService)],
+  handler: roomController.getUserRooms
+}
+
 const getLink: MadRoute = {
   method: MadRouteMethod.GET,
   path: '/link',
@@ -51,7 +58,7 @@ const joinByLink: MadRoute = {
 const roomRouter = new MadRouter({
   basePath: '/rooms',
   name: 'Rooms',
-  handlers: [getLink, createLink, updateLink, deleteLink, joinByLink]
+  handlers: [getUserRooms, getLink, createLink, updateLink, deleteLink, joinByLink]
 })
 
 export default roomRouter

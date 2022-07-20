@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { UserRoom } from 'src/app/types/room';
 
 @Component({
   selector: 'app-room-list',
@@ -7,7 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class RoomListComponent implements OnInit {
 
-  @Input() rooms: any[] = []
+  @Input() rooms: UserRoom[] = []
+  @Input() loading: boolean = false
 
   constructor() { }
 

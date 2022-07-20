@@ -18,6 +18,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    tui-loader {
+      aspect-ratio: 1;
+      width: 50px;
+    }
 
     p {
       font-size: 12px;
@@ -28,16 +33,29 @@
       max-height: 110px;
     }
 
-    ul {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-
-      li {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-    }
   }
+}
+
+.rooms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+  }
+}
+
+.room-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.participants-wrapper {
+  display: flex;
+  align-items: center;
 }

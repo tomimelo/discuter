@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { RoomLink } from '../types/room';
+import { RoomLink, UserRoom } from '../types/room';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({
@@ -14,6 +14,14 @@ export class ApiService {
   private roomLinksRoutesPath = `${environment.apiUrl}/rooms`
 
   constructor(private http: HttpClient, private supabaseService: SupabaseService) { }
+
+  public getUserRooms(): Observable<UserRoom[]> {
+    const jwt = this.getJWT()
+    return this.http.get(`${this.roomLinksRoutesPath}`,  { headers: this.getAuthorizationHeader(jwt) })
+      .pipe(
+        map((res: any) => res.rooms)
+      );
+  }
 
   public getAccessToken(): Observable<string> {
     const jwt = this.getJWT()

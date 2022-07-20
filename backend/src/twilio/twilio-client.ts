@@ -1,6 +1,8 @@
 import twilio, { Twilio } from 'twilio'
 import AccessToken from 'twilio/lib/jwt/AccessToken'
+import { ChannelInstance } from 'twilio/lib/rest/chat/v2/service/channel'
 import { ParticipantInstance } from 'twilio/lib/rest/conversations/v1/conversation/participant'
+import { Room } from '../types/room'
 import { TwilioConfig } from './twilio-config'
 
 export class TwilioClient {
@@ -15,18 +17,19 @@ export class TwilioClient {
     return accessToken.toJwt()
   }
 
-  public async getRoomsByUser (username: string): Promise<any[]> {
-    // const channels = await this.client.chat.services(this.config.serviceSid).channels.list()
+  public async getRoomsByUser (username: string): Promise<Room[]> {
+    const allChannels = await this.client.chat.services(this.config.serviceSid).channels.list()
     const user = await this.client.conversations.users.get(username)
     const userConversationsList = await user.userConversations.list()
+    const channelsMap = allChannels.reduce<Record<string, ChannelInstance>>((acc: Record<string, ChannelInstance>, channel) => {
+      acc[channel.sid] = channel
+      return acc
+    }, {})
     return userConversationsList.map(userConversation => {
       return {
         uniqueName: userConversation.uniqueName,
         createdBy: userConversation.createdBy,
-        conversationState: userConversation.conversationState,
-        unreadMessagesCount: userConversation.unreadMessagesCount,
-        dateCreated: userConversation.dateCreated,
-        dateUpdated: userConversation.dateUpdated
+        participantsCount: channelsMap[userConversation.conversationSid]?.membersCount
       }
     })
   }

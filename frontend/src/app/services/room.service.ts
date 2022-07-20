@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
-import { Room, RoomEventType, RoomSettings, RoomEvent } from '../types/room';
+import { Room, RoomEventType, RoomSettings, RoomEvent, UserRoom } from '../types/room';
 import { ApiService } from './api.service';
 import { ConversationEvents, TwilioService } from './twilio.service';
 
@@ -95,6 +95,10 @@ export class RoomService {
 
   public typing(): void {
     this.twilioService.typing()
+  }
+
+  public getUserRooms(): Observable<UserRoom[]> {
+    return this.apiService.getUserRooms()
   }
 
   private listenConversation(): void {

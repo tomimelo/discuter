@@ -46,7 +46,7 @@
         <tui-loader [showLoader]="joining" [inheritColor]="true">
         </tui-loader>
       </div>
-      <app-room-list></app-room-list>
+      <app-room-list [rooms]="userRooms" [loading]="loadingRooms"></app-room-list>
     </ng-container>
   </div>
 </tui-scrollbar>

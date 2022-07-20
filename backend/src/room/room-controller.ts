@@ -135,6 +135,19 @@ export class RoomController extends BaseController {
     }
   }
 
+  public async getUserRooms (req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user: User = httpContext.get('user')
+      const rooms = await this.twilioClient.getRoomsByUser(user.user_name)
+      res.json({
+        ok: true,
+        rooms
+      })
+    } catch (error) {
+      this.handleError(error, next)
+    }
+  }
+
   public handleError (error: any, next: NextFunction): void {
     this.logger.error(error.message)
     next(error)
