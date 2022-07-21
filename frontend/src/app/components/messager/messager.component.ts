@@ -3,11 +3,13 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, interval, Subject, takeUntil, tap } from 'rxjs';
 import { ENTER } from '@angular/cdk/keycodes';
 import { AudioRecorderService, ErrorCase, OutputFormat, RecorderState } from 'src/app/lib/audio-recorder/audio-recorder.service';
-import { Media, MessageType } from '@twilio/conversations';
+import { MessageType } from '@twilio/conversations';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
+import { TuiFileLike } from '@taiga-ui/kit';
 
 export interface MessagerMessage {
   type: MessageType,
+  contentType: string,
   body: string | null,
   media: Blob | null,
 }
@@ -23,8 +25,12 @@ export class MessagerComponent implements OnInit {
   @Output() typing = new EventEmitter<void>()
   @Input() maxLength: number = 1500
 
+  public isAttachmentContainerVisible: boolean = false
   public currentTime$ = new BehaviorSubject<number>(0)
   private stopTimer$ = new Subject<void>()
+
+  readonly fileControl = new FormControl();
+  readonly rejectedFiles$ = new Subject<TuiFileLike | null>();
 
   public recorderState: RecorderState = RecorderState.STOPPED
 
@@ -88,7 +94,7 @@ export class MessagerComponent implements OnInit {
   public async stopRecording() {
     const blob = await this.audioRecorder.stop(OutputFormat.WEBM_BLOB) as Blob
     this.stopTimer()
-    const message = this.createMediaMessage(blob)
+    const message = this.createMediaMessage('audio/webm', blob)
     this.onSend.emit(message)
   }
 
@@ -97,17 +103,49 @@ export class MessagerComponent implements OnInit {
     this.stopTimer()
   }
 
+  public toggleAttachmentContainer() {
+    if (this.isAttachmentContainerVisible) {
+      this.isAttachmentContainerVisible = false
+      this.removeFile()
+      this.clearRejected()
+    } else {
+      this.isAttachmentContainerVisible = true
+    }
+  }
+
+  public onReject(file: TuiFileLike | readonly TuiFileLike[]): void {
+    this.rejectedFiles$.next(file as TuiFileLike);
+  }
+
+  public removeFile(): void {
+    this.fileControl.setValue(null);
+  }
+
+  public clearRejected(): void {
+    this.rejectedFiles$.next(null);
+  }
+
+  public sendImage() {
+    const file = this.fileControl.value as File
+    if (!file) return
+    const message = this.createMediaMessage(file.type, file)
+    this.onSend.emit(message)
+    this.toggleAttachmentContainer()
+  }
+
   private createTextMessage(body: string): MessagerMessage {
     return {
       type: 'text',
+      contentType: 'text/plain',
       body,
       media: null
     }
   }
 
-  private createMediaMessage(data: Blob): MessagerMessage {
+  private createMediaMessage(contentType: string, data: Blob): MessagerMessage {
     return {
       type: 'media',
+      contentType,
       body: null,
       media: data
     }

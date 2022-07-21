@@ -6,7 +6,12 @@ export interface Message {
   author: Participant,
   type: MessageType,
   body: string | null,
-  media: string | null,
+  media: MessageMedia | null,
   dateCreated: Date,
   isOwn: boolean
+}
+
+export interface MessageMedia {
+  contentType: string,
+  url: string
 }

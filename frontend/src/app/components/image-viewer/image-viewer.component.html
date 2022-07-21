@@ -1,0 +1,4 @@
+<div class="image-wrapper">
+  <tui-loader *ngIf="!image" size="l" [inheritColor]="true"></tui-loader>
+  <img *ngIf="image" [src]="image?.url" alt="">
+</div>

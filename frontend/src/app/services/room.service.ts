@@ -3,7 +3,7 @@ import { Conversation, Media, Message as TwilioMessage, Participant as TwilioPar
 import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { MessagerMessage } from '../components/messager/messager.component';
-import { Message } from '../types/message';
+import { Message, MessageMedia } from '../types/message';
 import { Participant } from '../types/participant';
 import { Room, RoomEventType, RoomSettings, RoomEvent, UserRoom } from '../types/room';
 import { ApiService } from './api.service';
@@ -45,7 +45,7 @@ export class RoomService {
     if (message.type === 'text') {
       await this.twilioService.sendTextMessage(message.body!)
     } else if (message.type === 'media') {
-      await this.twilioService.sendMediaMessage('audio/webm', message.media!)
+      await this.twilioService.sendMediaMessage(message.contentType, message.media!)
     } else {
       throw new Error('Unknown message type')
     }
@@ -230,16 +230,21 @@ export class RoomService {
       author: participant,
       type: message.type,
       body: message.body,
-      media: await this.getMessageMedia(message.attachedMedia),
+      media: await this.getMessageMedia(message),
       dateCreated: message.dateCreated!,
       isOwn: message.author === this.twilioService.getUserIdentity()
     }
   }
 
-  private async getMessageMedia(media: Media[] | null): Promise<string | null> {
-    if (this.isMediaEmpty(media)) return null
-    const mediaUrl = await media![0].getContentTemporaryUrl()
-    return mediaUrl
+  private async getMessageMedia(message: TwilioMessage): Promise<MessageMedia | null> {
+    if (this.isMediaEmpty(message.attachedMedia)) return null
+    const [media] = message.attachedMedia!
+    const url = await media.getContentTemporaryUrl()
+    if (!url) return null
+    return {
+      contentType: media.contentType,
+      url
+    }
   }
 
   private isMediaEmpty(media: Media[] | null): boolean {

@@ -7,6 +7,7 @@ import { TimePipe } from 'src/app/pipes/time.pipe';
 import { TuiButtonModule } from '@taiga-ui/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AudioPlayerModule } from '../audio-player/audio-player.module';
+import { ImageViewerModule } from '../image-viewer/image-viewer.module';
 
 const TAIGA_MODULES = [
   TuiAvatarModule,
@@ -22,6 +23,7 @@ const TAIGA_MODULES = [
     CommonModule,
     SharedModule,
     AudioPlayerModule,
+    ImageViewerModule,
     ...TAIGA_MODULES
   ],
   exports: [

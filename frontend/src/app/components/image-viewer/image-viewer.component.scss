@@ -1,0 +1,14 @@
+.image-wrapper {
+  max-width: 250px;
+  padding: 10px 5px;
+
+  tui-loader {
+    aspect-ratio: 1;
+    height: 150px;
+  }
+  
+  img {
+    border-radius: 8px;
+    width: 100%;
+  }
+}
