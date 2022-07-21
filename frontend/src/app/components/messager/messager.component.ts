@@ -5,6 +5,7 @@ import { ENTER } from '@angular/cdk/keycodes';
 import { AudioRecorderService, ErrorCase, OutputFormat, RecorderState } from 'src/app/lib/audio-recorder/audio-recorder.service';
 import { MessageType } from '@twilio/conversations';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
+import { TuiFileLike } from '@taiga-ui/kit';
 
 export interface MessagerMessage {
   type: MessageType,
@@ -24,8 +25,12 @@ export class MessagerComponent implements OnInit {
   @Output() typing = new EventEmitter<void>()
   @Input() maxLength: number = 1500
 
+  public isAttachmentContainerVisible: boolean = false
   public currentTime$ = new BehaviorSubject<number>(0)
   private stopTimer$ = new Subject<void>()
+
+  readonly fileControl = new FormControl();
+  readonly rejectedFiles$ = new Subject<TuiFileLike | null>();
 
   public recorderState: RecorderState = RecorderState.STOPPED
 
@@ -96,6 +101,36 @@ export class MessagerComponent implements OnInit {
   public async cancelRecording() {
     await this.audioRecorder.cancel()
     this.stopTimer()
+  }
+
+  public toggleAttachmentContainer() {
+    if (this.isAttachmentContainerVisible) {
+      this.isAttachmentContainerVisible = false
+      this.removeFile()
+      this.clearRejected()
+    } else {
+      this.isAttachmentContainerVisible = true
+    }
+  }
+
+  public onReject(file: TuiFileLike | readonly TuiFileLike[]): void {
+    this.rejectedFiles$.next(file as TuiFileLike);
+  }
+
+  public removeFile(): void {
+    this.fileControl.setValue(null);
+  }
+
+  public clearRejected(): void {
+    this.rejectedFiles$.next(null);
+  }
+
+  public sendImage() {
+    const file = this.fileControl.value as File
+    if (!file) return
+    const message = this.createMediaMessage(file.type, file)
+    this.onSend.emit(message)
+    this.toggleAttachmentContainer()
   }
 
   private createTextMessage(body: string): MessagerMessage {

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import {TuiInputModule} from '@taiga-ui/kit';
+import { TuiFilesModule, TuiInputFilesModule, TuiInputModule } from '@taiga-ui/kit';
 import { TuiButtonModule, TuiSvgModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
 
 import { MessagerComponent } from './messager.component';
@@ -12,7 +12,9 @@ const TAIGA_MODULES = [
   TuiTextfieldControllerModule,
   TuiInputModule,
   TuiButtonModule,
-  TuiSvgModule
+  TuiSvgModule,
+  TuiInputFilesModule,
+  TuiFilesModule
 ]
 
 @NgModule({

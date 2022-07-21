@@ -1,18 +1,32 @@
 <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
   <ng-container *ngIf="recorderState === 'stopped' else recordingTemplate">
     <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length > maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
-    <div class="input-wrapper">
-      <tui-input formControlName="text" tuiTextfieldSize="s">
-        Type a message...
-        <input tuiTextfield autocomplete="off" (keydown)="onKeyDown($event)"/>
-      </tui-input>
-      <button
-        tuiIconButton
-        type="button"
-        size="s"
-        icon="tuiIconMicLarge"
-        (click)="startRecording()"
-        ></button>
+    <div class="main-messager-wrapper">
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconAttachLarge" (click)="toggleAttachmentContainer()"></button>
+      <div class="input-wrapper" *ngIf="!isAttachmentContainerVisible">
+        <tui-input formControlName="text" tuiTextfieldSize="s">
+          Type a message...
+          <input tuiTextfield autocomplete="off" (keydown)="onKeyDown($event)"/>
+        </tui-input>
+        <button
+          tuiIconButton
+          type="button"
+          size="s"
+          icon="tuiIconMicLarge"
+          (click)="startRecording()"
+          ></button>
+      </div>
+      <div *ngIf="isAttachmentContainerVisible">Send an image</div>
+    </div>
+    <div class="attachment-container" *ngIf="isAttachmentContainerVisible">
+      <tui-input-files *ngIf="!fileControl.value" accept="image/*" [formControl]="fileControl" (reject)="onReject($event)"></tui-input-files>
+      
+      <tui-files>
+          <tui-file *ngIf="fileControl.valueChanges | async as file" [file]="file" (removed)="removeFile()"></tui-file>
+          <tui-file *ngIf="rejectedFiles$ | async as file" state="error" [file]="file" (removed)="clearRejected()"></tui-file>
+      </tui-files>
+
+      <button tuiButton class="send-image-button" type="button" size="s" [icon]="sendIcon" [disabled]="!fileControl.value" (click)="sendImage()">Send</button>
     </div>
   </ng-container>
 </form>
