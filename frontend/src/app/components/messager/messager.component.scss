@@ -1,7 +1,8 @@
 :host {
   width: 100%;
-  padding: 5px 10px;
+  padding: 10px;
   display: flex;
+  background-color: var(--dark);
 }
 
 form {
@@ -27,5 +28,51 @@ form {
     &.limit-reached {
       color: red;
     }
+  }
+}
+
+.recording-wrapper {
+  position: relative;
+}
+
+.recording-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  justify-content: center;
+
+  .record-dot {
+    aspect-ratio: 1;
+    border-radius: 100%;
+    height: 8px;
+    background: red;
+    
+    &:not(.paused) {
+      animation: blink 1500ms infinite;
+    }
+  }
+}
+
+.user-consent-wrapper {
+  height: 57px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+@keyframes blink {
+  0%,50% {
+    opacity: 1;
+  }
+  51%,100% {
+    opacity: 0;
   }
 }

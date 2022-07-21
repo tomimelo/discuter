@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Conversation, Message as TwilioMessage, Participant as TwilioParticipant } from '@twilio/conversations';
+import { Conversation, Media, Message as TwilioMessage, Participant as TwilioParticipant } from '@twilio/conversations';
 import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { MessagerMessage } from '../components/messager/messager.component';
 import { Message } from '../types/message';
 import { Participant } from '../types/participant';
 import { Room, RoomEventType, RoomSettings, RoomEvent, UserRoom } from '../types/room';
@@ -40,8 +41,14 @@ export class RoomService {
     return this.twilioService.isClientOnConversation()
   }
 
-  public async sendMessage(message: string): Promise<void> {
-    await this.twilioService.sendMessage(message)
+  public async sendMessage(message: MessagerMessage): Promise<void> {
+    if (message.type === 'text') {
+      await this.twilioService.sendTextMessage(message.body!)
+    } else if (message.type === 'media') {
+      await this.twilioService.sendMediaMessage('audio/webm', message.media!)
+    } else {
+      throw new Error('Unknown message type')
+    }
   }
 
   public async joinRoom(room: string): Promise<void> {
@@ -219,11 +226,24 @@ export class RoomService {
   private async createMessage(message: TwilioMessage): Promise<Message> {
     const participant = await this.getParticipantFromMessage(message)
     return {
+      id: message.sid,
       author: participant,
+      type: message.type,
       body: message.body,
+      media: await this.getMessageMedia(message.attachedMedia),
       dateCreated: message.dateCreated!,
       isOwn: message.author === this.twilioService.getUserIdentity()
     }
+  }
+
+  private async getMessageMedia(media: Media[] | null): Promise<string | null> {
+    if (this.isMediaEmpty(media)) return null
+    const mediaUrl = await media![0].getContentTemporaryUrl()
+    return mediaUrl
+  }
+
+  private isMediaEmpty(media: Media[] | null): boolean {
+    return !media || media.length === 0
   }
 
   private async getParticipantFromMessage(message: TwilioMessage): Promise<Participant> {

@@ -1,0 +1,27 @@
+.audio-player-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 45px;
+
+  tui-loader {
+    aspect-ratio: 1;
+    width: 32px;
+  }
+  
+  audio {
+    display: none;
+  }
+  
+}
+
+.audio-input-wrapper {
+  position: relative;
+
+  .audio-duration {
+    font-size: 10px;
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+  }
+}

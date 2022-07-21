@@ -1,0 +1,19 @@
+<div class="audio-player-wrapper">
+  <tui-loader *ngIf="loading" [showLoader]="true" [inheritColor]="true"></tui-loader>
+  <button *ngIf="!loading" tuiIconButton type="button" size="s" appearance="icon" [icon]="icon" (click)="toggleState()"></button>
+  <div class="audio-input-wrapper">
+    <input tuiSlider 
+           [formControl]="audioControl" 
+           type="range" 
+           [min]="sliderMin" 
+           [max]="sliderMax"
+           [step]="step" 
+           (input)="onInput()" 
+           (change)="onChange()"/>
+    <span class="audio-duration">{{duration | timer}}</span>
+  </div>
+  <audio *ngIf="processedAudio" id="audio-{{processedAudio.id}}" preload=”metadata”>
+    <source [src]="processedAudio.url" type="audio/webm">
+    Your browser does not support the audio tag.
+  </audio>
+</div>

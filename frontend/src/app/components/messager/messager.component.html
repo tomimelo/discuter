@@ -1,19 +1,40 @@
 <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-  <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length > maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
-  <div class="input-wrapper">
-    <tui-input formControlName="text" tuiTextfieldSize="s">
-      Type a message...
-      <input tuiTextfield autocomplete="off" (keydown)="onKeyDown($event)"/>
-    </tui-input>
-    <button
-      tuiIconButton
-      type="submit"
-      size="s"
-      [icon]="sendIcon"
-      [disabled]="messageForm.invalid || messageForm.value.text.length > maxLength"
-      ></button>
-  </div>
+  <ng-container *ngIf="recorderState === 'stopped' else recordingTemplate">
+    <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length > maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
+    <div class="input-wrapper">
+      <tui-input formControlName="text" tuiTextfieldSize="s">
+        Type a message...
+        <input tuiTextfield autocomplete="off" (keydown)="onKeyDown($event)"/>
+      </tui-input>
+      <button
+        tuiIconButton
+        type="button"
+        size="s"
+        icon="tuiIconMicLarge"
+        (click)="startRecording()"
+        ></button>
+    </div>
+  </ng-container>
 </form>
+
+<ng-template #recordingTemplate>
+  <div class="user-consent-wrapper" *ngIf="recorderState === 'waitingForUserConsent'">
+    <tui-svg src="tuiIconMicLarge"></tui-svg>
+    <span>Please give Discuter access to your microphone</span>
+  </div>
+  <div class="recording-wrapper" *ngIf="recorderState !== 'waitingForUserConsent'">
+    <div class="timer">
+      <div class="record-dot" [class.paused]="recorderState === 'paused'"></div>
+      <span class="record-time">{{((currentTime$ | async) || 0) | timer}}</span>
+    </div>
+    <div class="recording-controls">
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconTrashLarge" (click)="cancelRecording()"></button>
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPauseLarge" *ngIf="recorderState === 'recording'" (click)="pauseRecording()"></button>
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPlayLarge" *ngIf="recorderState === 'paused'" (click)="startRecording()"></button>
+      <button tuiIconButton type="button" size="s" [icon]="sendIcon" (click)="stopRecording()"></button>
+    </div>
+  </div>
+</ng-template>
 
 <ng-template #sendIcon>
   <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="-40 -40 200 200" width="32" height="32"><path d="m2.33 44.58 115-44.21a3.63 3.63 0 0 1 5 4.56l-44 115.61a3.63 3.63 0 0 1-6.67.28L53.93 84.14l35.19-50.37-50.27 35.09L2.06 51.24a3.63 3.63 0 0 1 .27-6.66Z" style="fill:currentColor"/></svg>

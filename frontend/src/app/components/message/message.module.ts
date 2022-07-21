@@ -4,9 +4,13 @@ import {TuiAvatarModule} from '@taiga-ui/kit';
 
 import { MessageComponent } from './message.component';
 import { TimePipe } from 'src/app/pipes/time.pipe';
+import { TuiButtonModule } from '@taiga-ui/core';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { AudioPlayerModule } from '../audio-player/audio-player.module';
 
 const TAIGA_MODULES = [
-  TuiAvatarModule
+  TuiAvatarModule,
+  TuiButtonModule,
 ]
 
 @NgModule({
@@ -16,6 +20,8 @@ const TAIGA_MODULES = [
   ],
   imports: [
     CommonModule,
+    SharedModule,
+    AudioPlayerModule,
     ...TAIGA_MODULES
   ],
   exports: [

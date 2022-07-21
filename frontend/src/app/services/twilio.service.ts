@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Client, Conversation, ConversationUpdateReason, JSONValue, Message, Participant, State } from '@twilio/conversations';
+import { Client, Conversation, ConversationUpdateReason, JSONValue, Media, Message, MessageType, Participant, State } from '@twilio/conversations';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { RoomLink } from '../types/room';
 import { ApiService } from './api.service';
@@ -53,7 +53,7 @@ export class TwilioService {
     }
   }
 
-  public async sendMessage(message: string): Promise<void> {
+  public async sendTextMessage(message: string): Promise<void> {
     const userMetadata = this.getUserMetadata()
     const attributes: any = userMetadata ? {
       author: {
@@ -61,6 +61,19 @@ export class TwilioService {
       }
     } : undefined
     await this.conversation?.sendMessage(message, attributes)
+  }
+
+  public async sendMediaMessage(contentType: string, media: Blob): Promise<void> {
+    const userMetadata = this.getUserMetadata()
+    const attributes: any = userMetadata ? {
+      author: {
+        avatar_url: userMetadata['avatar_url']
+      }
+    } : undefined
+    await this.conversation?.sendMessage({
+      contentType,
+      media
+    }, attributes)
   }
 
   public destroyConversation() {
