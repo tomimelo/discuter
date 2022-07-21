@@ -2,6 +2,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, interval, Subject, takeUntil, tap } from 'rxjs';
 import { ENTER } from '@angular/cdk/keycodes';
+import { AudioRecorderService, OutputFormat, RecorderState } from 'src/app/lib/audio-recorder/audio-recorder.service';
+import { Media, MessageType } from '@twilio/conversations';
+
+export interface MessagerMessage {
+  type: MessageType,
+  body: string | null,
+  media: Blob | null,
+}
 
 @Component({
   selector: 'app-messager',
@@ -10,15 +18,14 @@ import { ENTER } from '@angular/cdk/keycodes';
 })
 export class MessagerComponent implements OnInit {
 
-  @Output() onSend = new EventEmitter<string>()
+  @Output() onSend = new EventEmitter<MessagerMessage>()
   @Output() typing = new EventEmitter<void>()
   @Input() maxLength: number = 1500
 
   public currentTime$ = new BehaviorSubject<number>(0)
   private stopTimer$ = new Subject<void>()
 
-  public recording: boolean = false
-  public paused: boolean = false
+  public recorderState: RecorderState = RecorderState.STOPPED
 
   public messageForm = new FormGroup({
     text: new FormControl('', Validators.required)
@@ -28,9 +35,12 @@ export class MessagerComponent implements OnInit {
     return this.messageForm.get('text') as FormControl
   }
 
-  constructor() {}
+  constructor(private audioRecorder: AudioRecorderService) {}
   
   public ngOnInit(): void {
+    this.audioRecorder.getRecorderState().subscribe(state => {
+      this.recorderState = state
+    })
   }
   
   public sendMessage() {
@@ -38,7 +48,8 @@ export class MessagerComponent implements OnInit {
       this.textControl.setValue('')
     }
     if (this.messageForm.invalid || this.textControl.value.length > this.maxLength) return
-    this.onSend.emit(this.messageForm.value.text)
+    const message = this.createTextMessage(this.messageForm.value.text)
+    this.onSend.emit(message)
     this.messageForm.reset({ text: '' })
   }
 
@@ -50,30 +61,55 @@ export class MessagerComponent implements OnInit {
     }
   }
 
-  private isEnterKey(event: KeyboardEvent) {
-    return event.key === 'Enter' || event.code === 'Enter' || event.keyCode === ENTER
+  public async startRecording() {
+    try {
+      await this.audioRecorder.start()
+      this.startTimer()
+    } catch (error) {
+      //Check if user has denied permission or dismissed the prompt
+    }
   }
 
-  public startRecording() {
-    this.recording = true
-    this.paused = false
+  public resumeRecording() {
+    this.audioRecorder.resume()
     this.startTimer()
   }
 
   public pauseRecording() {
-    this.paused = true
+    this.audioRecorder.pause()
     this.pauseTimer()
   }
 
-  public cancelRecording() {
-    this.recording = false
-    this.paused = false
+  public async stopRecording() {
+    const blob = await this.audioRecorder.stop(OutputFormat.WEBM_BLOB) as Blob
+    this.stopTimer()
+    const message = this.createMediaMessage(blob)
+    this.onSend.emit(message)
+  }
+
+  public async cancelRecording() {
+    await this.audioRecorder.cancel()
     this.stopTimer()
   }
 
-  public sendRecording() {
-    this.recording = false
-    this.stopTimer()
+  private createTextMessage(body: string): MessagerMessage {
+    return {
+      type: 'text',
+      body,
+      media: null
+    }
+  }
+
+  private createMediaMessage(data: Blob): MessagerMessage {
+    return {
+      type: 'media',
+      body: null,
+      media: data
+    }
+  }
+
+  private isEnterKey(event: KeyboardEvent) {
+    return event.key === 'Enter' || event.code === 'Enter' || event.keyCode === ENTER
   }
 
   private startTimer() {

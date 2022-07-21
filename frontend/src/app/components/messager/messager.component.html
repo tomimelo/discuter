@@ -1,5 +1,5 @@
 <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-  <ng-container *ngIf="!recording else recordingTemplate">
+  <ng-container *ngIf="recorderState === 'stopped' else recordingTemplate">
     <span class="length-indicator" [class.limit-reached]="messageForm.value.text.length > maxLength">{{messageForm.value.text.length}}/{{maxLength}}</span>
     <div class="input-wrapper">
       <tui-input formControlName="text" tuiTextfieldSize="s">
@@ -18,16 +18,20 @@
 </form>
 
 <ng-template #recordingTemplate>
-  <div class="recording-wrapper">
+  <div class="user-consent-wrapper" *ngIf="recorderState === 'waitingForUserConsent'">
+    <tui-svg src="tuiIconMicLarge"></tui-svg>
+    <span>Please give Discuter access to your microphone</span>
+  </div>
+  <div class="recording-wrapper" *ngIf="recorderState !== 'waitingForUserConsent'">
     <div class="timer">
-      <div class="record-dot"></div>
+      <div class="record-dot" [class.paused]="recorderState === 'paused'"></div>
       <span class="record-time">{{((currentTime$ | async) || 0) | timer}}</span>
     </div>
     <div class="recording-controls">
       <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconTrashLarge" (click)="cancelRecording()"></button>
-      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPauseLarge" *ngIf="!paused" (click)="pauseRecording()"></button>
-      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPlayLarge" *ngIf="paused" (click)="startRecording()"></button>
-      <button tuiIconButton type="button" size="s" [icon]="sendIcon" (click)="sendRecording()"></button>
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPauseLarge" *ngIf="recorderState === 'recording'" (click)="pauseRecording()"></button>
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPlayLarge" *ngIf="recorderState === 'paused'" (click)="startRecording()"></button>
+      <button tuiIconButton type="button" size="s" [icon]="sendIcon" (click)="stopRecording()"></button>
     </div>
   </div>
 </ng-template>

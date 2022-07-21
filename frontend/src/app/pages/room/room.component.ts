@@ -13,6 +13,7 @@ import { Message } from 'src/app/types/message';
 import { RoomSettingsComponent } from 'src/app/components/room-settings/room-settings.component';
 import { Participant } from 'src/app/types/participant';
 import { ChatEvent, ChatEventType } from 'src/app/types/chat';
+import { MessagerMessage } from 'src/app/components/messager/messager.component';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -56,7 +57,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.leaveRoom()
   }
 
-  public async sendMessage(message: string) {
+  public async sendMessage(message: MessagerMessage) {
     await this.roomService.sendMessage(message)
   }
 
