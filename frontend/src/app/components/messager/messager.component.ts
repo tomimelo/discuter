@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, interval, Subject, takeUntil, tap } from 'rxjs';
 import { ENTER } from '@angular/cdk/keycodes';
-import { AudioRecorderService, OutputFormat, RecorderState } from 'src/app/lib/audio-recorder/audio-recorder.service';
+import { AudioRecorderService, ErrorCase, OutputFormat, RecorderState } from 'src/app/lib/audio-recorder/audio-recorder.service';
 import { Media, MessageType } from '@twilio/conversations';
+import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 
 export interface MessagerMessage {
   type: MessageType,
@@ -35,12 +36,13 @@ export class MessagerComponent implements OnInit {
     return this.messageForm.get('text') as FormControl
   }
 
-  constructor(private audioRecorder: AudioRecorderService) {}
+  constructor(private audioRecorder: AudioRecorderService,
+              @Inject(TuiAlertService)
+              private readonly alertService: TuiAlertService) {}
   
   public ngOnInit(): void {
-    this.audioRecorder.getRecorderState().subscribe(state => {
-      this.recorderState = state
-    })
+    this.getRecorderState()
+    this.listenRecorderErrors()
   }
   
   public sendMessage() {
@@ -65,8 +67,11 @@ export class MessagerComponent implements OnInit {
     try {
       await this.audioRecorder.start()
       this.startTimer()
-    } catch (error) {
-      //Check if user has denied permission or dismissed the prompt
+    } catch (error: any) {
+      if (error.name === 'NotAllowedError') {
+        return
+      }
+      this.handleError()
     }
   }
 
@@ -130,6 +135,47 @@ export class MessagerComponent implements OnInit {
   private stopTimer() {
     this.stopTimer$.next()
     this.currentTime$.next(0)
+  }
+
+  private listenRecorderErrors() {
+    this.audioRecorder.recorderError.subscribe(error => {
+      switch (error) {
+        case ErrorCase.ALREADY_RECORDING:
+          this.handleError('You are already recording.')
+          break;
+        case ErrorCase.INVALID_OUTPUT_FORMAT:
+          this.handleError('You need to provide a valid output format.')
+          break;
+        case ErrorCase.RECORDER_TIMEOUT:
+          this.handleError()
+          break;
+        case ErrorCase.USER_CONSENT_FAILED:
+          this.handleError('You need to allow access to your microphone.')
+          break;
+        default:
+          this.handleError()
+          break;
+      }
+    })
+  }
+  
+  private getRecorderState(): void {
+    let timeout: NodeJS.Timeout
+    this.audioRecorder.getRecorderState().subscribe(state => {
+      if (state === RecorderState.WAITING_FOR_USER_CONSENT) {
+        //Prevent message flashing when waiting for user consent
+        timeout = setTimeout(() => {
+          this.recorderState = state
+        }, 300)
+      } else {
+        this.recorderState = state
+        clearTimeout(timeout)
+      }
+    })
+  }
+
+  private handleError(message: string = 'Something went wrong, please try again.') {
+    this.alertService.open(message, {autoClose: true, hasIcon: true, status: TuiNotification.Error}).subscribe()
   }
 
 }
