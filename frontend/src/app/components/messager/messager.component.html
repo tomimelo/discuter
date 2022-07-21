@@ -21,11 +21,12 @@
   <div class="recording-wrapper">
     <div class="timer">
       <div class="record-dot"></div>
-      <span class="record-time">{{(currentTime$ | async) || 0 | timer}}</span>
+      <span class="record-time">{{((currentTime$ | async) || 0) | timer}}</span>
     </div>
     <div class="recording-controls">
       <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconTrashLarge" (click)="cancelRecording()"></button>
-      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPauseLarge" (click)="pauseRecording()"></button>
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPauseLarge" *ngIf="!paused" (click)="pauseRecording()"></button>
+      <button tuiIconButton type="button" size="s" appearance="icon" icon="tuiIconPlayLarge" *ngIf="paused" (click)="startRecording()"></button>
       <button tuiIconButton type="button" size="s" [icon]="sendIcon" (click)="sendRecording()"></button>
     </div>
   </div>

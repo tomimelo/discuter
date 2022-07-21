@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, interval, Subject, takeUntil, tap } from 'rxjs';
+import { ENTER } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-messager',
@@ -17,6 +18,7 @@ export class MessagerComponent implements OnInit {
   private stopTimer$ = new Subject<void>()
 
   public recording: boolean = false
+  public paused: boolean = false
 
   public messageForm = new FormGroup({
     text: new FormControl('', Validators.required)
@@ -43,25 +45,29 @@ export class MessagerComponent implements OnInit {
   public onKeyDown(event: KeyboardEvent) {
     if (!this.isEnterKey(event)) {
       this.typing.emit()
+    } else {
+      this.sendMessage()
     }
   }
 
   private isEnterKey(event: KeyboardEvent) {
-    return event.key === 'Enter' || event.keyCode === 13
+    return event.key === 'Enter' || event.code === 'Enter' || event.keyCode === ENTER
   }
 
   public startRecording() {
     this.recording = true
+    this.paused = false
     this.startTimer()
   }
 
   public pauseRecording() {
-    //Add pause button and resume
+    this.paused = true
     this.pauseTimer()
   }
 
   public cancelRecording() {
     this.recording = false
+    this.paused = false
     this.stopTimer()
   }
 
@@ -71,10 +77,11 @@ export class MessagerComponent implements OnInit {
   }
 
   private startTimer() {
+    const currentTime = this.currentTime$.value
     interval(1000).pipe(
       takeUntil(this.stopTimer$),
       tap(v => {
-        this.currentTime$.next(v + 1)
+        this.currentTime$.next(v + currentTime + 1)
       }),
     )
     .subscribe();
