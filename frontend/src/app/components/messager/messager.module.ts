@@ -5,6 +5,7 @@ import {TuiInputModule} from '@taiga-ui/kit';
 import { TuiButtonModule, TuiTextfieldControllerModule } from '@taiga-ui/core';
 
 import { MessagerComponent } from './messager.component';
+import { TimerPipe } from 'src/app/pipes/timer.pipe';
 
 const TAIGA_MODULES = [
   TuiTextfieldControllerModule,
@@ -14,7 +15,8 @@ const TAIGA_MODULES = [
 
 @NgModule({
   declarations: [
-    MessagerComponent
+    MessagerComponent,
+    TimerPipe
   ],
   imports: [
     CommonModule,
