@@ -10,7 +10,14 @@
       <div *ngIf="processedMessage.type === 'media'" class="audio-message-wrapper">
         <button tuiIconButton type="button" size="s" appearance="icon" [icon]="audioIcon" (click)="toggleAudioState()"></button>
         <div class="audio-input-wrapper">
-          <input tuiSlider [formControl]="audioControl" type="range"/>
+          <input tuiSlider 
+                 [formControl]="audioControl" 
+                 type="range" 
+                 [min]="audioSliderMin" 
+                 [max]="audioSliderMax"
+                 [step]="0.1" 
+                 (input)="onInput()" 
+                 (change)="onChange()"/>
           <span class="audio-duration">{{audioDuration | timer}}</span>
         </div>
         <audio id="audio-{{processedMessage.id}}" preload=”metadata”>
