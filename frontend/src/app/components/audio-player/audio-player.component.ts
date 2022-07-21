@@ -68,9 +68,9 @@ export class AudioPlayerComponent implements OnInit {
     this.ref.detectChanges()
     this.setAudioElement()
     if (audio && this.audioElement) {
-      await this.loadAudioMetadata()
       this.listenOnAudioTimeUpdate()
       this.listenOnAudioEnded()
+      await this.loadAudioMetadata()
     }
     this.loading = false
     this.audioControl.enable()
@@ -122,7 +122,9 @@ export class AudioPlayerComponent implements OnInit {
     this.audioElement!.removeAllListeners?.('timeupdate')
     this.audioElement!.addEventListener('timeupdate', () => {
       this.audioControl.setValue(this.audioElement!.currentTime)
-      this.duration = this.audioElement!.currentTime
+      if (this.audioElement!.currentTime !== 0) {
+        this.duration = this.audioElement!.currentTime
+      }
     })
   }
 
