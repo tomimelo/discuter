@@ -3,11 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, interval, Subject, takeUntil, tap } from 'rxjs';
 import { ENTER } from '@angular/cdk/keycodes';
 import { AudioRecorderService, ErrorCase, OutputFormat, RecorderState } from 'src/app/lib/audio-recorder/audio-recorder.service';
-import { Media, MessageType } from '@twilio/conversations';
+import { MessageType } from '@twilio/conversations';
 import { TuiAlertService, TuiNotification } from '@taiga-ui/core';
 
 export interface MessagerMessage {
   type: MessageType,
+  contentType: string,
   body: string | null,
   media: Blob | null,
 }
@@ -88,7 +89,7 @@ export class MessagerComponent implements OnInit {
   public async stopRecording() {
     const blob = await this.audioRecorder.stop(OutputFormat.WEBM_BLOB) as Blob
     this.stopTimer()
-    const message = this.createMediaMessage(blob)
+    const message = this.createMediaMessage('audio/webm', blob)
     this.onSend.emit(message)
   }
 
@@ -100,14 +101,16 @@ export class MessagerComponent implements OnInit {
   private createTextMessage(body: string): MessagerMessage {
     return {
       type: 'text',
+      contentType: 'text/plain',
       body,
       media: null
     }
   }
 
-  private createMediaMessage(data: Blob): MessagerMessage {
+  private createMediaMessage(contentType: string, data: Blob): MessagerMessage {
     return {
       type: 'media',
+      contentType,
       body: null,
       media: data
     }

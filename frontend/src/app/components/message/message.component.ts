@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Message } from 'src/app/types/message';
+import { Component, Input } from '@angular/core';
+import { Message, MessageMedia } from 'src/app/types/message';
 import { Audio } from '../audio-player/audio-player.component';
 
 @Component({
@@ -16,22 +15,42 @@ export class MessageComponent {
 
   public processedMessage!: Message
   public audio: Audio | null = null
+  public image: any | null = null
 
   constructor() { }
 
   private async processMessage(message: Message) {
     this.processedMessage = message
     if (message.type === 'media') {
-     this.createAudio(message)
+      const media = message.media
+      if (this.isAudio(media)) {
+        this.createAudio(message)
+      }
+      if (this.isImage(media)) {
+        this.createImage(message)
+      }
     }
   }
 
+  private isAudio(media: MessageMedia | null): boolean {
+    return !!media && media.contentType.startsWith('audio/')
+  }
+
+  private isImage(media: MessageMedia | null): boolean {
+    return !!media && media.contentType.startsWith('image/')
+  }
+
   private createAudio(message: Message) {
-    if (message.media) {
-      this.audio = {
-        id: message.id,
-        url: message.media
-      }
+    this.audio = {
+      id: message.id,
+      url: message.media!.url
+    }
+  }
+
+  private createImage(message: Message) {
+    this.image = {
+      id: message.id,
+      url: message.media!.url
     }
   }
 

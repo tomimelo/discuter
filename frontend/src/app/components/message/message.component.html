@@ -8,6 +8,7 @@
     <div class="message-body">
       <p *ngIf="processedMessage.type === 'text'">{{processedMessage.body}}</p>
       <app-audio-player *ngIf="audio" [audio]="audio"></app-audio-player>
+      <app-image-viewer *ngIf="image" [image]="image"></app-image-viewer>
     </div>
   </div>
 </div>
