@@ -1,15 +1,20 @@
-<div class="message" [class.own-message]="message.isOwn">
-  <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="message.author.username" [avatarUrl]="message.author.avatarUrl"></tui-avatar>
+<div class="message" [class.own-message]="processedMessage.isOwn">
+  <tui-avatar [autoColor]="true" size="s" [rounded]="true" [text]="processedMessage.author.username" [avatarUrl]="processedMessage.author.avatarUrl"></tui-avatar>
   <div class="message-content">
     <div class="message-header">
-      <span class="message-author">{{message.isOwn ? 'You' : message.author.username}}</span>
-      <span class="message-time">{{message.dateCreated! | time}}</span>
+      <span class="message-author">{{processedMessage.isOwn ? 'You' : processedMessage.author.username}}</span>
+      <span class="message-time">{{processedMessage.dateCreated! | time}}</span>
     </div>
     <div class="message-body">
-      <p *ngIf="message.type === 'text'">{{message.body}}</p>
-      <div *ngIf="message.type === 'media'">
-        <audio controls>
-          <source [src]="message.media" type="audio/webm">
+      <p *ngIf="processedMessage.type === 'text'">{{processedMessage.body}}</p>
+      <div *ngIf="processedMessage.type === 'media'" class="audio-message-wrapper">
+        <button tuiIconButton type="button" size="s" appearance="icon" [icon]="audioIcon" (click)="toggleAudioState()"></button>
+        <div class="audio-input-wrapper">
+          <input tuiSlider [formControl]="audioControl" type="range"/>
+          <span class="audio-duration">{{audioDuration | timer}}</span>
+        </div>
+        <audio id="audio-{{processedMessage.id}}" preload=”metadata”>
+          <source [src]="processedMessage.media" type="audio/webm">
           Your browser does not support the audio tag.
         </audio>
       </div>

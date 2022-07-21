@@ -55,4 +55,26 @@
   }
 }
 
+.audio-message-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 45px;
+  
+  audio {
+    display: none;
+  }
+  
+}
+
+.audio-input-wrapper {
+  position: relative;
+
+  .audio-duration {
+    font-size: 10px;
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+  }
+}
 

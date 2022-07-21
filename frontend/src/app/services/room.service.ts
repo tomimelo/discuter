@@ -226,6 +226,7 @@ export class RoomService {
   private async createMessage(message: TwilioMessage): Promise<Message> {
     const participant = await this.getParticipantFromMessage(message)
     return {
+      id: message.sid,
       author: participant,
       type: message.type,
       body: message.body,

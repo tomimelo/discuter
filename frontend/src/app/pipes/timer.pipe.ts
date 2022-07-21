@@ -9,7 +9,7 @@ export class TimerPipe implements PipeTransform {
     if (typeof value !== 'number') {
       throw new Error('Invalid value');
     }
-    const seconds = `${value % 60}`.padStart(2, '0');
+    const seconds = `${Math.floor(value % 60)}`.padStart(2, '0');
     const minutes = `${Math.floor(value / 60)}`.padStart(2, '0');
 
     return `${minutes}:${seconds}`;
