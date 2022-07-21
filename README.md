@@ -16,6 +16,7 @@ It's a participation for [midudev](https://github.com/midudev) Hackathon of July
 - Option to regenerate invite link
 - Add participants via username
 - Kick participants from rooms (admin only)
+- See participants typing status
 - Setup room sounds
 - Voice messages
 - Text messages
